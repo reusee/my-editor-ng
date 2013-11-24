@@ -5,12 +5,14 @@ from core_buffer import *
 from core_view import *
 from core_modal import *
 from core_move import *
+from core_switcher import *
 
 class Editor(Gtk.Box,
     Buffer,
     View,
     Modal,
     Move,
+    Switcher,
     ):
 
   __gsignals__ = {}
@@ -21,6 +23,7 @@ class Editor(Gtk.Box,
     View.__init__(self)
     Modal.__init__(self)
     Move.__init__(self)
+    Switcher.__init__(self)
 
     self.set_homogeneous(True)
 
