@@ -20,6 +20,10 @@ class Modal:
 
     self.key_handler = self.command_key_handler
     self.delay_events = []
+    self.n = 0
+
+    for i in range(0, 10):
+      self.emit('bind-command-key', str(i), self.make_number_prefix_handler(i))
 
   def handle_key_press(self, view, ev):
     if self.operation_mode == self.COMMAND:
@@ -47,6 +51,8 @@ class Modal:
       ret = self.execute_key_handler(handler, view, ev)
       if callable(ret): # another function handler
         self.key_handler = ret
+      elif ret != 'is_number_prefix':
+        self.n = 0
       else: # trigger command
         pass
     elif isinstance(handler, dict): # sub dict handler
@@ -75,7 +81,7 @@ class Modal:
       else: print(param); handler_error
     return f(*args)
 
-  def bind_command_key(self, editor, seq, handler): #TODO list dict
+  def bind_command_key(self, editor, seq, handler):
     seq = seq.split(' ')
     cur = self.command_key_handler
     for key in seq[:len(seq) - 1]:
@@ -87,3 +93,9 @@ class Modal:
     if seq[-1] in cur: # conflict
       raise Exception('command conflict %s %s' % (seq, handler))
     cur[seq[-1]] = handler
+
+  def make_number_prefix_handler(self, i):
+    def f():
+      self.n = self.n * 10 + i
+      return 'is_number_prefix'
+    return f
