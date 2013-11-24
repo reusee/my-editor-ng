@@ -1,14 +1,25 @@
-from gi.repository import Gtk, Pango, GtkSource
+from gi.repository import Gtk, Pango, GtkSource, GObject
 import os
 
-class Editor(Gtk.Box):
+from core_modal import *
+
+class Editor(Gtk.Box,
+    Modal,
+    ):
+
+  __gsignals__ = {
+      'view-created': (GObject.SIGNAL_RUN_FIRST, None, (GtkSource.View,)),
+      }
+
   def __init__(self):
     super().__init__()
+    Modal.__init__(self)
 
     self.buffers = []
     self.views = []
     self.set_homogeneous(True)
 
+    # font and style
     self.default_font = Pango.FontDescription.from_string('Terminus 13')
     self.style_scheme_manager = GtkSource.StyleSchemeManager.get_default()
     self.style_scheme_manager.append_search_path(os.path.dirname(__file__))
@@ -30,8 +41,11 @@ class Editor(Gtk.Box):
 
     return buf
 
-  def new_view(self, buf):
-    view = GtkSource.View.new_with_buffer(buf)
+  def new_view(self, buf = None):
+    if buf:
+      view = GtkSource.View.new_with_buffer(buf)
+    else:
+      view = GtkSource.View()
     self.views.append(view)
     scroll = Gtk.ScrolledWindow()
     scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
@@ -49,5 +63,11 @@ class Editor(Gtk.Box):
     view.set_tab_width(2)
 
     self.pack_start(scroll, True, True, 0)
+    self.emit('view-created', view)
 
     return view
+
+  def load_file(self, buf, filename):
+    with open(filename, 'r') as f:
+      buf.set_text(f.read())
+    buf.place_cursor(buf.get_start_iter())
