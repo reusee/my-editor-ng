@@ -4,7 +4,7 @@ class View:
   def __init__(self):
     self.views = []
 
-    self.new_signal('view-created', GObject.SIGNAL_RUN_FIRST, None, (GtkSource.View,))
+    self.new_signal('view-created', (GtkSource.View,))
 
   def new_view(self, buf = None):
     if buf:
@@ -15,6 +15,8 @@ class View:
     scroll = Gtk.ScrolledWindow()
     scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
     scroll.add(view)
+
+    setattr(view, 'attr', {})
 
     view.modify_font(self.default_font)
     view.set_auto_indent(True)

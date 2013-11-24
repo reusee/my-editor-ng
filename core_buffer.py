@@ -4,6 +4,8 @@ class Buffer:
   def __init__(self):
     self.buffers = []
 
+    self.new_signal('buffer-created', (Gtk.TextBuffer,))
+
   def new_buffer(self, filename = '<untitle>'):
     language_manager = GtkSource.LanguageManager.get_default()
     lang = language_manager.guess_language(filename, 'plain/text')
@@ -17,6 +19,10 @@ class Buffer:
     buf.set_highlight_matching_brackets(True)
     buf.set_max_undo_levels(-1)
     buf.set_style_scheme(self.style_scheme)
+
+    setattr(buf, 'attr', {})
+
+    self.emit('buffer-created', buf)
 
     return buf
 
