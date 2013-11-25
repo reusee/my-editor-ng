@@ -27,10 +27,9 @@ class Modal:
 
   def handle_key_press(self, view, ev):
     if self.operation_mode == self.COMMAND:
-      self.handle_command_key(view, ev)
+      return self.handle_command_key(view, ev)
     elif self.operation_mode == self.EDIT:
-      self.handle_edit_key(view, ev)
-    return True
+      return self.handle_edit_key(view, ev)
 
   def handle_command_key(self, view, ev):
     _, val = ev.get_keyval()
@@ -60,9 +59,10 @@ class Modal:
     else: # no handler
       self.reset_key_handler(self.command_key_handler)
       print('no command for', chr(val))
+    return True
 
   def handle_edit_key(self, view, key):
-    pass
+    return False
 
   def reset_key_handler(self, handler):
     self.delay_events.clear()
