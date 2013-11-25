@@ -1,14 +1,12 @@
 from gi.repository import Gtk
 
 class Move:
-
-  FORWARD, BACKWARD = range(2)
-
   def __init__(self):
-    self.emit('bind-command-key', 'j', lambda view, n: self.move_line(view, self.FORWARD, n))
-    self.emit('bind-command-key', 'k', lambda view, n: self.move_line(view, self.BACKWARD, n))
-    self.emit('bind-command-key', 'h', lambda view, n: self.move_char(view, self.BACKWARD, n))
-    self.emit('bind-command-key', 'l', lambda view, n: self.move_char(view, self.FORWARD, n))
+
+    self.emit('bind-command-key', 'j', lambda view, n: self.move_line(view, n))
+    self.emit('bind-command-key', 'k', lambda view, n: self.move_line(view, n, backward = True))
+    self.emit('bind-command-key', 'h', lambda view, n: self.move_char(view, n, backward = True))
+    self.emit('bind-command-key', 'l', lambda view, n: self.move_char(view, n))
     self.emit('bind-command-key', 'f', self.make_char_locator())
     self.emit('bind-command-key', 'F', self.make_char_locator(backward = True))
     self.emit('bind-command-key', ';', self.locate_last)
@@ -29,11 +27,11 @@ class Move:
     if buf.attr.get('freeze', False): return
     buf.attr['current_offset'] = buf.get_iter_at_mark(buf.get_insert()).get_line_offset()
 
-  def move_line(self, view, direction, n):
+  def move_line(self, view, n, backward = False):
     if n == 0: n = 1
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
-    if direction == self.FORWARD:
+    if not backward:
       for i in range(n): view.forward_display_line(it)
     else:
       for i in range(n): view.backward_display_line(it)
@@ -48,11 +46,11 @@ class Move:
     view.scroll_mark_onscreen(buf.get_insert())
     buf.attr['freeze'] = False
 
-  def move_char(self, view, direction, n):
+  def move_char(self, view, n, backward = False):
     if n == 0: n = 1
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
-    if direction == self.FORWARD:
+    if not backward:
       for i in range(n): it.forward_char()
     else:
       for i in range(n): it.backward_char()
@@ -63,24 +61,15 @@ class Move:
     if 'last_locate_func' in view.attr:
       view.attr['last_locate_func'](view)
 
-  def locate_forward(self, view, s):
+  def locate_search(self, view, s, backward = False):
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
     orig = it.copy()
-    it.forward_char()
-    it = it.forward_search(s, 0, buf.get_end_iter())
-    if it: 
-      buf.place_cursor(it[0])
-      view.scroll_mark_onscreen(buf.get_insert())
-      return True
-    else: 
-      buf.place_cursor(orig)
-
-  def locate_backward(self, view, s):
-    buf = view.get_buffer()
-    it = buf.get_iter_at_mark(buf.get_insert())
-    orig = it.copy()
-    it = it.backward_search(s, 0, buf.get_start_iter())
+    if backward:
+      it = it.backward_search(s, 0, buf.get_start_iter())
+    else:
+      it.forward_char()
+      it = it.forward_search(s, 0, buf.get_end_iter())
     if it: 
       buf.place_cursor(it[0])
       view.scroll_mark_onscreen(buf.get_insert())
@@ -93,12 +82,12 @@ class Move:
     def make(c):
       if backward:
         def f(view):
-          if self.locate_backward(view, c):
+          if self.locate_search(view, c, backward = True):
             view.attr['last_locate_func'] = f
         return f
       else:
         def f(view):
-          if self.locate_forward(view, c):
+          if self.locate_search(view, c):
             view.attr['last_locate_func'] = f
         return f
     for i in range(0x20, 0x7F):
@@ -112,12 +101,12 @@ class Move:
         s = s1 + chr(ev.get_keyval()[1])
         if backward:
           def f(view):
-            if self.locate_backward(view, s):
+            if self.locate_search(view, s, backward = True):
               view.attr['last_locate_func'] = f
           f(view)
         else:
           def f(view):
-            if self.locate_forward(view, s):
+            if self.locate_search(view, s):
               view.attr['last_locate_func'] = f
           f(view)
       return step2
