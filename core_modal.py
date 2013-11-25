@@ -23,6 +23,9 @@ class Modal:
     self.connect('bind-edit-key',
         lambda _, seq, handler: self.bind_key_handler(self.edit_key_handler, seq, handler))
 
+    self.new_signal('key-handler-reset', ())
+    self.new_signal('key-handler-prefix', (str,))
+
     self.new_signal('edit-mode-entered', ())
     self.new_signal('command-mode-entered', ())
 
@@ -59,8 +62,10 @@ class Modal:
       ret = self.execute_key_handler(handler, view, ev)
       if callable(ret): # another function handler
         self.key_handler = ret
+        self.emit('key-handler-prefix', chr(val))
       elif ret != 'is_number_prefix':
         self.n = 0
+        self.emit('key-handler-prefix', chr(val))
       else: # trigger command
         pass
     elif isinstance(handler, dict): # sub dict handler
@@ -69,6 +74,7 @@ class Modal:
         self.delay_chars.append(chr(val))
         self.delay_chars_timer = GObject.timeout_add(200,
             lambda: self.insert_delay_chars(view))
+      self.emit('key-handler-prefix', chr(val))
     else: # no handler
       if is_edit_mode:
         if self.delay_chars_timer:
@@ -88,6 +94,7 @@ class Modal:
   def reset_key_handler(self, handler):
     self.key_handler = handler
     self.delay_chars.clear()
+    self.emit('key-handler-reset')
 
   def execute_key_handler(self, f, view, ev):
     if '_param_names' not in f.__dict__:
