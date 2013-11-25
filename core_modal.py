@@ -40,7 +40,6 @@ class Modal:
     if val == Gdk.KEY_Escape: # cancel command
       self.enter_command_mode()
       return True
-    is_command_mode = self.operation_mode == self.COMMAND
     is_edit_mode = self.operation_mode == self.EDIT
     handler = None
     if isinstance(self.key_handler, dict): # dict handler
@@ -51,12 +50,12 @@ class Modal:
     elif callable(self.key_handler): # function handler
       handler = self.key_handler
     if callable(handler): # trigger a command or call handler function
-      if is_command_mode:
-        self.reset_key_handler(self.command_key_handler)
-      else:
+      if is_edit_mode:
         if self.delay_chars_timer:
           GObject.source_remove(self.delay_chars_timer)
         self.reset_key_handler(self.edit_key_handler)
+      else:
+        self.reset_key_handler(self.command_key_handler)
       ret = self.execute_key_handler(handler, view, ev)
       if callable(ret): # another function handler
         self.key_handler = ret
@@ -71,14 +70,14 @@ class Modal:
         self.delay_chars_timer = GObject.timeout_add(200,
             lambda: self.insert_delay_chars(view))
     else: # no handler
-      if is_command_mode:
-        self.reset_key_handler(self.command_key_handler)
-      else:
+      if is_edit_mode:
         if self.delay_chars_timer:
           GObject.source_remove(self.delay_chars_timer)
         self.insert_delay_chars(view)
         self.reset_key_handler(self.edit_key_handler)
         return False
+      else:
+        self.reset_key_handler(self.command_key_handler)
     return True
 
   def insert_delay_chars(self, view):
