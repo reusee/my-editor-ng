@@ -13,6 +13,8 @@ class Modal:
     self.new_signal('bind-command-key', (str, object))
     self.connect('bind-command-key', self.bind_command_key)
 
+    self.new_signal('command-mode-entered', ())
+
     self.operation_mode = self.COMMAND
     self.selection_mode = self.NONE
     self.command_key_handler = {}
@@ -30,6 +32,7 @@ class Modal:
       return self.handle_command_key(view, ev)
     elif self.operation_mode == self.EDIT:
       return self.handle_edit_key(view, ev)
+    not_here
 
   def handle_command_key(self, view, ev):
     _, val = ev.get_keyval()

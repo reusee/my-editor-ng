@@ -6,6 +6,7 @@ from core_view import *
 from core_modal import *
 from core_move import *
 from core_switcher import *
+from core_edit import *
 from core_status import *
 
 from mod_minimap import *
@@ -16,6 +17,7 @@ class Editor(Gtk.Box,
     Modal,
     Move,
     Switcher,
+    Edit,
     Status,
     ):
 
@@ -28,6 +30,7 @@ class Editor(Gtk.Box,
     Modal.__init__(self)
     Move.__init__(self)
     Switcher.__init__(self)
+    Edit.__init__(self)
     Status.__init__(self)
 
     # views
@@ -46,12 +49,12 @@ class Editor(Gtk.Box,
     self.style_scheme = self.style_scheme_manager.get_scheme('molokai')
 
     # extra modules
-    self.minimap = Minimap(self)
+    #self.minimap = Minimap(self)
 
   def new_signal(self, name, arg_types):
     GObject.signal_new(name, Editor, GObject.SIGNAL_RUN_FIRST, None, arg_types)
 
-  def dump_object(self, obj, pattern = None):
+  def dump(self, obj, pattern = None):
     if pattern:
       print([e for e in dir(obj) if pattern in e.lower()])
     else:

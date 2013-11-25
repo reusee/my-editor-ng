@@ -6,6 +6,8 @@ class View:
 
     self.new_signal('view-created', (GtkSource.View,))
 
+    self.current_view = None
+
   def new_view(self, buf = None):
     if buf:
       view = GtkSource.View.new_with_buffer(buf)
@@ -28,10 +30,10 @@ class View:
     view.set_show_line_marks(False)
     view.set_show_line_numbers(True)
     view.set_tab_width(2)
-    view.set_editable(False)
     view.set_wrap_mode(Gtk.WrapMode.NONE)
 
     self.views_box.pack_start(scroll, True, True, 0)
     self.emit('view-created', view)
+    self.current_view = view
 
     return view
