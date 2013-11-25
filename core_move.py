@@ -9,11 +9,18 @@ class Move:
     self.emit('bind-command-key', 'k', lambda view, n: self.move_line(view, self.BACKWARD, n))
     self.emit('bind-command-key', 'h', lambda view, n: self.move_char(view, self.BACKWARD, n))
     self.emit('bind-command-key', 'l', lambda view, n: self.move_char(view, self.FORWARD, n))
+
     self.emit('bind-command-key', 'f', self.make_char_locator())
     self.emit('bind-command-key', 'F', self.make_char_locator(backward = True))
     self.emit('bind-command-key', ';', self.locate_last)
     self.emit('bind-command-key', 's', lambda view: self.make_two_char_locator(view))
     self.emit('bind-command-key', 'S', lambda view: self.make_two_char_locator(view, backward = True))
+
+    self.emit('bind-command-key', 'g g', self.move_to_start)
+    self.emit('bind-command-key', 'G', self.move_to_end)
+
+    self.emit('bind-command-key', 'e', self.move_to_line_start)
+    self.emit('bind-command-key', 'r', self.move_to_line_end)
 
     self.connect('buffer-created',
         lambda _, buf: buf.connect('notify::cursor-position', 
@@ -116,3 +123,27 @@ class Move:
           f(view)
       return step2
     return step1
+
+  def move_to_start(self, view):
+    buf = view.get_buffer()
+    buf.place_cursor(buf.get_start_iter())
+    view.scroll_mark_onscreen(buf.get_insert())
+
+  def move_to_end(self, view):
+    buf = view.get_buffer()
+    buf.place_cursor(buf.get_end_iter())
+    view.scroll_mark_onscreen(buf.get_insert())
+
+  def move_to_line_start(self, view):
+    buf = view.get_buffer()
+    it = buf.get_iter_at_mark(buf.get_insert())
+    it.set_line_offset(0)
+    buf.place_cursor(it)
+    view.scroll_mark_onscreen(buf.get_insert())
+
+  def move_to_line_end(self, view):
+    buf = view.get_buffer()
+    it = buf.get_iter_at_mark(buf.get_insert())
+    it.forward_to_line_end()
+    buf.place_cursor(it)
+    view.scroll_mark_onscreen(buf.get_insert())
