@@ -28,6 +28,8 @@ class Modal:
 
     self.key_handler = self.command_key_handler
     self.n = 0
+    self.delay_chars = []
+    self.delay_chars_timer = None
 
     for i in range(0, 10):
       self.emit('bind-command-key', str(i), self.make_number_prefix_handler(i))
@@ -52,7 +54,8 @@ class Modal:
       if is_command_mode:
         self.reset_key_handler(self.command_key_handler)
       else:
-        #TODO stop timer
+        if self.delay_chars_timer:
+          GObject.source_remove(self.delay_chars_timer)
         self.reset_key_handler(self.edit_key_handler)
       ret = self.execute_key_handler(handler, view, ev)
       if callable(ret): # another function handler
@@ -64,21 +67,28 @@ class Modal:
     elif isinstance(handler, dict): # sub dict handler
       self.key_handler = handler
       if is_edit_mode:
-        #TODO save keyval start timer
-        pass
+        self.delay_chars.append(chr(val))
+        self.delay_chars_timer = GObject.timeout_add(200,
+            lambda: self.insert_delay_chars(view))
     else: # no handler
       if is_command_mode:
         self.reset_key_handler(self.command_key_handler)
-        print('no command for', chr(val))
       else:
-        #TODO stop timer
-        #TODO insert delayed chars
+        if self.delay_chars_timer:
+          GObject.source_remove(self.delay_chars_timer)
+        self.insert_delay_chars(view)
         self.reset_key_handler(self.edit_key_handler)
         return False
     return True
 
+  def insert_delay_chars(self, view):
+    buf = view.get_buffer()
+    buf.insert(buf.get_iter_at_mark(buf.get_insert()), ''.join(self.delay_chars))
+    self.reset_key_handler(self.edit_key_handler)
+
   def reset_key_handler(self, handler):
     self.key_handler = handler
+    self.delay_chars.clear()
 
   def execute_key_handler(self, f, view, ev):
     if '_param_names' not in f.__dict__:
