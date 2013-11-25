@@ -53,21 +53,22 @@ class Modal:
     elif callable(self.key_handler): # function handler
       handler = self.key_handler
     if callable(handler): # trigger a command or call handler function
-      if is_edit_mode:
+      if is_edit_mode: # not a char to insert
         if self.delay_chars_timer:
           GObject.source_remove(self.delay_chars_timer)
-        self.reset_key_handler(self.edit_key_handler)
+        self.key_handler = self.edit_key_handler
+        self.delay_chars.clear()
       else:
-        self.reset_key_handler(self.command_key_handler)
+        self.key_handler = self.command_key_handler #XXX
       ret = self.execute_key_handler(handler, view, ev)
       if callable(ret): # another function handler
         self.key_handler = ret
         self.emit('key-handler-prefix', chr(val))
-      elif ret != 'is_number_prefix':
-        self.n = 0
-        self.emit('key-handler-prefix', chr(val))
-      else: # trigger command
+      elif ret == 'is_number_prefix': # a number prefix
         pass
+      else: # handler executed
+        self.emit('key-handler-reset')
+        self.n = 0
     elif isinstance(handler, dict): # sub dict handler
       self.key_handler = handler
       if is_edit_mode:
@@ -80,19 +81,17 @@ class Modal:
         if self.delay_chars_timer:
           GObject.source_remove(self.delay_chars_timer)
         self.insert_delay_chars(view)
-        self.reset_key_handler(self.edit_key_handler)
+        self.key_handler = self.edit_key_handler
         return False
       else:
-        self.reset_key_handler(self.command_key_handler)
+        self.key_handler = self.command_key_handler
+      self.emit('key-handler-reset')
     return True
 
   def insert_delay_chars(self, view):
     buf = view.get_buffer()
     buf.insert(buf.get_iter_at_mark(buf.get_insert()), ''.join(self.delay_chars))
-    self.reset_key_handler(self.edit_key_handler)
-
-  def reset_key_handler(self, handler):
-    self.key_handler = handler
+    self.key_handler = self.edit_key_handler
     self.delay_chars.clear()
     self.emit('key-handler-reset')
 
@@ -129,10 +128,10 @@ class Modal:
 
   def enter_command_mode(self):
     self.operation_mode = self.COMMAND
-    self.reset_key_handler(self.command_key_handler)
+    self.key_handler = self.command_key_handler
     self.emit('command-mode-entered')
 
   def enter_edit_mode(self):
     self.operation_mode = self.EDIT
-    self.reset_key_handler(self.edit_key_handler)
+    self.key_handler = self.edit_key_handler
     self.emit('edit-mode-entered')
