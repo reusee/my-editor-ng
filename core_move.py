@@ -9,6 +9,9 @@ class Move:
     self.emit('bind-command-key', 'k', lambda view, n: self.move_line(view, self.BACKWARD, n))
     self.emit('bind-command-key', 'h', lambda view, n: self.move_char(view, self.BACKWARD, n))
     self.emit('bind-command-key', 'l', lambda view, n: self.move_char(view, self.FORWARD, n))
+    self.emit('bind-command-key', 'f', self.make_char_locator())
+    self.emit('bind-command-key', 'F', self.make_char_locator(backward = True))
+    self.emit('bind-command-key', ';', self.locate_last)
 
     self.connect('buffer-created',
         lambda _, buf: buf.connect('notify::cursor-position', 
@@ -45,3 +48,39 @@ class Move:
     else:
       for i in range(n): it.backward_char()
     buf.place_cursor(it)
+
+  def make_char_locator(self, backward = False):
+    handler = {}
+    def make(c):
+      if backward:
+        def f(view):
+          buf = view.get_buffer()
+          it = buf.get_iter_at_mark(buf.get_insert())
+          orig = it.copy()
+          it = it.backward_search(c, 0, buf.get_start_iter())
+          if it: 
+            buf.place_cursor(it[0])
+            view.attr['last_locate_func'] = f
+          else: 
+            buf.place_cursor(orig)
+        return f
+      else:
+        def f(view):
+          buf = view.get_buffer()
+          it = buf.get_iter_at_mark(buf.get_insert())
+          orig = it.copy()
+          it.forward_char()
+          it = it.forward_search(c, 0, buf.get_end_iter())
+          if it: 
+            buf.place_cursor(it[0])
+            view.attr['last_locate_func'] = f
+          else: 
+            buf.place_cursor(orig)
+        return f
+    for i in range(0x20, 0x7F):
+      handler[chr(i)] = make(chr(i))
+    return handler
+
+  def locate_last(self, view):
+    if 'last_locate_func' in view.attr:
+      view.attr['last_locate_func'](view)
