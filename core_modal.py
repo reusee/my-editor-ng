@@ -132,6 +132,8 @@ class Modal:
   def enter_command_mode(self):
     self.operation_mode = self.COMMAND
     self.key_handler = self.command_key_handler
+    self.n = 0
+    self.emit('key-handler-reset')
 
   def enter_edit_mode(self):
     self.operation_mode = self.EDIT
