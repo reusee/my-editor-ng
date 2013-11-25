@@ -16,9 +16,20 @@ class Status:
     cr.set_font_size(256)
     cr.set_source_rgb(0.2, 0.2, 0.2)
     cr.move_to(rect.width / 2, rect.height / 2)
+    # operation_mode
     if self.operation_mode == self.COMMAND:
         cr.show_text('C')
+    # command
     cr.set_font_size(128)
     t = ''.join(self.command_prefix)
     if self.n != 0: t = str(self.n) + t
+    cr.show_text(t)
+    # selection_mode
+    cr.move_to(rect.width / 2 + 50, rect.height / 2 - 50)
+    if self.selection_mode == self.CHAR:
+        t = 'c'
+    elif self.selection_mode == self.LINE:
+        t = 'l'
+    elif self.selection_mode == self.RECT:
+        t = 'r'
     cr.show_text(t)

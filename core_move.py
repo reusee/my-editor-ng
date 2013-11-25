@@ -27,6 +27,12 @@ class Move:
     if buf.attr.get('freeze', False): return
     buf.attr['current_offset'] = buf.get_iter_at_mark(buf.get_insert()).get_line_offset()
 
+  def move_mark(self, buf, it):
+    if self.selection_mode == self.NONE:
+      buf.place_cursor(it)
+    else:
+      buf.move_mark(buf.get_insert(), it)
+
   def move_line(self, view, n, backward = False):
     if n == 0: n = 1
     buf = view.get_buffer()
@@ -42,7 +48,7 @@ class Move:
     if offset > 0:
       it.set_line_offset(offset)
     buf.attr['freeze'] = True
-    buf.place_cursor(it)
+    self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())
     buf.attr['freeze'] = False
 
@@ -54,7 +60,7 @@ class Move:
       for i in range(n): it.forward_char()
     else:
       for i in range(n): it.backward_char()
-    buf.place_cursor(it)
+    self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())
 
   def locate_last(self, view):
@@ -71,11 +77,11 @@ class Move:
       it.forward_char()
       it = it.forward_search(s, 0, buf.get_end_iter())
     if it: 
-      buf.place_cursor(it[0])
+      self.move_mark(buf, it[0])
       view.scroll_mark_onscreen(buf.get_insert())
       return True
     else: 
-      buf.place_cursor(orig)
+      self.move_mark(buf, orig)
 
   def make_char_locator(self, backward = False):
     handler = {}
@@ -117,26 +123,26 @@ class Move:
     it = buf.get_start_iter()
     if n > 0:
       it.set_line(n - 1)
-    buf.place_cursor(it)
+    self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())
 
   def move_to_end(self, view):
     buf = view.get_buffer()
-    buf.place_cursor(buf.get_end_iter())
+    self.move_mark(buf, buf.get_end_iter())
     view.scroll_mark_onscreen(buf.get_insert())
 
   def move_to_line_start(self, view):
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
     it.set_line_offset(0)
-    buf.place_cursor(it)
+    self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())
 
   def move_to_line_end(self, view):
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
     it.forward_to_line_end()
-    buf.place_cursor(it)
+    self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())
 
   def move_to_empty_line(self, view, backward = False):
@@ -147,5 +153,5 @@ class Move:
     ret = f()
     while ret and it.get_bytes_in_line() != 1:
       ret = f()
-    buf.place_cursor(it)
+    self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())

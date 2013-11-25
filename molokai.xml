@@ -24,10 +24,9 @@
 	<style foreground="#66D9EF" name="def:type"/>
 	<style background="#272822" foreground="#F8F8F2" name="text"/>
 	<style foreground="#75715E" name="def:comment"/>
-	<style background="#3E3D32" name="current-line"/>
-	<style background="#272822" foreground="#F8F8F2" name="text"/>
 	<style foreground="#465457" name="def:comment"/>
-	<style background="#3e3d32" name="current-line"/>
+	<style background="#3E3D32" name="current-line"/>
 	<style background="#3b3a32" foreground="#bcbca7" name="line-numbers"/>
+  <style name="selection" foreground="#000000" background="#FFFF00" />
 </style-scheme>
 
