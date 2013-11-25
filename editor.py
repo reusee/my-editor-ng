@@ -8,6 +8,8 @@ from core_move import *
 from core_switcher import *
 from core_status import *
 
+from mod_minimap import *
+
 class Editor(Gtk.Box,
     Buffer,
     View,
@@ -42,6 +44,9 @@ class Editor(Gtk.Box,
     self.style_scheme_manager = GtkSource.StyleSchemeManager.get_default()
     self.style_scheme_manager.append_search_path(os.path.dirname(__file__))
     self.style_scheme = self.style_scheme_manager.get_scheme('molokai')
+
+    # extra modules
+    self.minimap = Minimap(self)
 
   def new_signal(self, name, arg_types):
     GObject.signal_new(name, Editor, GObject.SIGNAL_RUN_FIRST, None, arg_types)
