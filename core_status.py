@@ -27,9 +27,17 @@ class Status:
     # selection_mode
     cr.move_to(rect.width / 2 + 50, rect.height / 2 - 50)
     if self.selection_mode == self.CHAR:
-        t = 'c'
+        cr.show_text('c')
     elif self.selection_mode == self.LINE:
-        t = 'l'
+        cr.show_text('l')
     elif self.selection_mode == self.RECT:
-        t = 'r'
-    cr.show_text(t)
+        cr.show_text('r')
+    # current column
+    buf = view.get_buffer()
+    cursor_rect = view.get_iter_location(buf.get_iter_at_mark(buf.get_insert()))
+    cr.set_source_rgb(0.1, 0.1, 0.1)
+    cr.set_line_width(3)
+    x, _ = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET, cursor_rect.x, 0)
+    cr.move_to(x, 0)
+    cr.line_to(x, rect.height)
+    cr.stroke()

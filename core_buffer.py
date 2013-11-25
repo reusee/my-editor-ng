@@ -19,6 +19,7 @@ class Buffer:
     buf.set_highlight_matching_brackets(True)
     buf.set_max_undo_levels(-1)
     buf.set_style_scheme(self.style_scheme)
+    buf.get_insert().set_visible(False)
 
     setattr(buf, 'attr', {})
 
