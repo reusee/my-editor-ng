@@ -15,6 +15,7 @@ class Modal:
 
     self.connect('view-created', lambda editor, view:
         view.connect('key-press-event', self.handle_key_press))
+    self.new_signal('key-pressed', ())
 
     self.new_signal('bind-command-key', (str, object))
     self.new_signal('bind-edit-key', (str, object))
@@ -26,9 +27,6 @@ class Modal:
     self.new_signal('key-handler-reset', ())
     self.new_signal('key-handler-prefix', (str,))
 
-    self.new_signal('edit-mode-entered', ())
-    self.new_signal('command-mode-entered', ())
-
     self.key_handler = self.command_key_handler
     self.n = 0
     self.delay_chars = []
@@ -39,9 +37,12 @@ class Modal:
 
   def handle_key_press(self, view, ev):
     _, val = ev.get_keyval()
-    if val == Gdk.KEY_Shift_L or val == Gdk.KEY_Shift_R: return False
+    if val == Gdk.KEY_Shift_L or val == Gdk.KEY_Shift_R:
+      self.emit('key-pressed')
+      return False
     if val == Gdk.KEY_Escape: # cancel command
       self.enter_command_mode()
+      self.emit('key-pressed')
       return True
     is_edit_mode = self.operation_mode == self.EDIT
     handler = None
@@ -82,10 +83,12 @@ class Modal:
           GObject.source_remove(self.delay_chars_timer)
         self.insert_delay_chars(view)
         self.key_handler = self.edit_key_handler
+        self.emit('key-pressed')
         return False
       else:
         self.key_handler = self.command_key_handler
       self.emit('key-handler-reset')
+    self.emit('key-pressed')
     return True
 
   def insert_delay_chars(self, view):
@@ -129,9 +132,7 @@ class Modal:
   def enter_command_mode(self):
     self.operation_mode = self.COMMAND
     self.key_handler = self.command_key_handler
-    self.emit('command-mode-entered')
 
   def enter_edit_mode(self):
     self.operation_mode = self.EDIT
     self.key_handler = self.edit_key_handler
-    self.emit('edit-mode-entered')
