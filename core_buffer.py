@@ -28,5 +28,7 @@ class Buffer:
 
   def load_file(self, buf, filename):
     with open(filename, 'r') as f:
+      buf.begin_not_undoable_action()
       buf.set_text(f.read())
+      buf.end_not_undoable_action()
     buf.place_cursor(buf.get_start_iter())
