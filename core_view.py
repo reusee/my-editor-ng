@@ -31,7 +31,7 @@ class View:
     view.set_editable(False)
     view.set_wrap_mode(Gtk.WrapMode.NONE)
 
-    self.pack_start(scroll, True, True, 0)
+    self.views_box.pack_start(scroll, True, True, 0)
     self.emit('view-created', view)
 
     return view

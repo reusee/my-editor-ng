@@ -28,7 +28,14 @@ class Editor(Gtk.Box,
     Switcher.__init__(self)
     Status.__init__(self)
 
-    self.set_homogeneous(True)
+    # views
+    self.views_box = Gtk.Box()
+    self.views_box.set_homogeneous(True)
+    self.pack_start(self.views_box, True, True, 0)
+
+    # areas
+    self.east_area = Gtk.VBox()
+    self.pack_start(self.east_area, False, False, 0)
 
     # font and style
     self.default_font = Pango.FontDescription.from_string('Terminus 13')
