@@ -11,8 +11,8 @@ class TextObject:
         'F': lambda view, n: self.text_object_to_two_chars(view, n, func, to_end = True),
         'j': lambda view, n: self.text_object_sibling_line(view, n, func),
         'k': lambda view, n: self.text_object_sibling_line(view, n, func, prev = True),
-        'h': lambda view, n: self.text_object_prev_char(view, n, func),
-        'l': lambda view, n: self.text_object_prev_char(view, n, func),
+        'h': lambda view, n: self.text_object_sibling_char(view, n, func, prev = True),
+        'l': lambda view, n: self.text_object_sibling_char(view, n, func),
         }
     return handler
 
@@ -92,4 +92,18 @@ class TextObject:
       buf.move_mark(buf.get_insert(), end)
       func(view)
       buf.place_cursor(buf.get_iter_at_mark(cur)) # restore position
+    buf.end_user_action()
+
+  def text_object_sibling_char(self, view, n, func, prev = False):
+    buf = view.get_buffer()
+    if n == 0: n = 1
+    buf.begin_user_action()
+    for _ in range(n):
+      it = buf.get_iter_at_mark(buf.get_insert())
+      if prev:
+        it.backward_char()
+      else:
+        it.forward_char()
+      buf.move_mark(buf.get_selection_bound(), it)
+      func(view)
     buf.end_user_action()
