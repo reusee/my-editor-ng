@@ -65,6 +65,9 @@ class Modal:
       if callable(ret): # another function handler
         self.key_handler = ret
         self.emit('key-handler-prefix', chr(val))
+      elif isinstance(ret, dict): # another dict handler
+        self.key_handler = ret
+        self.emit('key-handler-prefix', chr(val))
       elif ret == 'is_number_prefix': # a number prefix
         pass
       else: # handler executed
