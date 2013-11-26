@@ -4,9 +4,20 @@ class TextObject:
 
   def make_text_object_handler(self, func):
     handler = {
-        'd': lambda view, n: self.text_object_current_line(view, n, func),
+        'w': lambda view, n: self.text_object_to_word_edge(view, n, func),
+        'W': lambda view, n: self.text_object_to_word_edge(view, n, func, backward = True),
+        #'r': # to line end
+        #'R': # to line start
+        #'i':
+        #  'w': # inside word
+        #  '(': # inside ()
+        #  '[': # inside []
+        #  '{': # inside {}
+        #  "'": # inside ''
+        #  '"': # inside ""
         't': lambda view, n: self.text_object_to_char(view, n, func),
         'T': lambda view, n: self.text_object_to_two_chars(view, n, func),
+        'd': lambda view, n: self.text_object_current_line(view, n, func),
         'f': lambda view, n: self.text_object_to_char(view, n, func, to_end = True),
         'F': lambda view, n: self.text_object_to_two_chars(view, n, func, to_end = True),
         'j': lambda view, n: self.text_object_sibling_line(view, n, func),
@@ -107,3 +118,31 @@ class TextObject:
       buf.move_mark(buf.get_selection_bound(), it)
       func(view)
     buf.end_user_action()
+
+  def text_object_to_word_edge(self, view, n, func, backward = False):
+    buf = view.get_buffer()
+    if n == 0: n = 1
+    buf.begin_user_action()
+    for _ in range(n):
+      it = buf.get_iter_at_mark(buf.get_insert())
+      if backward: it.backward_char()
+      at_begin = False
+      while self.is_word_char(it.get_char()):
+        if backward:
+          if not it.backward_char():
+            at_begin = True
+            break
+        else:
+          it.forward_char()
+      if backward and not at_begin: it.forward_char()
+      buf.move_mark(buf.get_selection_bound(), it)
+      func(view)
+    buf.end_user_action()
+
+  def is_word_char(self, c):
+    if not c: return False
+    o = ord(c.lower())
+    if o >= ord('a') and o <= ord('z'): return True
+    if c.isdigit(): return True
+    if c in {'-', '_'}: return True
+    return False
