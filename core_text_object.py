@@ -8,13 +8,14 @@ class TextObject:
         'W': lambda view, n: self.text_object_to_word_edge(view, n, func, backward = True),
         'r': lambda view, n: self.text_object_to_line_edge(view, n, func),
         'R': lambda view, n: self.text_object_to_line_edge(view, n, func, backward = True),
-        #'i':
-        #  'w': # inside word
+        'i': {
+          'w': lambda view, n: self.text_object_inside_word(view, n, func),
         #  '(': # inside ()
         #  '[': # inside []
         #  '{': # inside {}
         #  "'": # inside ''
         #  '"': # inside ""
+          },
         't': lambda view, n: self.text_object_to_char(view, n, func),
         'T': lambda view, n: self.text_object_to_two_chars(view, n, func),
         'd': lambda view, n: self.text_object_current_line(view, n, func),
@@ -125,16 +126,7 @@ class TextObject:
     buf.begin_user_action()
     for _ in range(n):
       it = buf.get_iter_at_mark(buf.get_insert())
-      if backward: it.backward_char()
-      at_begin = False
-      while self.is_word_char(it.get_char()):
-        if backward:
-          if not it.backward_char():
-            at_begin = True
-            break
-        else:
-          it.forward_char()
-      if backward and not at_begin: it.forward_char()
+      self.iter_to_word_edge(it, backward)
       buf.move_mark(buf.get_selection_bound(), it)
       func(view)
     buf.end_user_action()
@@ -147,6 +139,18 @@ class TextObject:
     if c in {'-', '_'}: return True
     return False
 
+  def iter_to_word_edge(self, it, backward = False):
+    if backward: it.backward_char()
+    at_begin = False
+    while self.is_word_char(it.get_char()):
+      if backward:
+        if not it.backward_char():
+          at_begin = True
+          break
+      else:
+        it.forward_char()
+    if backward and not at_begin: it.forward_char()
+
   def text_object_to_line_edge(self, view, n, func, backward = False):
     buf = view.get_buffer()
     if n == 0: n = 1
@@ -156,5 +160,19 @@ class TextObject:
       if backward: it.set_line_offset(0)
       else: it.forward_to_line_end()
       buf.move_mark(buf.get_selection_bound(), it)
+      func(view)
+    buf.end_user_action()
+
+  def text_object_inside_word(self, view, n, func):
+    buf = view.get_buffer()
+    if n == 0: n = 1
+    buf.begin_user_action()
+    for _ in range(n):
+      start = buf.get_iter_at_mark(buf.get_insert())
+      end = start.copy()
+      self.iter_to_word_edge(start, backward = True)
+      self.iter_to_word_edge(end)
+      buf.move_mark(buf.get_selection_bound(), start)
+      buf.move_mark(buf.get_insert(), end)
       func(view)
     buf.end_user_action()
