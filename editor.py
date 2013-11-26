@@ -11,6 +11,7 @@ from core_switcher import *
 from core_edit import *
 from core_status import *
 from core_selection import *
+from core_scroll import *
 
 from mod_minimap import *
 
@@ -25,6 +26,7 @@ class Editor(Gtk.Box,
     Edit,
     Status,
     Selection,
+    Scroll,
     ):
 
   __gsignals__ = {}
@@ -41,6 +43,7 @@ class Editor(Gtk.Box,
     Edit.__init__(self)
     Status.__init__(self)
     Selection.__init__(self)
+    Scroll.__init__(self)
 
     # views
     self.views_box = Gtk.Box()
