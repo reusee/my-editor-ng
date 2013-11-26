@@ -15,7 +15,7 @@ class Status:
     cr.select_font_face('Times')
     cr.set_font_size(256)
     cr.set_source_rgb(0.2, 0.2, 0.2)
-    cr.move_to(rect.width / 2, rect.height / 2)
+    cr.move_to(rect.width / 3, rect.height / 2)
     # operation_mode
     if self.operation_mode == self.COMMAND:
         cr.show_text('C')
@@ -25,7 +25,7 @@ class Status:
     if self.n != 0: t = str(self.n) + t
     cr.show_text(t)
     # selection_mode
-    cr.move_to(rect.width / 2 + 50, rect.height / 2 - 50)
+    cr.move_to(rect.width / 3 + 50, rect.height / 2 - 50)
     if self.selection_mode == self.CHAR:
         cr.show_text('c')
     elif self.selection_mode == self.LINE:
