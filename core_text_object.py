@@ -4,7 +4,7 @@ class TextObject:
 
   def make_text_object_handler(self, func):
     handler = {
-        'd': lambda view, n: self.text_object_current_line_func(view, n, func),
+        'd': lambda view, n: self.text_object_current_line(view, n, func),
         't': lambda view, n: self.text_object_to_char(view, n, func),
         'T': lambda view, n: self.text_object_to_two_chars(view, n, func),
         'f': lambda view, n: self.text_object_to_char(view, n, func, to_end = True),
@@ -12,7 +12,7 @@ class TextObject:
         }
     return handler
 
-  def text_object_current_line_func(self, view, n, func):
+  def text_object_current_line(self, view, n, func):
     buf = view.get_buffer()
     if n == 0: n = 1
     buf.begin_user_action()
