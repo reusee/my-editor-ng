@@ -38,6 +38,11 @@ class Edit:
       self.enter_edit_mode()
 
   def copy_selection(self, view):
+    buf = view.get_buffer()
+    if 'copy-mark' not in buf.attr:
+      buf.attr['copy-mark'] = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
+    else:
+      buf.move_mark(buf.attr['copy-mark'], buf.get_iter_at_mark(buf.get_insert()))
     if not self._copy_selection(view):
       return self.make_text_object_handler(self._copy_selection)
 
@@ -47,6 +52,7 @@ class Edit:
       clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
       buf.copy_clipboard(clipboard)
       self.enter_none_selection_mode(view)
+      buf.place_cursor(buf.get_iter_at_mark(buf.attr['copy-mark']))
       return True
 
   def undo(self, view):
