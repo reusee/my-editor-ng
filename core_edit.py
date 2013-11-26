@@ -78,6 +78,7 @@ class Edit:
 
   def newline_above(self, view):
     buf = view.get_buffer()
+    buf.begin_user_action()
     it = buf.get_iter_at_mark(buf.get_insert())
     it.set_line_offset(0)
     buf.insert(it, '\n')
@@ -85,12 +86,15 @@ class Edit:
     #TODO indent
     buf.place_cursor(it)
     self.enter_edit_mode()
+    buf.end_user_action()
 
   def newline_below(self, view):
     buf = view.get_buffer()
+    buf.begin_user_action()
     it = buf.get_iter_at_mark(buf.get_insert())
-    it.forward_to_line_end()
+    if not it.ends_line(): it.forward_to_line_end()
     buf.insert(it, '\n')
     #TODO indent
     buf.place_cursor(it)
     self.enter_edit_mode()
+    buf.end_user_action()
