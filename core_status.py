@@ -1,8 +1,11 @@
 from gi.repository import Gtk, GtkSource
+
 class Status:
   def __init__(self):
     self.connect('view-created', lambda _, view:
         view.connect('draw', self.draw_status))
+    self.connect('view-created', lambda _, view:
+        self.setup_relative_line_number(view))
     self.connect('key-pressed', lambda _:
         self.current_view.queue_draw())
 
@@ -41,3 +44,20 @@ class Status:
     cr.move_to(x, 0)
     cr.line_to(x, rect.height)
     cr.stroke()
+
+  def setup_relative_line_number(self, view):
+      gutter = view.get_gutter(Gtk.TextWindowType.LEFT)
+      renderer = RelativeNumberRenderer()
+      gutter.insert(renderer, 0)
+
+class RelativeNumberRenderer(GtkSource.GutterRendererText):
+    def __init__(self):
+        GtkSource.GutterRendererText.__init__(self)
+        self.set_alignment(1, 1)
+        self.set_size(30)
+
+    def do_query_data(self, start, end, state):
+        buf = start.get_buffer()
+        current_line = buf.get_iter_at_mark(buf.get_insert()).get_line()
+        text = str(abs(start.get_line() - current_line))
+        self.set_text(text, -1)
