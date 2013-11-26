@@ -1,7 +1,7 @@
 class Switcher:
     def __init__(self):
-        self.emit('bind-command-key', 'R', self.switch_next_buffer)
-        self.emit('bind-command-key', 'E', self.switch_prev_buffer)
+        self.emit('bind-command-key', '>', self.switch_next_buffer)
+        self.emit('bind-command-key', '<', self.switch_next_buffer)
 
     def switch_next_buffer(self, view):
         index = self.buffers.index(view.get_buffer())
