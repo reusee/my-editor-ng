@@ -3,6 +3,7 @@ import os
 
 from core_buffer import *
 from core_view import *
+from core_defs import *
 from core_modal import *
 from core_text_object import *
 from core_move import *
@@ -16,6 +17,7 @@ from mod_minimap import *
 class Editor(Gtk.Box,
     Buffer,
     View,
+    Defs,
     Modal,
     TextObject,
     Move,
@@ -31,6 +33,7 @@ class Editor(Gtk.Box,
     super().__init__()
     Buffer.__init__(self)
     View.__init__(self)
+    Defs.__init__(self)
     Modal.__init__(self)
     TextObject.__init__(self)
     Move.__init__(self)

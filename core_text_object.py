@@ -10,30 +10,10 @@ class TextObject:
         'R': lambda view, n: self.text_object_to_line_edge(view, n, func, backward = True),
         'i': {
           'w': lambda view, n: self.text_object_inside_word(view, n, func),
-          '(': lambda view, n: self.text_object_pair(view, n, func, '(', ')'),
-          ')': lambda view, n: self.text_object_pair(view, n, func, '(', ')'),
-          '[': lambda view, n: self.text_object_pair(view, n, func, '[', ']'),
-          ']': lambda view, n: self.text_object_pair(view, n, func, '[', ']'),
-          '{': lambda view, n: self.text_object_pair(view, n, func, '{', '}'),
-          '}': lambda view, n: self.text_object_pair(view, n, func, '{', '}'),
-          '<': lambda view, n: self.text_object_pair(view, n, func, '<', '>'),
-          '>': lambda view, n: self.text_object_pair(view, n, func, '<', '>'),
-          '"': lambda view, n: self.text_object_pair(view, n, func, '"', '"'),
-          "'": lambda view, n: self.text_object_pair(view, n, func, "'", "'"),
           },
         't': lambda view, n: self.text_object_to_char(view, n, func),
         'T': lambda view, n: self.text_object_to_two_chars(view, n, func),
         'a': {
-          '(': lambda view, n: self.text_object_pair(view, n, func, '(', ')', around = True),
-          ')': lambda view, n: self.text_object_pair(view, n, func, '(', ')', around = True),
-          '[': lambda view, n: self.text_object_pair(view, n, func, '[', ']', around = True),
-          ']': lambda view, n: self.text_object_pair(view, n, func, '[', ']', around = True),
-          '{': lambda view, n: self.text_object_pair(view, n, func, '{', '}', around = True),
-          '}': lambda view, n: self.text_object_pair(view, n, func, '{', '}', around = True),
-          '<': lambda view, n: self.text_object_pair(view, n, func, '<', '>', around = True),
-          '>': lambda view, n: self.text_object_pair(view, n, func, '<', '>', around = True),
-          '"': lambda view, n: self.text_object_pair(view, n, func, '"', '"', around = True),
-          "'": lambda view, n: self.text_object_pair(view, n, func, "'", "'", around = True),
           },
         'd': lambda view, n: self.text_object_current_line(view, n, func),
         'f': lambda view, n: self.text_object_to_char(view, n, func, to_end = True),
@@ -43,6 +23,15 @@ class TextObject:
         'h': lambda view, n: self.text_object_sibling_char(view, n, func, prev = True),
         'l': lambda view, n: self.text_object_sibling_char(view, n, func),
         }
+
+    def define(left, right):
+      handler['i'][left] = lambda view, n: self.text_object_pair(view, n, func, left, right)
+      handler['i'][right] = lambda view, n: self.text_object_pair(view, n, func, left, right)
+      handler['a'][left] = lambda view, n: self.text_object_pair(view, n, func, left, right, around = True)
+      handler['a'][right] = lambda view, n: self.text_object_pair(view, n, func, left, right, around = True)
+    for left, right in self.BRACKETS.items():
+      define(left, right)
+
     return handler
 
   def text_object_current_line(self, view, n, func):
