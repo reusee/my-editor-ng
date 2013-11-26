@@ -16,6 +16,7 @@ class View:
     self.views.append(view)
     scroll = Gtk.ScrolledWindow()
     scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+    scroll.set_placement(Gtk.CornerType.TOP_RIGHT)
     scroll.add(view)
 
     setattr(view, 'attr', {})
