@@ -10,30 +10,30 @@ class TextObject:
         'R': lambda view, n: self.text_object_to_line_edge(view, n, func, backward = True),
         'i': {
           'w': lambda view, n: self.text_object_inside_word(view, n, func),
-          '(': lambda view, n: self.text_object_inside_pair(view, n, func, '(', ')'),
-          ')': lambda view, n: self.text_object_inside_pair(view, n, func, '(', ')'),
-          '[': lambda view, n: self.text_object_inside_pair(view, n, func, '[', ']'),
-          ']': lambda view, n: self.text_object_inside_pair(view, n, func, '[', ']'),
-          '{': lambda view, n: self.text_object_inside_pair(view, n, func, '{', '}'),
-          '}': lambda view, n: self.text_object_inside_pair(view, n, func, '{', '}'),
-          '<': lambda view, n: self.text_object_inside_pair(view, n, func, '<', '>'),
-          '>': lambda view, n: self.text_object_inside_pair(view, n, func, '<', '>'),
-          '"': lambda view, n: self.text_object_inside_pair(view, n, func, '"', '"'),
-          "'": lambda view, n: self.text_object_inside_pair(view, n, func, "'", "'"),
+          '(': lambda view, n: self.text_object_pair(view, n, func, '(', ')'),
+          ')': lambda view, n: self.text_object_pair(view, n, func, '(', ')'),
+          '[': lambda view, n: self.text_object_pair(view, n, func, '[', ']'),
+          ']': lambda view, n: self.text_object_pair(view, n, func, '[', ']'),
+          '{': lambda view, n: self.text_object_pair(view, n, func, '{', '}'),
+          '}': lambda view, n: self.text_object_pair(view, n, func, '{', '}'),
+          '<': lambda view, n: self.text_object_pair(view, n, func, '<', '>'),
+          '>': lambda view, n: self.text_object_pair(view, n, func, '<', '>'),
+          '"': lambda view, n: self.text_object_pair(view, n, func, '"', '"'),
+          "'": lambda view, n: self.text_object_pair(view, n, func, "'", "'"),
           },
         't': lambda view, n: self.text_object_to_char(view, n, func),
         'T': lambda view, n: self.text_object_to_two_chars(view, n, func),
         'a': {
-          '(': lambda view, n: self.text_object_around_pair(view, n, func, '(', ')'),
-          ')': lambda view, n: self.text_object_around_pair(view, n, func, '(', ')'),
-          '[': lambda view, n: self.text_object_around_pair(view, n, func, '[', ']'),
-          ']': lambda view, n: self.text_object_around_pair(view, n, func, '[', ']'),
-          '{': lambda view, n: self.text_object_around_pair(view, n, func, '{', '}'),
-          '}': lambda view, n: self.text_object_around_pair(view, n, func, '{', '}'),
-          '<': lambda view, n: self.text_object_around_pair(view, n, func, '<', '>'),
-          '>': lambda view, n: self.text_object_around_pair(view, n, func, '<', '>'),
-          '"': lambda view, n: self.text_object_around_pair(view, n, func, '"', '"'),
-          "'": lambda view, n: self.text_object_around_pair(view, n, func, "'", "'"),
+          '(': lambda view, n: self.text_object_pair(view, n, func, '(', ')', around = True),
+          ')': lambda view, n: self.text_object_pair(view, n, func, '(', ')', around = True),
+          '[': lambda view, n: self.text_object_pair(view, n, func, '[', ']', around = True),
+          ']': lambda view, n: self.text_object_pair(view, n, func, '[', ']', around = True),
+          '{': lambda view, n: self.text_object_pair(view, n, func, '{', '}', around = True),
+          '}': lambda view, n: self.text_object_pair(view, n, func, '{', '}', around = True),
+          '<': lambda view, n: self.text_object_pair(view, n, func, '<', '>', around = True),
+          '>': lambda view, n: self.text_object_pair(view, n, func, '<', '>', around = True),
+          '"': lambda view, n: self.text_object_pair(view, n, func, '"', '"', around = True),
+          "'": lambda view, n: self.text_object_pair(view, n, func, "'", "'", around = True),
           },
         'd': lambda view, n: self.text_object_current_line(view, n, func),
         'f': lambda view, n: self.text_object_to_char(view, n, func, to_end = True),
@@ -194,7 +194,7 @@ class TextObject:
       func(view)
     buf.end_user_action()
 
-  def text_object_inside_pair(self, view, n ,func, left, right):
+  def text_object_pair(self, view, n ,func, left, right, around = False):
     buf = view.get_buffer()
     if n == 0: n = 1
     buf.begin_user_action()
@@ -202,10 +202,12 @@ class TextObject:
       start = buf.get_iter_at_mark(buf.get_insert())
       end = start.copy()
       ret = start.backward_search(left, 0, buf.get_start_iter())
-      if ret: start = ret[1]
+      if ret and around: start = ret[0]
+      elif ret: start = ret[1]
       else: continue
       ret = end.forward_search(right, 0, buf.get_end_iter())
-      if ret: end = ret[0]
+      if ret and around: end = ret[1]
+      elif ret: end = ret[0]
       else: continue
       buf.move_mark(buf.get_selection_bound(), start)
       buf.move_mark(buf.get_insert(), end)
