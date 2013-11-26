@@ -49,8 +49,6 @@ class Modal:
     if isinstance(self.key_handler, dict): # dict handler
       key = chr(val) if val > 0x20 and val <= 0x7e else val
       handler = self.key_handler.get(key, None)
-      #if isinstance(handler, tuple): # tuple handler
-      #  handler = handler[self.selection_mode]
     elif callable(self.key_handler): # function handler
       handler = self.key_handler
     if callable(handler): # trigger a command or call handler function
