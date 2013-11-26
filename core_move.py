@@ -160,6 +160,21 @@ class Move:
   def move_to_matching_bracket(self, view):
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
+
+    start = it.get_char()
+    is_left = False
+    match = None
+    for left, right in self.BRACKETS.items():
+        if left == right: continue
+        if left == start:
+            is_left = True
+            match = right
+            break
+        elif right == start:
+            match = left
+            break
+    if not match: it.backward_char()
+
     start = it.get_char()
     is_left = False
     match = None
@@ -173,6 +188,7 @@ class Move:
             match = left
             break
     if not match: return
+
     balance = 0
     found = False
     if is_left: it.forward_char()
@@ -191,5 +207,6 @@ class Move:
         else:
             if not it.backward_char(): break
     if not found: return
+
     self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())
