@@ -35,8 +35,8 @@ class Status:
     # current column
     buf = view.get_buffer()
     cursor_rect = view.get_iter_location(buf.get_iter_at_mark(buf.get_insert()))
-    cr.set_source_rgb(0, 0, 0)
-    cr.set_line_width(3)
+    cr.set_source_rgb(0, 0.5, 0)
+    cr.set_line_width(2)
     x, _ = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET, cursor_rect.x, 0)
     cr.move_to(x, 0)
     cr.line_to(x, rect.height)
