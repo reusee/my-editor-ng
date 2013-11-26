@@ -10,3 +10,9 @@ class Selection:
       buf = view.get_buffer()
       it = buf.get_iter_at_mark(buf.get_insert())
       buf.place_cursor(it)
+
+  def enter_none_selection_mode(self, view):
+    self.selection_mode = self.NONE
+    buf = view.get_buffer()
+    it = buf.get_iter_at_mark(buf.get_insert())
+    buf.place_cursor(it)

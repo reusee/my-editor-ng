@@ -4,6 +4,7 @@ import os
 from core_buffer import *
 from core_view import *
 from core_modal import *
+from core_text_object import *
 from core_move import *
 from core_switcher import *
 from core_edit import *
@@ -16,6 +17,7 @@ class Editor(Gtk.Box,
     Buffer,
     View,
     Modal,
+    TextObject,
     Move,
     Switcher,
     Edit,
@@ -30,6 +32,7 @@ class Editor(Gtk.Box,
     Buffer.__init__(self)
     View.__init__(self)
     Modal.__init__(self)
+    TextObject.__init__(self)
     Move.__init__(self)
     Switcher.__init__(self)
     Edit.__init__(self)
