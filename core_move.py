@@ -14,8 +14,8 @@ class Move:
     self.emit('bind-command-key', 'S', lambda view: self.make_two_char_locator(view, backward = True))
     self.emit('bind-command-key', 'g g', self.move_to_line)
     self.emit('bind-command-key', 'G', self.move_to_end)
-    self.emit('bind-command-key', 'e', self.move_to_line_start)
     self.emit('bind-command-key', 'r', self.move_to_line_end)
+    self.emit('bind-command-key', 'R', self.move_to_line_start)
     self.emit('bind-command-key', '[', lambda view: self.move_to_empty_line(view, backward = True))
     self.emit('bind-command-key', ']', lambda view: self.move_to_empty_line(view))
 
