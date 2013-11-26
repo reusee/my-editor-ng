@@ -201,14 +201,40 @@ class TextObject:
     for _ in range(n):
       start = buf.get_iter_at_mark(buf.get_insert())
       end = start.copy()
-      ret = start.backward_search(left, 0, buf.get_start_iter())
-      if ret and around: start = ret[0]
-      elif ret: start = ret[1]
-      else: continue
-      ret = end.forward_search(right, 0, buf.get_end_iter())
-      if ret and around: end = ret[1]
-      elif ret: end = ret[0]
-      else: continue
+
+      balance = 0
+      start.backward_char()
+      found = False
+      while True:
+        c = start.get_char()
+        if c == left and balance == 0: # found
+          found = True
+          break
+        elif c == left:
+          balance -= 1
+        elif c == right:
+          balance += 1
+        if not start.backward_char(): # edge
+          break
+      if not found: continue
+      if not around: start.forward_char()
+
+      balance = 0
+      found = False
+      while True:
+        c = end.get_char()
+        if c == right and balance == 0: # found
+          found = True
+          break
+        elif c == right:
+          balance -= 1
+        elif c == left:
+          balance += 1
+        if not end.forward_char():
+          break
+      if not found: continue
+      if around: end.forward_char()
+
       buf.move_mark(buf.get_selection_bound(), start)
       buf.move_mark(buf.get_insert(), end)
       func(view)
