@@ -13,6 +13,9 @@ class Edit:
     self.emit('bind-command-key', 'u', self.undo)
     self.emit('bind-command-key', 'Y', self.redo)
 
+    self.emit('bind-command-key', 'o', self.newline_below)
+    self.emit('bind-command-key', 'O', self.newline_above)
+
     self.emit('bind-edit-key', 'k d', self.enter_command_mode)
 
   def delete_selection(self, view):
@@ -72,3 +75,22 @@ class Edit:
     if buf.can_redo():
         buf.redo()
         buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
+
+  def newline_above(self, view):
+    buf = view.get_buffer()
+    it = buf.get_iter_at_mark(buf.get_insert())
+    it.set_line_offset(0)
+    buf.insert(it, '\n')
+    it.backward_line()
+    #TODO indent
+    buf.place_cursor(it)
+    self.enter_edit_mode()
+
+  def newline_below(self, view):
+    buf = view.get_buffer()
+    it = buf.get_iter_at_mark(buf.get_insert())
+    it.forward_to_line_end()
+    buf.insert(it, '\n')
+    #TODO indent
+    buf.place_cursor(it)
+    self.enter_edit_mode()
