@@ -1,3 +1,5 @@
+from gi.repository import Gtk, Gdk
+
 class Edit:
   def __init__(self):
 
@@ -5,6 +7,7 @@ class Edit:
 
     self.emit('bind-command-key', 'd', self.delete_selection)
     self.emit('bind-command-key', 'c', self.change_selection)
+    self.emit('bind-command-key', 'y', self.copy_selection)
 
     self.emit('bind-command-key', 'u', self.undo)
     self.emit('bind-command-key', 'Y', self.redo)
@@ -15,7 +18,7 @@ class Edit:
     if self._delete_selection(view):
       self.enter_none_selection_mode(view)
     else:
-      return self.make_text_object_handler(lambda view: self._delete_selection(view))
+      return self.make_text_object_handler(self._delete_selection)
 
   def _delete_selection(self, view):
     buf = view.get_buffer()
@@ -28,11 +31,23 @@ class Edit:
       self.enter_none_selection_mode(view)
       self.enter_edit_mode()
     else:
-      return self.make_text_object_handler(lambda view: self._change_selection(view))
+      return self.make_text_object_handler(self._change_selection)
 
   def _change_selection(self, view):
       self._delete_selection(view)
       self.enter_edit_mode()
+
+  def copy_selection(self, view):
+    if not self._copy_selection(view):
+      return self.make_text_object_handler(self._copy_selection)
+
+  def _copy_selection(self, view):
+    buf = view.get_buffer()
+    if buf.get_has_selection():
+      clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+      buf.copy_clipboard(clipboard)
+      self.enter_none_selection_mode(view)
+      return True
 
   def undo(self, view):
     buf = view.get_buffer()
