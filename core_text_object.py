@@ -6,8 +6,8 @@ class TextObject:
     handler = {
         'w': lambda view, n: self.text_object_to_word_edge(view, n, func),
         'W': lambda view, n: self.text_object_to_word_edge(view, n, func, backward = True),
-        #'r': # to line end
-        #'R': # to line start
+        'r': lambda view, n: self.text_object_to_line_edge(view, n, func),
+        'R': lambda view, n: self.text_object_to_line_edge(view, n, func, backward = True),
         #'i':
         #  'w': # inside word
         #  '(': # inside ()
@@ -146,3 +146,15 @@ class TextObject:
     if c.isdigit(): return True
     if c in {'-', '_'}: return True
     return False
+
+  def text_object_to_line_edge(self, view, n, func, backward = False):
+    buf = view.get_buffer()
+    if n == 0: n = 1
+    buf.begin_user_action()
+    for _ in range(n):
+      it = buf.get_iter_at_mark(buf.get_insert())
+      if backward: it.set_line_offset(0)
+      else: it.forward_to_line_end()
+      buf.move_mark(buf.get_selection_bound(), it)
+      func(view)
+    buf.end_user_action()
