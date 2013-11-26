@@ -4,6 +4,7 @@ class Edit:
     self.emit('bind-command-key', 'i', self.enter_edit_mode)
 
     self.emit('bind-command-key', 'd', self.delete_selection)
+    self.emit('bind-command-key', 'c', self.change_selection)
 
     self.emit('bind-command-key', 'u', self.undo)
     self.emit('bind-command-key', 'Y', self.redo)
@@ -21,6 +22,17 @@ class Edit:
     if buf.get_has_selection():
         buf.delete_selection(True, True)
         return True
+
+  def change_selection(self, view):
+    if self._delete_selection(view):
+      self.enter_none_selection_mode(view)
+      self.enter_edit_mode()
+    else:
+      return self.make_text_object_handler(lambda view: self._change_selection(view))
+
+  def _change_selection(self, view):
+      self._delete_selection(view)
+      self.enter_edit_mode()
 
   def undo(self, view):
     buf = view.get_buffer()
