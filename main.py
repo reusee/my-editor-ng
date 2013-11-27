@@ -26,9 +26,6 @@ class Main(Gtk.Window):
         self.editor = Editor()
         self.box.pack_end(self.editor, True, True, 0)
 
-        # first view
-        view = self.editor.new_view()
-
         # buffers
         for filename in sys.argv[1:]:
             buf = self.editor.new_buffer(filename)
@@ -37,7 +34,7 @@ class Main(Gtk.Window):
             self.editor.new_buffer()
 
         # view first buffer
-        view.set_buffer(self.editor.buffers[0])
+        self.editor.views[0].set_buffer(self.editor.buffers[0])
 
 win = Main()
 win.connect('delete-event', Gtk.main_quit)

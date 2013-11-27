@@ -63,6 +63,9 @@ class Editor(Gtk.Box,
     # extra modules
     #self.minimap = Minimap(self)
 
+    # first view
+    self.new_view(self.views_box)
+
   def new_signal(self, name, arg_types):
     GObject.signal_new(name, Editor, GObject.SIGNAL_RUN_FIRST, None, arg_types)
 
