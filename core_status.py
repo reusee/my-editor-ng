@@ -14,6 +14,7 @@ class Status:
     self.connect('key-handler-prefix', lambda w, c: self.command_prefix.append(c))
 
   def draw_status(self, view, cr):
+    if not view.is_focus(): return
     rect = view.get_allocation()
     cr.select_font_face('Times')
     cr.set_font_size(256)
@@ -47,17 +48,22 @@ class Status:
 
   def setup_relative_line_number(self, view):
       gutter = view.get_gutter(Gtk.TextWindowType.LEFT)
-      renderer = RelativeNumberRenderer()
+      renderer = RelativeNumberRenderer(view)
       gutter.insert(renderer, 0)
 
 class RelativeNumberRenderer(GtkSource.GutterRendererText):
-    def __init__(self):
-        GtkSource.GutterRendererText.__init__(self)
-        self.set_alignment(1, 1)
-        self.set_size(30)
+    def __init__(self, view):
+      GtkSource.GutterRendererText.__init__(self)
+      self.set_alignment(1, 1)
+      self.view = view
 
     def do_query_data(self, start, end, state):
-        buf = start.get_buffer()
-        current_line = buf.get_iter_at_mark(buf.get_insert()).get_line()
-        text = str(abs(start.get_line() - current_line))
-        self.set_text(text, -1)
+      if not self.view.is_focus():
+        self.set_size(0)
+        return
+      buf = start.get_buffer()
+      current_line = buf.get_iter_at_mark(buf.get_insert()).get_line()
+      text = str(abs(start.get_line() - current_line))
+      self.set_text(text, -1)
+      self.set_size(30)
+      self.queue_draw()

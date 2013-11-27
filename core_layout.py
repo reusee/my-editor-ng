@@ -43,7 +43,7 @@ class Layout:
       right = left + alloc.width
       bottom = top + alloc.height
       if x >= left and x <= right and y >= top and y <= bottom: # found
-        view.grab_focus()
+        self.switch_to_view(view)
         break
     
   def north_view(self, view):

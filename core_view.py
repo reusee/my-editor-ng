@@ -38,3 +38,7 @@ class View:
     self.current_view = view
 
     return view, scroll
+
+  def switch_to_view(self, view):
+    view.grab_focus()
+    self.current_view = view
