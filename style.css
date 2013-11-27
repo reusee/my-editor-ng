@@ -1,6 +1,11 @@
 GtkWidget {
   background-color: #272822;
   color: #CCCCCC;
+  font-family: Terminus;
+  font-size: 13px;
+}
+GtkEntry {
+  border: 0;
 }
 .scrollbar {
   -GtkScrollbar-has-backward-stepper: 0;
