@@ -47,25 +47,27 @@ class Layout:
         break
     
   def north_view(self, view):
+    alloc = view.get_allocation()
     win = view.get_window(Gtk.TextWindowType.WIDGET)
     _, x, y = win.get_origin()
-    self.switch_to_view_at_pos(x, y - 20)
+    self.switch_to_view_at_pos(x + alloc.width / 3, y - 30)
     
   def south_view(self, view):
     alloc = view.get_allocation()
     win = view.get_window(Gtk.TextWindowType.WIDGET)
     _, x, y = win.get_origin()
-    self.switch_to_view_at_pos(x, y + 20 + alloc.height)
+    self.switch_to_view_at_pos(x + alloc.width / 3, y + 30 + alloc.height)
     
   def west_view(self, view):
+    alloc = view.get_allocation()
     win = view.get_window(Gtk.TextWindowType.WIDGET)
     _, x, y = win.get_origin()
-    self.switch_to_view_at_pos(x - 20, y)
+    self.switch_to_view_at_pos(x - 30, y + alloc.height / 3)
     
   def east_view(self, view):
     alloc = view.get_allocation()
     win = view.get_window(Gtk.TextWindowType.WIDGET)
     _, x, y = win.get_origin()
-    self.switch_to_view_at_pos(x + 20 + alloc.width, y)
+    self.switch_to_view_at_pos(x + 20 + alloc.width, y + alloc.height / 3)
 
   
