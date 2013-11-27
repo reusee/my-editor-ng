@@ -68,7 +68,8 @@ class Editor(Gtk.Grid,
     #self.minimap = Minimap(self)
 
     # first view
-    self.new_view(self.views_grid)
+    view, scroll = self.new_view()
+    self.views_grid.add(scroll)
 
   def new_signal(self, name, arg_types):
     GObject.signal_new(name, Editor, GObject.SIGNAL_RUN_FIRST, None, arg_types)

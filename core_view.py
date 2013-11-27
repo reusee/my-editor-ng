@@ -8,7 +8,7 @@ class View:
 
     self.current_view = None
 
-  def new_view(self, grid, buf = None):
+  def new_view(self, buf = None):
     if buf:
       view = GtkSource.View.new_with_buffer(buf)
     else:
@@ -34,8 +34,7 @@ class View:
     view.set_tab_width(2)
     view.set_wrap_mode(Gtk.WrapMode.NONE)
 
-    grid.add(scroll)
     self.emit('view-created', view)
     self.current_view = view
 
-    return view
+    return view, scroll
