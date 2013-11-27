@@ -10,7 +10,7 @@ class Minimap(GtkSource.View):
         scroll.set_min_content_width(rect.width / 10))
     scroll.add(self)
     self.modify_font(Pango.FontDescription.from_string('Terminus 5'))
-    editor.east_area.pack_start(scroll, True, True, 0)
+    editor.east_area.add(scroll)
 
     editor.connect('view-created', lambda _, view:
         view.connect('notify::buffer', self.switch_buffer))

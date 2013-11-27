@@ -12,10 +12,11 @@ from core_edit import *
 from core_status import *
 from core_selection import *
 from core_scroll import *
+from core_layout import *
 
 from mod_minimap import *
 
-class Editor(Gtk.Box,
+class Editor(Gtk.Grid,
     Buffer,
     View,
     Defs,
@@ -27,6 +28,7 @@ class Editor(Gtk.Box,
     Status,
     Selection,
     Scroll,
+    Layout,
     ):
 
   __gsignals__ = {}
@@ -44,15 +46,17 @@ class Editor(Gtk.Box,
     Status.__init__(self)
     Selection.__init__(self)
     Scroll.__init__(self)
+    Layout.__init__(self)
 
     # views
-    self.views_box = Gtk.Box()
-    self.views_box.set_homogeneous(True)
-    self.pack_start(self.views_box, True, True, 0)
+    self.views_grid = Gtk.Grid()
+    self.views_grid.set_row_homogeneous(True)
+    self.views_grid.set_column_homogeneous(True)
+    self.attach(self.views_grid, 0, 0, 1, 1)
 
     # areas
-    self.east_area = Gtk.VBox()
-    self.pack_start(self.east_area, False, False, 0)
+    self.east_area = Gtk.Grid()
+    self.attach(self.east_area, 1, 0, 1, 1)
 
     # font and style
     self.default_font = Pango.FontDescription.from_string('Terminus 13')
@@ -64,7 +68,7 @@ class Editor(Gtk.Box,
     #self.minimap = Minimap(self)
 
     # first view
-    self.new_view(self.views_box)
+    self.new_view(self.views_grid)
 
   def new_signal(self, name, arg_types):
     GObject.signal_new(name, Editor, GObject.SIGNAL_RUN_FIRST, None, arg_types)

@@ -18,13 +18,13 @@ class Main(Gtk.Window):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
                 )
 
-        # top box
-        self.box = Gtk.Box(spacing = 0)
-        self.add(self.box)
+        # top grid
+        self.grid = Gtk.Grid()
+        self.add(self.grid)
 
         # editor
         self.editor = Editor()
-        self.box.pack_end(self.editor, True, True, 0)
+        self.grid.attach(self.editor, 0, 0, 1, 1)
 
         # buffers
         for filename in sys.argv[1:]:

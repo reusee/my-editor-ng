@@ -8,7 +8,7 @@ class View:
 
     self.current_view = None
 
-  def new_view(self, box, buf = None):
+  def new_view(self, grid, buf = None):
     if buf:
       view = GtkSource.View.new_with_buffer(buf)
     else:
@@ -17,6 +17,7 @@ class View:
     scroll = Gtk.ScrolledWindow()
     scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
     scroll.set_placement(Gtk.CornerType.TOP_RIGHT)
+    scroll.set_property('expand', True)
     scroll.add(view)
 
     setattr(view, 'attr', {})
@@ -33,7 +34,7 @@ class View:
     view.set_tab_width(2)
     view.set_wrap_mode(Gtk.WrapMode.NONE)
 
-    box.pack_start(scroll, True, True, 0)
+    grid.add(scroll)
     self.emit('view-created', view)
     self.current_view = view
 
