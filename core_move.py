@@ -53,7 +53,7 @@ class Move:
     offset = buf.attr['current_offset']
     if bytes_in_line <= buf.attr['current_offset']:
       offset = bytes_in_line - 1
-    if offset > 0:
+    if offset >= 0:
       it.set_line_offset(offset)
     buf.attr['freeze'] = True
     self.move_mark(buf, it)
