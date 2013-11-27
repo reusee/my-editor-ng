@@ -26,6 +26,7 @@ class Buffer:
 
     setattr(buf, 'attr', {
       'filename': filename,
+      'current_offset': 0,
       })
 
     self.emit('buffer-created', buf)
