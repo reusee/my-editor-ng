@@ -60,6 +60,8 @@ class Editor(Gtk.Grid,
     # areas
     self.east_area = Gtk.Grid()
     self.attach(self.east_area, 1, 0, 1, 1)
+    self.north_area = Gtk.Grid()
+    self.attach(self.north_area, 0, -1, 2, 1)
 
     # font and style
     self.default_font = Pango.FontDescription.from_string('Terminus 13')
