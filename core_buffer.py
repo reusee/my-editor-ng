@@ -1,4 +1,5 @@
 from gi.repository import GtkSource, Gtk
+import os
 
 class Buffer:
   def __init__(self):
@@ -6,7 +7,7 @@ class Buffer:
 
     self.new_signal('buffer-created', (Gtk.TextBuffer,))
 
-  def new_buffer(self, filename = '<untitle>'):
+  def new_buffer(self, filename = ''):
     language_manager = GtkSource.LanguageManager.get_default()
     lang = language_manager.guess_language(filename, 'plain/text')
     if lang:
@@ -21,7 +22,11 @@ class Buffer:
     buf.set_style_scheme(self.style_scheme)
     buf.get_insert().set_visible(False)
 
-    setattr(buf, 'attr', {})
+    if filename: filename = os.path.abspath(filename)
+
+    setattr(buf, 'attr', {
+      'filename': filename,
+      })
 
     self.emit('buffer-created', buf)
 
