@@ -1,5 +1,6 @@
 GtkWidget {
   background-color: #272822;
+  color: #CCCCCC;
 }
 .scrollbar {
   -GtkScrollbar-has-backward-stepper: 0;
