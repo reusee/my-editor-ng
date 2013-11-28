@@ -36,12 +36,15 @@ class Buffer:
     return buf
 
   def load_file(self, buf, filename):
-    with open(filename, 'r') as f:
-      buf.begin_not_undoable_action()
-      buf.set_text(f.read())
-      buf.end_not_undoable_action()
-      buf.set_modified(False)
+    try:
+      with open(filename, 'r') as f:
+        buf.begin_not_undoable_action()
+        buf.set_text(f.read())
+        buf.end_not_undoable_action()
+    except FileNotFoundError:
+      pass
     buf.place_cursor(buf.get_start_iter())
+    buf.set_modified(False)
 
   def close_buffer(self, view):
     buf = view.get_buffer()

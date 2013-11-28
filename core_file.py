@@ -56,7 +56,8 @@ class File:
     self.emit('before-saving', buf)
     with open(tmp_filename, 'w+') as f:
       f.write(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False))
-    os.rename(filename, backup_filename)
+    try: os.rename(filename, backup_filename)
+    except FileNotFoundError: pass
     os.rename(tmp_filename, filename)
     buf.set_modified(False)
 
