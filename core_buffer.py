@@ -1,4 +1,4 @@
-from gi.repository import GtkSource, Gtk, Gio
+from gi.repository import GtkSource, Gtk
 import os
 
 class Buffer:
@@ -6,7 +6,6 @@ class Buffer:
     self.buffers = []
 
     self.new_signal('buffer-created', (Gtk.TextBuffer,))
-    self.new_signal('disk-file-changed', (Gio.FileMonitor, Gtk.TextBuffer, Gio.FileMonitorEvent))
 
   def new_buffer(self, filename = ''):
     language_manager = GtkSource.LanguageManager.get_default()
@@ -40,12 +39,4 @@ class Buffer:
       buf.set_text(f.read())
       buf.end_not_undoable_action()
       buf.set_modified(False)
-      self.monitor_file(buf, filename)
     buf.place_cursor(buf.get_start_iter())
-
-  def monitor_file(self, buf, filename):
-    monitor = Gio.File.monitor_file(Gio.File.new_for_path(filename), Gio.FileMonitorFlags.NONE, Gio.Cancellable())
-    monitor.connect('changed', lambda monitor, _f, _other_f, event_type:
-                      self.emit('disk-file-changed', monitor, buf, event_type))
-    buf.attr['monitor'] = monitor
-    print('monitor created', filename, monitor)
