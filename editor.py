@@ -14,6 +14,7 @@ from core_selection import *
 from core_scroll import *
 from core_layout import *
 from core_file import *
+from core_message import *
 
 from mod_minimap import *
 
@@ -31,6 +32,7 @@ class Editor(Gtk.Grid,
     Scroll,
     Layout,
     File,
+    Message,
     ):
 
   __gsignals__ = {}
@@ -50,6 +52,7 @@ class Editor(Gtk.Grid,
     Scroll.__init__(self)
     Layout.__init__(self)
     File.__init__(self)
+    Message.__init__(self)
 
     # views
     self.views_grid = Gtk.Grid()
@@ -62,6 +65,8 @@ class Editor(Gtk.Grid,
     self.attach(self.east_area, 1, 0, 1, 1)
     self.north_area = Gtk.Grid()
     self.attach(self.north_area, 0, -1, 2, 1)
+    self.south_area = Gtk.Grid()
+    self.attach(self.south_area, 0, 1, 2, 1)
 
     # font and style
     self.default_font = Pango.FontDescription.from_string('Terminus 13')
