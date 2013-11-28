@@ -5,6 +5,8 @@ class View:
     self.views = []
 
     self.new_signal('view-created', (GtkSource.View,))
+    self.connect('view-created', lambda editor, view:
+        view.connect('key-press-event', self.handle_key_press))
 
     self.current_view = None
 

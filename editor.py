@@ -1,10 +1,10 @@
 from gi.repository import Gtk, Pango, GtkSource, GObject
 import os
 
+from core_modal import *
 from core_buffer import *
 from core_view import *
 from core_defs import *
-from core_modal import *
 from core_text_object import *
 from core_move import *
 from core_switcher import *
@@ -19,10 +19,10 @@ from core_message import *
 from mod_minimap import *
 
 class Editor(Gtk.Grid,
+    Modal,
     Buffer,
     View,
     Defs,
-    Modal,
     TextObject,
     Move,
     Switcher,
@@ -39,10 +39,10 @@ class Editor(Gtk.Grid,
 
   def __init__(self):
     super().__init__()
+    Modal.__init__(self)
     Buffer.__init__(self)
     View.__init__(self)
     Defs.__init__(self)
-    Modal.__init__(self)
     TextObject.__init__(self)
     Move.__init__(self)
     Switcher.__init__(self)

@@ -13,8 +13,6 @@ class Modal:
     self.command_key_handler = {}
     self.edit_key_handler = {}
 
-    self.connect('view-created', lambda editor, view:
-        view.connect('key-press-event', self.handle_key_press))
     self.new_signal('key-pressed', ())
 
     self.new_signal('bind-command-key', (str, object))
