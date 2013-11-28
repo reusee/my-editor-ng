@@ -17,6 +17,7 @@ class Edit:
     self.emit('bind-command-key', 'O', self.newline_above)
     self.emit('bind-command-key', 'a', self.append_current_pos)
     self.emit('bind-command-key', 'A', self.append_current_line)
+    self.emit('bind-command-key', 'x', self.delete_current_char)
 
     self.emit('bind-edit-key', 'k d', self.enter_command_mode)
 
@@ -109,3 +110,10 @@ class Edit:
   def append_current_pos(self, view):
     self.move_char(view, 1)
     self.enter_edit_mode()    
+
+  def delete_current_char(self, view):
+    buf = view.get_buffer()
+    start = buf.get_iter_at_mark(buf.get_insert())
+    end = start.copy()
+    end.forward_char()
+    buf.delete(start, end)
