@@ -1,17 +1,25 @@
 from gi.repository import Gtk, Gdk, GObject
 import os
+import time
 
 class File:
   def __init__(self):
-    self.emit('bind-command-key', ', t', self.open_file_chooser)
 
+    self.emit('bind-command-key', ', t', self.open_file_chooser)
     self.file_chooser = FileChooser()
     self.connect('realize', lambda _: self.north_area.add(self.file_chooser))
     self.file_chooser.connect('done', self.open_file)
 
+    self.emit('bind-command-key', ', w', self.save_to_file)
+    self.file_backup_dir = os.path.join(os.path.expanduser('~'), '.my-editor-file-backup')
+    if not os.path.exists(self.file_backup_dir):
+      os.mkdir(self.file_backup_dir)
+
   def open_file_chooser(self, view):
     self.file_chooser.last_view = view
-    os.chdir(os.path.dirname(view.get_buffer().attr['filename']))
+    current_filename = view.get_buffer().attr['filename']
+    if current_filename:
+      os.chdir(os.path.dirname(current_filename))
     self.file_chooser.update_list(self.file_chooser.entry, None)
     self.file_chooser.show_all()
     self.file_chooser.entry.set_text('')
@@ -33,6 +41,26 @@ class File:
     # switch to buffer
     if view.get_buffer() != buf:
       view.set_buffer(buf)
+
+  def save_to_file(self, view):
+    buf = view.get_buffer()
+    if not buf.get_modified(): return
+    filename = buf.attr['filename']
+    if not filename: return
+    print('saving', buf.attr['filename'])
+    tmp_filename = filename + '.' + str(time.time())
+    backup_filename = self.quote_filename(filename) + '.' + str(time.time())
+    backup_filename = os.path.join(self.file_backup_dir, backup_filename)
+    f = open(tmp_filename, 'wb+')
+    f.write(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False).encode('utf8'))
+    os.rename(filename, backup_filename)
+    os.rename(tmp_filename, filename)
+    buf.set_modified(False)
+
+  def quote_filename(self, s):
+    s = s.replace(r'%', r'%%')
+    s = s.replace('/', r'%s')
+    return s
 
 class FileChooser(Gtk.Grid):
 
@@ -103,7 +131,7 @@ class FileChooser(Gtk.Grid):
     candidates = []
     try:
       for f in os.listdir(head):
-        if fuzzy_match(tail, f):
+        if self.fuzzy_match(tail, f):
           candidates.append(os.path.join(head, f))
     except FileNotFoundError:
       return
@@ -112,13 +140,13 @@ class FileChooser(Gtk.Grid):
       self.store.append([c])
     self.select.select_path((0))
 
-def fuzzy_match(key, s):
-  keyI = 0
-  sI = 0
-  while keyI < len(key) and sI < len(s):
-    if s[sI].lower() == key[keyI].lower():
-      sI += 1
-      keyI += 1
-    else:
-      sI += 1
-  return keyI == len(key)
+  def fuzzy_match(self, key, s):
+    keyI = 0
+    sI = 0
+    while keyI < len(key) and sI < len(s):
+      if s[sI].lower() == key[keyI].lower():
+        sI += 1
+        keyI += 1
+      else:
+        sI += 1
+    return keyI == len(key)
