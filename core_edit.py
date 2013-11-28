@@ -15,6 +15,7 @@ class Edit:
 
     self.emit('bind-command-key', 'o', self.newline_below)
     self.emit('bind-command-key', 'O', self.newline_above)
+    self.emit('bind-command-key', 'A', self.append_current_line)
 
     self.emit('bind-edit-key', 'k d', self.enter_command_mode)
 
@@ -99,3 +100,7 @@ class Edit:
     buf.place_cursor(it)
     self.enter_edit_mode()
     buf.end_user_action()
+
+  def append_current_line(self, view):
+    self.move_to_line_end(view)
+    self.enter_edit_mode()    
