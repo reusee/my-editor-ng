@@ -43,7 +43,10 @@ class Status:
       cr.set_source_rgb(0, 0.3, 0.5)
     else:
       cr.set_source_rgb(0, 0.5, 0)
-    cr.set_line_width(2)
+    if self.operation_mode == self.COMMAND:
+      cr.set_line_width(2)
+    else:
+      cr.set_line_width(4)
     x, _ = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET, cursor_rect.x, 0)
     cr.move_to(x, 0)
     cr.line_to(x, rect.height)
