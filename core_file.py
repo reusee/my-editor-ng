@@ -1,4 +1,4 @@
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk, GObject, GtkSource
 import os
 import time
 
@@ -14,6 +14,8 @@ class File:
     self.file_backup_dir = os.path.join(os.path.expanduser('~'), '.my-editor-file-backup')
     if not os.path.exists(self.file_backup_dir):
       os.mkdir(self.file_backup_dir)
+
+    self.new_signal('before-saving', (GtkSource.Buffer,))
 
   def open_file_chooser(self, view):
     self.file_chooser.last_view = view
@@ -51,6 +53,7 @@ class File:
     tmp_filename = filename + '.' + str(time.time())
     backup_filename = self.quote_filename(filename) + '.' + str(time.time())
     backup_filename = os.path.join(self.file_backup_dir, backup_filename)
+    self.emit('before-saving', buf)
     with open(tmp_filename, 'w+') as f:
       f.write(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False))
     os.rename(filename, backup_filename)

@@ -15,6 +15,7 @@ from core_scroll import *
 from core_layout import *
 from core_file import *
 from core_message import *
+from core_formatter import *
 
 from mod_minimap import *
 
@@ -33,6 +34,7 @@ class Editor(Gtk.Grid,
     Layout,
     File,
     Message,
+    Formatter,
     ):
 
   __gsignals__ = {}
@@ -53,6 +55,7 @@ class Editor(Gtk.Grid,
     Layout.__init__(self)
     File.__init__(self)
     Message.__init__(self)
+    Formatter.__init__(self)
 
     # views
     self.views_grid = Gtk.Grid()
