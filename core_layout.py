@@ -5,7 +5,6 @@ class Layout:
     self.emit('bind-command-key', ', v', lambda view: self.split_view(view, Gtk.Orientation.VERTICAL))
     self.emit('bind-command-key', ', h', lambda view: self.split_view(view, Gtk.Orientation.HORIZONTAL))
     self.emit('bind-command-key', ', s', self.sibling_view)
-    self.emit('bind-command-key', ', z', self.close_view)
 
     self.emit('bind-command-key', 'J', self.south_view)
     self.emit('bind-command-key', 'K', self.north_view)
@@ -80,13 +79,3 @@ class Layout:
     _, x, y = win.get_origin()
     self.switch_to_view_at_pos(x + 20 + alloc.width, y + alloc.height / 3)
 
-  def close_view(self, view):
-    if len(self.views) == 1: return
-    scroll = view.get_parent()
-    index = self.views.index(view)
-    self.views.remove(view)
-    index -= 1
-    if index < 0: index = 0
-    next_view = self.views[index]
-    scroll.destroy()
-    self.switch_to_view(next_view)

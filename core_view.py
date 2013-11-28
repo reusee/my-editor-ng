@@ -10,6 +10,8 @@ class View:
 
     self.current_view = None
 
+    self.emit('bind-command-key', ', z', self.close_view)
+
   def new_view(self, buf = None):
     if buf:
       view = GtkSource.View.new_with_buffer(buf)
@@ -42,5 +44,16 @@ class View:
     return view, scroll
 
   def switch_to_view(self, view):
-    view.grab_focus()
     self.current_view = view
+    view.grab_focus()
+
+  def close_view(self, view):
+    if len(self.views) == 1: return
+    scroll = view.get_parent()
+    index = self.views.index(view)
+    self.views.remove(view)
+    index -= 1
+    if index < 0: index = 0
+    next_view = self.views[index]
+    scroll.destroy()
+    self.switch_to_view(next_view)
