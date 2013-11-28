@@ -51,8 +51,8 @@ class File:
     tmp_filename = filename + '.' + str(time.time())
     backup_filename = self.quote_filename(filename) + '.' + str(time.time())
     backup_filename = os.path.join(self.file_backup_dir, backup_filename)
-    f = open(tmp_filename, 'wb+')
-    f.write(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False).encode('utf8'))
+    with open(tmp_filename, 'w+') as f:
+      f.write(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False))
     os.rename(filename, backup_filename)
     os.rename(tmp_filename, filename)
     buf.set_modified(False)
