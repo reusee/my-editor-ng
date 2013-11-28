@@ -9,9 +9,28 @@ class Status:
     self.connect('key-pressed', lambda _:
         self.current_view.queue_draw())
 
+    # command
     self.command_prefix = []
     self.connect('key-handler-reset', lambda w: self.command_prefix.clear())
     self.connect('key-handler-prefix', lambda w, c: self.command_prefix.append(c))
+
+    # status line
+    self.status_line = Gtk.Grid()
+    self.status_line.set_hexpand(True)
+    self.connect('realize', lambda _: self.south_area.add(self.status_line))
+    self.current_buffer_filename = Gtk.Entry()
+    self.current_buffer_filename.set_hexpand(True)
+    self.status_line.add(self.current_buffer_filename)
+    self.status_line.show_all()
+
+    self.connect('view-created', lambda _, view:
+      view.connect('notify::buffer', lambda view, _:
+        self.current_buffer_filename.set_text(
+          view.get_buffer().attr['filename'])))
+    self.connect('view-created', lambda _, view:
+      view.connect('grab-focus', lambda view:
+        self.current_buffer_filename.set_text(
+          view.get_buffer().attr['filename'])))
 
   def draw_status(self, view, cr):
     if not view.is_focus(): return
@@ -20,14 +39,17 @@ class Status:
     cr.set_font_size(256)
     cr.set_source_rgb(0.2, 0.2, 0.2)
     cr.move_to(rect.width / 3, rect.height / 2)
+
     # operation_mode
     if self.operation_mode == self.COMMAND:
         cr.show_text('C')
+
     # command
     cr.set_font_size(128)
     t = ''.join(self.command_prefix)
     if self.n != 0: t = str(self.n) + t
     cr.show_text(t)
+
     # selection_mode
     cr.move_to(rect.width / 3 + 50, rect.height / 2 - 50)
     if self.selection_mode == self.CHAR:
@@ -36,6 +58,7 @@ class Status:
         cr.show_text('l')
     elif self.selection_mode == self.RECT:
         cr.show_text('r')
+
     # current column
     buf = view.get_buffer()
     cursor_rect = view.get_iter_location(buf.get_iter_at_mark(buf.get_insert()))

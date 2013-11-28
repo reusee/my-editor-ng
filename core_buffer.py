@@ -5,7 +5,7 @@ class Buffer:
   def __init__(self):
     self.buffers = []
 
-    self.new_signal('buffer-created', (Gtk.TextBuffer,))
+    self.new_signal('buffer-created', (GtkSource.Buffer,))
 
     self.emit('bind-command-key', ', q', self.close_buffer)
     self.emit('bind-command-key', ', n', self.new_buffer_then_view)
