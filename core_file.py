@@ -1,4 +1,4 @@
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk, GObject, Gio
 import os
 import time
 
@@ -14,6 +14,8 @@ class File:
     self.file_backup_dir = os.path.join(os.path.expanduser('~'), '.my-editor-file-backup')
     if not os.path.exists(self.file_backup_dir):
       os.mkdir(self.file_backup_dir)
+
+    self.connect('disk-file-changed', self.ask_reload)
 
   def open_file_chooser(self, view):
     self.file_chooser.last_view = view
@@ -35,7 +37,7 @@ class File:
     for b in self.buffers:
       if b.attr['filename'] == filename:
         buf = b
-    if buf is None:
+    if buf is None: # load from disk
       buf = self.new_buffer(filename)
       self.load_file(buf, filename)
     # switch to buffer
@@ -44,23 +46,46 @@ class File:
 
   def save_to_file(self, view):
     buf = view.get_buffer()
+    print(buf.attr)
     if not buf.get_modified(): return
     filename = buf.attr['filename']
     if not filename: return
+    buf.attr['monitor'].cancel()
+    print('monitor cancel', buf.attr['monitor'])
     print('saving', buf.attr['filename'])
     tmp_filename = filename + '.' + str(time.time())
     backup_filename = self.quote_filename(filename) + '.' + str(time.time())
     backup_filename = os.path.join(self.file_backup_dir, backup_filename)
-    f = open(tmp_filename, 'wb+')
-    f.write(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False).encode('utf8'))
-    os.rename(filename, backup_filename)
-    os.rename(tmp_filename, filename)
+    with open(tmp_filename, 'wb+') as f:
+      f.write(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False).encode('utf8'))
+    print('tmp file written')
+    Gio.File.move(Gio.File.new_for_path(filename),
+                  Gio.File.new_for_path(backup_filename),
+                  Gio.FileCopyFlags.NONE, None, None, None)
+    print('backup file moved')
+    Gio.File.move(Gio.File.new_for_path(tmp_filename),
+                  Gio.File.new_for_path(filename),
+                  Gio.FileCopyFlags.NONE,
+                  None,
+                  lambda cur, total, _: print(cur, total),
+                  None)
+    print('file saved')
     buf.set_modified(False)
+    self.monitor_file(buf, filename)
+    print('end')
 
   def quote_filename(self, s):
     s = s.replace(r'%', r'%%')
     s = s.replace('/', r'%s')
     return s
+
+  def ask_reload(self, _, monitor, buf, ev_type):
+    print('change', buf.attr['filename'], ev_type, monitor)
+    if ev_type == Gio.FileMonitorEvent.CHANGES_DONE_HINT:
+      print('reload', buf.attr['filename'])
+      with open(buf.attr['filename'], 'r') as f:
+        buf.set_text(f.read())
+      buf.set_modified(False)
 
 class FileChooser(Gtk.Grid):
 
