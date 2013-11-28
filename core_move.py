@@ -21,7 +21,7 @@ class Move:
     self.emit('bind-command-key', ']', lambda view: self.move_to_empty_line(view))
 
     self.connect('buffer-created',
-        lambda _, buf: buf.connect('notify::cursor-position', 
+        lambda _, buf: buf.connect('notify::cursor-position',
           lambda buf, _: self.update_offset(buf)))
 
   def update_offset(self, buf):
@@ -84,11 +84,11 @@ class Move:
     else:
       it.forward_char()
       it = it.forward_search(s, 0, buf.get_end_iter())
-    if it: 
+    if it:
       self.move_mark(buf, it[0])
       view.scroll_mark_onscreen(buf.get_insert())
       return True
-    else: 
+    else:
       self.move_mark(buf, orig)
 
   def make_char_locator(self, backward = False):
@@ -149,7 +149,8 @@ class Move:
   def move_to_line_end(self, view):
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
-    it.forward_to_line_end()
+    if not it.ends_line():
+      it.forward_to_line_end()
     self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())
 
