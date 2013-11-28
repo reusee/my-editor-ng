@@ -4,7 +4,10 @@ class Formatter:
     self.connect('before-saving', self.ensure_last_newline)
 
   def ensure_last_newline(self, _, buf):
-    pass
+    it = buf.get_end_iter()
+    if not it.backward_char(): return
+    if it.get_char() != '\n':
+      buf.insert(buf.get_end_iter(), '\n', -1)
 
   def strip_trailing_whitespace(self, _, buf):
     for l in range(buf.get_line_count()):
