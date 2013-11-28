@@ -18,6 +18,8 @@ class Edit:
 
     self.emit('bind-edit-key', 'k d', self.enter_command_mode)
 
+    self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+
   def delete_selection(self, view):
     if self._delete_selection(view):
       self.enter_none_selection_mode(view)
@@ -27,6 +29,7 @@ class Edit:
   def _delete_selection(self, view):
     buf = view.get_buffer()
     if buf.get_has_selection():
+        buf.copy_clipboard(self.clipboard)
         buf.delete_selection(True, True)
         return True
 
@@ -53,16 +56,14 @@ class Edit:
   def _copy_selection(self, view):
     buf = view.get_buffer()
     if buf.get_has_selection():
-      clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-      buf.copy_clipboard(clipboard)
+      buf.copy_clipboard(self.clipboard)
       self.enter_none_selection_mode(view)
       buf.place_cursor(buf.get_iter_at_mark(buf.attr['copy-mark']))
       return True
 
   def paste(self, view):
     buf = view.get_buffer()
-    clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-    buf.paste_clipboard(clipboard, None, True)
+    buf.paste_clipboard(self.clipboard, None, True)
 
   def undo(self, view):
     buf = view.get_buffer()
