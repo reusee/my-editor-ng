@@ -7,6 +7,8 @@ class Buffer:
 
     self.new_signal('buffer-created', (Gtk.TextBuffer,))
 
+    self.emit('bind-command-key', ', q', self.close_buffer)
+
   def new_buffer(self, filename = ''):
     language_manager = GtkSource.LanguageManager.get_default()
     lang = language_manager.guess_language(filename, 'plain/text')
@@ -40,3 +42,19 @@ class Buffer:
       buf.end_not_undoable_action()
       buf.set_modified(False)
     buf.place_cursor(buf.get_start_iter())
+
+  def close_buffer(self, view):
+    buf = view.get_buffer()
+    if buf.get_modified():
+      self.emit('show-message', 'cannot close modified buffer ' + buf.attr['filename'])
+      return
+    if not buf.attr['filename']: return
+    if len(self.buffers) == 1: return
+    index = self.buffers.index(buf)
+    index += 1
+    if index == len(self.buffers): index = 0
+    for view in self.views:
+      if view.get_buffer() == buf:
+        view.set_buffer(self.buffers[index])
+    self.buffers.remove(buf)
+    print('closed buffer of', buf.attr['filename'])
