@@ -8,6 +8,7 @@ class Buffer:
     self.new_signal('buffer-created', (Gtk.TextBuffer,))
 
     self.emit('bind-command-key', ', q', self.close_buffer)
+    self.emit('bind-command-key', ', n', self.new_buffer_then_view)
 
   def new_buffer(self, filename = ''):
     language_manager = GtkSource.LanguageManager.get_default()
@@ -45,6 +46,10 @@ class Buffer:
       pass
     buf.place_cursor(buf.get_start_iter())
     buf.set_modified(False)
+
+  def new_buffer_then_view(self, view):
+    buf = self.new_buffer()
+    view.set_buffer(buf)
 
   def close_buffer(self, view):
     buf = view.get_buffer()
