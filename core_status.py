@@ -4,10 +4,12 @@ class Status:
   def __init__(self):
     self.connect('view-created', lambda _, view:
         view.connect('draw', self.draw_status))
-    self.connect('view-created', lambda _, view:
-        self.setup_relative_line_number(view))
     self.connect('key-pressed', lambda _:
         self.current_view.queue_draw())
+
+    # relative numer
+    self.connect('view-created', lambda _, view:
+        self.setup_relative_line_number(view))
 
     # command
     self.command_prefix = []
@@ -23,6 +25,7 @@ class Status:
     self.status_line.add(self.current_buffer_filename)
     self.status_line.show_all()
 
+    # current buffer filename
     self.connect('view-created', lambda _, view:
       view.connect('notify::buffer', lambda view, _:
         self.current_buffer_filename.set_text(
