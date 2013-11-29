@@ -17,7 +17,7 @@ class Modal:
 
     self.new_signal('bind-command-key', (str, object))
     self.new_signal('bind-edit-key', (str, object))
-    self.connect('bind-command-key', 
+    self.connect('bind-command-key',
         lambda _, seq, handler: self.bind_key_handler(self.command_key_handler, seq, handler))
     self.connect('bind-edit-key',
         lambda _, seq, handler: self.bind_key_handler(self.edit_key_handler, seq, handler))
@@ -34,13 +34,12 @@ class Modal:
       self.emit('bind-command-key', str(i), self.make_number_prefix_handler(i))
 
   def handle_key_press(self, view, ev):
+    self.emit('key-pressed')
     _, val = ev.get_keyval()
     if val == Gdk.KEY_Shift_L or val == Gdk.KEY_Shift_R:
-      self.emit('key-pressed')
       return False
     if val == Gdk.KEY_Escape: # cancel command
       self.enter_command_mode()
-      self.emit('key-pressed')
       return True
     is_edit_mode = self.operation_mode == self.EDIT
     handler = None
@@ -82,12 +81,10 @@ class Modal:
           GObject.source_remove(self.delay_chars_timer)
         self.insert_delay_chars(view)
         self.key_handler = self.edit_key_handler
-        self.emit('key-pressed')
         return False
       else:
         self.key_handler = self.command_key_handler
       self.emit('key-handler-reset')
-    self.emit('key-pressed')
     return True
 
   def insert_delay_chars(self, view):
