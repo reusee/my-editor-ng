@@ -4,6 +4,7 @@ class Edit:
   def __init__(self):
 
     self.emit('bind-command-key', 'i', self.enter_edit_mode)
+    self.emit('bind-command-key', 'I', self.enter_edit_mode_at_first_char)
 
     self.emit('bind-command-key', 'd', self.delete_selection)
     self.emit('bind-command-key', 'c', self.change_selection)
@@ -124,3 +125,12 @@ class Edit:
     end = start.copy()
     end.forward_char()
     buf.delete(start, end)
+
+  def enter_edit_mode_at_first_char(self, view):
+    buf = view.get_buffer()
+    it = buf.get_iter_at_mark(buf.get_insert())
+    it.set_line_offset(0)
+    while it.get_char().isspace():
+      it.forward_char()
+    self.move_mark(buf, it)
+    self.enter_edit_mode()
