@@ -22,7 +22,7 @@ class Search:
       self.prev_search_result(entry.view))
 
     self.emit('bind-command-key', 'n', self.next_search_result)
-    self.emit('bind-command-key', 'N', self.prev_search_result)
+    self.emit('bind-command-key', 'm', self.prev_search_result)
 
   def setup_searcher(self, _, buf):
     buf.attr['searcher'] = Searcher(buf)
@@ -40,7 +40,7 @@ class Search:
           self.move_mark(buf, it)
       else:
         self.move_mark(buf, it)
-    view.scroll_mark_onscreen(buf.get_insert())
+    view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
 
   def prev_search_result(self, view):
     buf = view.get_buffer()
@@ -52,7 +52,7 @@ class Search:
           self.move_mark(buf, it)
       else:
         self.move_mark(buf, it)
-    view.scroll_mark_onscreen(buf.get_insert())
+    view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
 
 class Searcher(GObject.GObject):
   __gsignals__ = {
