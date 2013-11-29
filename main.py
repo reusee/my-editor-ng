@@ -2,6 +2,7 @@
 
 from gi.repository import Gtk, Gdk
 import sys
+import os
 
 from editor import *
 
@@ -11,7 +12,8 @@ class Main(Gtk.Window):
 
         # css
         css_provider = Gtk.CssProvider()
-        css_provider.load_from_data(open('style.css', 'rb').read())
+        css_provider.load_from_data(
+            open(os.path.join(os.path.dirname(__file__), 'style.css'), 'rb').read())
         Gtk.StyleContext.add_provider_for_screen(
                 Gdk.Screen.get_default(),
                 css_provider,
