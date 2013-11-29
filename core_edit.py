@@ -9,6 +9,7 @@ class Edit:
     self.emit('bind-command-key', 'c', self.change_selection)
     self.emit('bind-command-key', 'y', self.copy_selection)
     self.emit('bind-command-key', 'p', self.paste)
+    self.emit('bind-command-key', ', p', self.paste_at_next_line)
 
     self.emit('bind-command-key', 'u', self.undo)
     self.emit('bind-command-key', 'Y', self.redo)
@@ -68,6 +69,12 @@ class Edit:
     buf = view.get_buffer()
     buf.paste_clipboard(self.clipboard, None, True)
 
+  def paste_at_next_line(self, view):
+    buf = view.get_buffer()
+    it = buf.get_iter_at_mark(buf.get_insert())
+    it.forward_line()
+    buf.paste_clipboard(self.clipboard, it, True)
+
   def undo(self, view):
     buf = view.get_buffer()
     if buf.can_undo():
@@ -105,11 +112,11 @@ class Edit:
 
   def append_current_line(self, view):
     self.move_to_line_end(view)
-    self.enter_edit_mode()    
+    self.enter_edit_mode()
 
   def append_current_pos(self, view):
     self.move_char(view, 1)
-    self.enter_edit_mode()    
+    self.enter_edit_mode()
 
   def delete_current_char(self, view):
     buf = view.get_buffer()
