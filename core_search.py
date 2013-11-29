@@ -76,6 +76,7 @@ class SearchEntry(Gtk.Entry):
   def __init__(self):
     super().__init__()
     self.set_hexpand(True)
+    self.set_alignment(0.5)
     self.connect('key-press-event', self.on_key_press_event)
     self.connect('notify::text', self.update)
 
