@@ -1,4 +1,5 @@
 from gi.repository import Gtk, Gdk, GObject, GtkSource
+import regex
 
 class Search:
   def __init__(self):
@@ -33,14 +34,14 @@ class Search:
       buf.get_start_iter(), buf.get_end_iter())
     pattern = buf.attr['search-pattern']
     if not pattern: return
-    buffer_end = buf.get_end_iter()
-    it = buf.get_start_iter()
-    res = it.forward_search(pattern, 0, buffer_end)
-    while res:
-      start, end = res
+    content = buf.get_slice(buf.get_start_iter(), buf.get_end_iter(), False)
+    pattern = regex.compile(pattern)
+    start = buf.get_start_iter()
+    end = start.copy()
+    for m in pattern.finditer(content):
+      start.set_offset(m.start())
+      end.set_offset(m.end())
       buf.apply_tag_by_name('search-result', start, end)
-      it = end
-      res = it.forward_search(pattern, 0, buffer_end)
 
   def on_search_entry_update(self, entry, buf):
     self.update_search_result(buf)
