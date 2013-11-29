@@ -44,7 +44,7 @@ class Modal:
     is_edit_mode = self.operation_mode == self.EDIT
     handler = None
     if isinstance(self.key_handler, dict): # dict handler
-      key = chr(val) if val > 0x20 and val <= 0x7e else val
+      key = chr(val) if val >= 0x20 and val <= 0x7e else val
       handler = self.key_handler.get(key, None)
     elif callable(self.key_handler): # function handler
       handler = self.key_handler
