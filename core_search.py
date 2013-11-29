@@ -21,6 +21,7 @@ class Search:
       self.next_search_result(view))
     self.emit('bind-command-key', 'm', lambda view:
       self.next_search_result(view, backward = True))
+    self.emit('bind-command-key', '*', self.search_current_word)
 
   def setup_search(self, _, buf):
     tag = buf.create_tag('search-result',
@@ -65,6 +66,15 @@ class Search:
       else:
         self.move_mark(buf, it)
     view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
+
+  def search_current_word(self, view):
+    buf = view.get_buffer()
+    start = buf.get_iter_at_mark(buf.get_insert())
+    end = start.copy()
+    self.iter_to_word_edge(start, backward = True)
+    self.iter_to_word_edge(end)
+    buf.attr['search-pattern'] = buf.get_text(start, end, False)
+    self.update_search_result(buf)
 
 class SearchEntry(Gtk.Entry):
 
