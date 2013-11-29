@@ -95,10 +95,9 @@ class Edit:
     it.set_line_offset(0)
     buf.insert(it, '\n')
     it.backward_line()
-    #TODO indent
+    buf.end_user_action()
     buf.place_cursor(it)
     self.enter_edit_mode()
-    buf.end_user_action()
 
   def newline_below(self, view):
     buf = view.get_buffer()
@@ -106,10 +105,9 @@ class Edit:
     it = buf.get_iter_at_mark(buf.get_insert())
     if not it.ends_line(): it.forward_to_line_end()
     buf.insert(it, '\n')
-    #TODO indent
+    buf.end_user_action()
     buf.place_cursor(it)
     self.enter_edit_mode()
-    buf.end_user_action()
 
   def append_current_line(self, view):
     self.move_to_line_end(view)
