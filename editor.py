@@ -17,6 +17,7 @@ from core_file import *
 from core_message import *
 from core_formatter import *
 from core_search import *
+from core_completion import *
 
 from mod_minimap import *
 
@@ -37,6 +38,7 @@ class Editor(Gtk.Grid,
     Message,
     Formatter,
     Search,
+    Completion,
     ):
 
   __gsignals__ = {}
@@ -59,6 +61,7 @@ class Editor(Gtk.Grid,
     Message.__init__(self)
     Formatter.__init__(self)
     Search.__init__(self)
+    Completion.__init__(self)
 
     # views
     self.views_grid = Gtk.Grid()
