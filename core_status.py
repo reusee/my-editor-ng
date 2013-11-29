@@ -6,6 +6,9 @@ class Status:
         view.connect('draw', self.draw_status))
     self.connect('key-pressed', lambda _:
         self.current_view.queue_draw())
+    self.connect('buffer-created', lambda _, buf:
+      buf.connect('changed', lambda buf:
+        self.current_view.queue_draw()))
 
     # relative numer
     self.connect('view-created', lambda _, view:
