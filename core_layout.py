@@ -34,7 +34,7 @@ class Layout:
     new_grid.show_all()
     grid.attach(new_grid, left, top, 1, 1)
 
-    new_view.grab_focus()
+    self.switch_to_view(new_view)
 
   def sibling_view(self, view):
     grid = view.get_parent().get_parent()
@@ -42,7 +42,7 @@ class Layout:
     new_view.set_buffer(view.get_buffer())
     new_scroll.show_all()
     grid.add(new_scroll)
-    new_view.grab_focus()
+    self.switch_to_view(new_view)
 
   def switch_to_view_at_pos(self, x, y):
     for view in self.views:
@@ -78,4 +78,3 @@ class Layout:
     win = view.get_window(Gtk.TextWindowType.WIDGET)
     _, x, y = win.get_origin()
     self.switch_to_view_at_pos(x + 20 + alloc.width, y + alloc.height / 3)
-
