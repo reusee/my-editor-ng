@@ -8,6 +8,7 @@ class Edit:
 
     self.emit('bind-command-key', 'd', self.delete_selection)
     self.emit('bind-command-key', 'c', self.change_selection)
+    self.emit('bind-command-key', 'C', self.change_from_first_char)
     self.emit('bind-command-key', 'y', self.copy_selection)
     self.emit('bind-command-key', 'p', self.paste)
     self.emit('bind-command-key', ', p', self.paste_at_next_line)
@@ -128,7 +129,19 @@ class Edit:
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
     it.set_line_offset(0)
-    while it.get_char().isspace():
+    while it.get_char().isspace() and not it.ends_line():
       it.forward_char()
+    self.move_mark(buf, it)
+    self.enter_edit_mode()
+
+  def change_from_first_char(self, view):
+    buf = view.get_buffer()
+    it = buf.get_iter_at_mark(buf.get_insert())
+    it.set_line_offset(0)
+    while it.get_char().isspace() and not it.ends_line():
+      it.forward_char()
+    line_end = it.copy()
+    if not line_end.ends_line(): it.forward_to_line_end()
+    buf.delete(it, line_end)
     self.move_mark(buf, it)
     self.enter_edit_mode()
