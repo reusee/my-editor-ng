@@ -142,7 +142,11 @@ class Move:
   def move_to_line_start(self, view):
     buf = view.get_buffer()
     it = buf.get_iter_at_mark(buf.get_insert())
-    it.set_line_offset(0)
+    if it.starts_line(): # already at line start
+      while it.get_char().isspace() and not it.ends_line():
+        it.forward_char()
+    else:
+      it.set_line_offset(0)
     self.move_mark(buf, it)
     view.scroll_mark_onscreen(buf.get_insert())
 
