@@ -5,10 +5,10 @@ class Status:
     self.connect('view-created', lambda _, view:
         view.connect('draw', self.draw_status))
     self.connect('key-pressed', lambda _:
-        self.current_view.queue_draw())
+        [v.queue_draw() for v in self.views if v.is_focus()])
     self.connect('buffer-created', lambda _, buf:
       buf.connect('changed', lambda buf:
-        self.current_view.queue_draw()))
+        [v.queue_draw() for v in self.views if v.is_focus()]))
 
     # relative numer
     self.connect('view-created', lambda _, view:

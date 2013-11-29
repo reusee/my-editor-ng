@@ -6,10 +6,9 @@ class Switcher:
 
     def setup_switcher(self, _, view):
       view.attr['buffer-position'] = {}
-      view.connect('focus-out-event', self.save_buffer_position)
       view.connect('focus-in-event', self.restore_buffer_position)
 
-    def save_buffer_position(self, view, ev):
+    def save_buffer_position(self, view):
       buf = view.get_buffer()
       mark = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
       view.attr['buffer-position'][buf] = mark

@@ -9,8 +9,6 @@ class View:
         view.connect('key-press-event', self.handle_key_press))
     self.connect('destroy', lambda _: [v.freeze_notify() for v in self.views])
 
-    self.current_view = None
-
     self.emit('bind-command-key', ', z', self.close_view)
 
   def new_view(self, buf = None):
@@ -40,12 +38,14 @@ class View:
     view.set_wrap_mode(Gtk.WrapMode.NONE)
 
     self.emit('view-created', view)
-    self.current_view = view
 
     return view, scroll
 
   def switch_to_view(self, view):
-    self.current_view = view
+    # save cursor position of current buffer
+    for v in self.views:
+      if v.is_focus():
+        self.save_buffer_position(v)
     view.grab_focus()
 
   def close_view(self, view):
