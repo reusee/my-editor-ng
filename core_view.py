@@ -59,3 +59,8 @@ class View:
     view.freeze_notify()
     scroll.destroy()
     self.switch_to_view(next_view)
+
+  def get_current_view(self):
+    for v in self.views:
+      if v.is_focus: return v
+    return None
