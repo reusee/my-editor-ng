@@ -19,6 +19,7 @@ from core_formatter import *
 from core_search import *
 from core_word_collector import *
 from core_mark import *
+from core_completion import *
 
 from mod_minimap import *
 
@@ -41,6 +42,7 @@ class Editor(Gtk.Grid,
     Search,
     WordCollector,
     Mark,
+    Completion,
     ):
 
   __gsignals__ = {}
@@ -65,6 +67,7 @@ class Editor(Gtk.Grid,
     Search.__init__(self)
     WordCollector.__init__(self)
     Mark.__init__(self)
+    Completion.__init__(self)
 
     # views
     self.views_grid = Gtk.Grid()

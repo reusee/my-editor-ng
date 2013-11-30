@@ -85,6 +85,7 @@ class Status:
       gutter = view.get_gutter(Gtk.TextWindowType.LEFT)
       renderer = RelativeNumberRenderer(view)
       gutter.insert(renderer, 0)
+      view.attr['_relative_line_number_renderer'] = renderer
 
 class RelativeNumberRenderer(GtkSource.GutterRendererText):
     def __init__(self, view):
