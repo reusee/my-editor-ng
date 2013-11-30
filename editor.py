@@ -17,7 +17,7 @@ from core_file import *
 from core_message import *
 from core_formatter import *
 from core_search import *
-from core_completion import *
+from core_word_collector import *
 from core_mark import *
 
 from mod_minimap import *
@@ -39,7 +39,7 @@ class Editor(Gtk.Grid,
     Message,
     Formatter,
     Search,
-    Completion,
+    WordCollector,
     Mark,
     ):
 
@@ -63,7 +63,7 @@ class Editor(Gtk.Grid,
     Message.__init__(self)
     Formatter.__init__(self)
     Search.__init__(self)
-    Completion.__init__(self)
+    WordCollector.__init__(self)
     Mark.__init__(self)
 
     # views
