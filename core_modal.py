@@ -25,6 +25,9 @@ class Modal:
     self.new_signal('key-handler-reset', ())
     self.new_signal('key-handler-prefix', (str,))
 
+    self.new_signal('entered-edit-mode', ())
+    self.new_signal('entered-command-mode', ())
+
     self.key_handler = self.command_key_handler
     self.n = 0
     self.delay_chars = []
@@ -130,7 +133,9 @@ class Modal:
     self.key_handler = self.command_key_handler
     self.n = 0
     self.emit('key-handler-reset')
+    self.emit('entered-command-mode')
 
   def enter_edit_mode(self):
     self.operation_mode = self.EDIT
     self.key_handler = self.edit_key_handler
+    self.emit('entered-edit-mode')
