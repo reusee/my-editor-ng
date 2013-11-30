@@ -66,3 +66,8 @@ class Buffer:
         view.set_buffer(self.buffers[index])
     self.buffers.remove(buf)
     print('closed buffer of', buf.attr['filename'])
+
+  def get_current_buffer(self):
+    for v in self.views:
+      if v.is_focus(): return v.get_buffer()
+    return None
