@@ -7,7 +7,6 @@ class WordCollector:
     self.connect('entered-command-mode', self.update_word_bound_leaving_edit)
 
     self.new_signal('found-word', (str,))
-    self.connect('found-word', lambda _, word: print('word:', word))
 
     self.connect('file-loaded', self.collect_file_words)
 
