@@ -54,7 +54,8 @@ class File:
     backup_filename = self.quote_filename(filename) + '.' + str(time.time())
     backup_filename = os.path.join(self.file_backup_dir, backup_filename)
     self.emit('before-saving', buf)
-    with open(tmp_filename, 'w+') as f:
+    mode = os.stat(filename).st_mode
+    with os.fdopen(os.open(tmp_filename, os.O_WRONLY | os.O_CREAT, mode), 'w+') as f:
       f.write(buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False))
     try: os.rename(filename, backup_filename)
     except FileNotFoundError: pass
