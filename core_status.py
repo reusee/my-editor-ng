@@ -95,6 +95,7 @@ class RelativeNumberRenderer(GtkSource.GutterRendererText):
 
     def do_query_data(self, start, end, state):
       if not self.view.is_focus():
+        self.set_text('', -1)
         self.set_size(0)
         return
       buf = start.get_buffer()
