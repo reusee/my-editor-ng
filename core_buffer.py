@@ -17,12 +17,14 @@ class Buffer:
     self.emit('bind-command-key', ', n', self.new_buffer_then_view)
 
     self.new_signal('file-loaded', (GtkSource.Buffer,))
+    self.new_signal('language-detected', (GtkSource.Buffer, str))
 
   def new_buffer(self, filename = ''):
     language_manager = GtkSource.LanguageManager.get_default()
     lang = language_manager.guess_language(filename, 'plain/text')
     if lang:
       buf = GtkSource.Buffer.new_with_language(lang)
+      self.emit('language-detected', buf, lang.get_name())
     else:
       buf = GtkSource.Buffer()
     self.buffers.append(buf)
