@@ -47,7 +47,7 @@ class Editor(Gtk.Grid,
 
   __gsignals__ = {}
 
-  def __init__(self):
+  def __init__(self, stage):
     super().__init__()
     Modal.__init__(self)
     Buffer.__init__(self)
@@ -68,6 +68,8 @@ class Editor(Gtk.Grid,
     WordCollector.__init__(self)
     Mark.__init__(self)
     Completion.__init__(self)
+
+    self.stage = stage
 
     # views
     self.views_grid = Gtk.Grid()

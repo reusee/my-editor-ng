@@ -25,7 +25,7 @@ class Main(GtkClutter.Window):
         self.add(self.grid)
 
         # editor
-        self.editor = Editor()
+        self.editor = Editor(self.get_stage())
         self.grid.attach(self.editor, 0, 0, 1, 1)
 
         # buffers
