@@ -1,4 +1,4 @@
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GtkSource
 
 class Completion:
   def __init__(self):
@@ -18,20 +18,28 @@ class Completion:
     self.completion_replacing = False # changing text
     self.completion_candidates = []
 
+    self.new_signal('provide-completions', (GtkSource.Buffer, str, object))
+
   def hint_completion(self, buf):
     if self.completion_replacing: return
     self.completion_view.hide()
     self.completion_candidates.clear()
     if self.operation_mode != self.EDIT: return
+
+    candidates = set()
+    # word completions
     word_start_iter = buf.get_iter_at_mark(buf.attr['word-start'])
     word_end_iter = buf.get_iter_at_mark(buf.attr['word-end'])
     word = buf.get_text(word_start_iter, word_end_iter, False)
-    if not word: return
-    candidates = list(self.get_completion_candidates(word))
-    if len(candidates) == 0: return
-    candidates = sorted(candidates, key = lambda w: len(w))
-    self.completion_candidates = candidates
-    self.show_candidates()
+    if word:
+      words = list(self.get_completion_candidates(word))
+      candidates.update(words)
+    # extra providers
+    self.emit('provide-completions', buf, word, candidates)
+
+    self.completion_candidates = sorted(candidates, key = lambda w: len(w))
+    if len(self.completion_candidates) > 0:
+      self.show_candidates()
 
   def show_candidates(self):
     max_length = 0
