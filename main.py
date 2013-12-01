@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GtkClutter
 import sys
 import os
 
 from editor import *
 
-class Main(Gtk.Window):
+class Main(GtkClutter.Window):
     def __init__(self):
         super().__init__()
 
@@ -38,7 +38,12 @@ class Main(Gtk.Window):
         # view first buffer
         self.editor.views[0].set_buffer(self.editor.buffers[0])
 
-win = Main()
-win.connect('delete-event', Gtk.main_quit)
-win.show_all()
-Gtk.main()
+def main():
+  GtkClutter.init(sys.argv)
+  win = Main()
+  win.connect('delete-event', Gtk.main_quit)
+  win.show_all()
+  Gtk.main()
+
+if __name__ == '__main__':
+  main()
