@@ -141,7 +141,7 @@ class FileChooser(Gtk.Grid):
           candidates.append(os.path.join(head, f))
     except FileNotFoundError:
       return
-    candidates = sorted(candidates)
+    candidates = sorted(candidates, key = lambda e: len(e))
     for c in candidates:
       self.store.append([c])
     self.select.select_path((0))
