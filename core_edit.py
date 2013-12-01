@@ -82,12 +82,14 @@ class Edit:
     if buf.can_undo():
         buf.undo()
         buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
+        view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
 
   def redo(self, view):
     buf = view.get_buffer()
     if buf.can_redo():
         buf.redo()
         buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
+        view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
 
   def newline_above(self, view):
     buf = view.get_buffer()
