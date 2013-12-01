@@ -89,6 +89,11 @@ class Editor(Gtk.Grid,
     self.style_scheme_manager.append_search_path(os.path.dirname(__file__))
     self.style_scheme = self.style_scheme_manager.get_scheme('molokai')
 
+    # screen
+    screen = Gdk.Screen.get_default()
+    self.screen_width = screen.get_width()
+    self.screen_height = screen.get_height()
+
     # extra modules
     #self.minimap = Minimap(self)
 
