@@ -6,6 +6,12 @@ class Buffer:
     self.buffers = []
 
     self.new_signal('buffer-created', (GtkSource.Buffer,))
+    self.connect('buffer-created', lambda _, buf:
+      buf.connect('changed', lambda buf:
+        self.emit('should-redraw')))
+    self.connect('buffer-created', lambda _, buf:
+      buf.connect('notify::cursor-position', lambda buf, _:
+        self.emit('should-redraw')))
 
     self.emit('bind-command-key', ', q', self.close_buffer)
     self.emit('bind-command-key', ', n', self.new_buffer_then_view)
