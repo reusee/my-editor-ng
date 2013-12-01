@@ -27,7 +27,6 @@ class Completion:
     word_end_iter = buf.get_iter_at_mark(buf.attr['word-end'])
     word = buf.get_text(word_start_iter, word_end_iter, False)
     if not word: return
-    print('current word:', word)
     candidates = list(self.get_completion_candidates(word))
     if len(candidates) == 0: return
     candidates = sorted(candidates, key = lambda w: len(w))
@@ -49,8 +48,13 @@ class Completion:
       iter_rect.x, iter_rect.y)
     x += win_x
     y += win_y
+    if self.screen_width - x < 100:
+      x -= 100
+    height = len(self.completion_candidates) * 26
+    if self.screen_height - (y + height) < 100:
+      y -= height + 20
     self.completion_view.move(x, y + 20)
-    self.completion_view.resize(1, len(self.completion_candidates) * 26)
+    self.completion_view.resize(1, height)
     self.completion_view.show_all()
 
   def get_completion_candidates(self, word):
