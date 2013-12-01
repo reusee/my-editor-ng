@@ -70,7 +70,6 @@ class Editor(Gtk.Grid,
     Completion.__init__(self)
 
     self.stage = stage
-    self.connect('should-redraw', lambda _: self.stage.queue_redraw())
 
     # views
     self.views_grid = Gtk.Grid()

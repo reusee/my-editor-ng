@@ -2,7 +2,6 @@ from gi.repository import Gtk, GtkSource
 
 class Status:
   def __init__(self):
-    # redraw
     self.connect('view-created', lambda _, view:
         view.connect('draw', self.draw_status))
 
@@ -99,4 +98,3 @@ class RelativeNumberRenderer(GtkSource.GutterRendererText):
       text = str(abs(start.get_line() - current_line))
       self.set_text(text, -1)
       self.set_size(30)
-      self.queue_draw()

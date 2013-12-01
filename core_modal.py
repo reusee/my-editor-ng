@@ -14,8 +14,6 @@ class Modal:
     self.edit_key_handler = {}
 
     self.new_signal('key-pressed', ())
-    self.connect('key-pressed', lambda _:
-      self.emit('should-redraw'))
 
     self.new_signal('bind-command-key', (str, object))
     self.new_signal('bind-edit-key', (str, object))

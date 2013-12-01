@@ -11,9 +11,6 @@ class View:
 
     self.emit('bind-command-key', ', z', self.close_view)
 
-    self.new_signal('should-redraw', ())
-    self.connect('should-redraw', lambda _: self.redraw_current_view())
-
   def new_view(self, buf = None):
     if buf:
       view = GtkSource.View.new_with_buffer(buf)
@@ -50,7 +47,6 @@ class View:
       if v.is_focus():
         self.save_buffer_position(v)
     view.grab_focus()
-    self.emit('should-redraw')
 
   def close_view(self, view):
     if len(self.views) == 1: return
@@ -68,9 +64,3 @@ class View:
     for v in self.views:
       if v.is_focus(): return v
     return None
-
-  def redraw_current_view(self):
-    for v in self.views:
-      if v.is_focus():
-        v.queue_draw()
-        return
