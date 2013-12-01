@@ -22,6 +22,7 @@ from core_mark import *
 from core_completion import *
 
 from mod_minimap import *
+from mod_jedi import *
 
 class Editor(Gtk.Grid,
     Modal,
@@ -96,6 +97,7 @@ class Editor(Gtk.Grid,
 
     # extra modules
     #self.minimap = Minimap(self)
+    self.jedi = Jedi(self)
 
     # first view
     view, scroll = self.new_view()
