@@ -62,5 +62,11 @@ class View:
 
   def get_current_view(self):
     for v in self.views:
-      if v.is_focus: return v
+      if v.is_focus(): return v
     return None
+
+  def redraw_current_view(self):
+    for v in self.views:
+      if v.is_focus():
+        v.queue_draw()
+        return

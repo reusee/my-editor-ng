@@ -2,13 +2,12 @@ from gi.repository import Gtk, GtkSource
 
 class Status:
   def __init__(self):
+    # redraw
     self.connect('view-created', lambda _, view:
         view.connect('draw', self.draw_status))
-    self.connect('key-pressed', lambda _:
-        [v.queue_draw() for v in self.views if v.is_focus()])
+    self.connect('key-pressed', lambda _: self.redraw_current_view())
     self.connect('buffer-created', lambda _, buf:
-      buf.connect('changed', lambda buf:
-        [v.queue_draw() for v in self.views if v.is_focus()]))
+      buf.connect('changed', lambda buf: self.redraw_current_view()))
 
     # relative numer
     self.connect('view-created', lambda _, view:
