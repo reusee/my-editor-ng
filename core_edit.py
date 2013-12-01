@@ -120,10 +120,12 @@ class Edit:
 
   def delete_current_char(self, view):
     buf = view.get_buffer()
+    buf.begin_user_action()
     start = buf.get_iter_at_mark(buf.get_insert())
     end = start.copy()
     end.forward_char()
     buf.delete(start, end)
+    buf.end_user_action()
 
   def enter_edit_mode_at_first_char(self, view):
     buf = view.get_buffer()
@@ -136,6 +138,7 @@ class Edit:
 
   def change_from_first_char(self, view):
     buf = view.get_buffer()
+    buf.begin_user_action()
     it = buf.get_iter_at_mark(buf.get_insert())
     it.set_line_offset(0)
     while it.get_char().isspace() and not it.ends_line():
@@ -143,5 +146,6 @@ class Edit:
     line_end = it.copy()
     if not line_end.ends_line(): it.forward_to_line_end()
     buf.delete(it, line_end)
+    buf.end_user_action()
     self.move_mark(buf, it)
     self.enter_edit_mode()
