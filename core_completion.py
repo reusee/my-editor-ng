@@ -23,8 +23,11 @@ class Completion:
     print('current word:', word)
     candidates = list(self.get_completion_candidates(word))
     if len(candidates) == 0: return
+    max_length = 0
+    candidates = sorted(candidates, key = lambda w: len(w))
     for w in candidates:
       self.completion_view.store.append([w])
+      if len(w) > max_length: max_length = len(w)
     view = self.get_current_view()
     win = view.get_window(Gtk.TextWindowType.WIDGET)
     _, x, y = win.get_origin()
@@ -35,7 +38,7 @@ class Completion:
     x += win_x
     y += win_y
     self.completion_view.move(x, y)
-    self.completion_view.resize(500, 200)
+    self.completion_view.resize(1, len(candidates) * 26)
     self.completion_view.show_all()
 
   def get_completion_candidates(self, word):
@@ -66,6 +69,6 @@ class CompletionView(Gtk.Window):
     self.add(self.view)
     self.view.set_headers_visible(False)
     renderer = Gtk.CellRendererText()
-    renderer.set_alignment(0.5, 0.5)
+    renderer.set_alignment(0, 0.5)
     column = Gtk.TreeViewColumn('word', renderer, text = 0)
     self.view.append_column(column)
