@@ -126,6 +126,9 @@ class Edit:
     start = buf.get_iter_at_mark(buf.get_insert())
     end = start.copy()
     end.forward_char()
+    buf.move_mark(buf.get_insert(), start)
+    buf.move_mark(buf.get_selection_bound(), end)
+    buf.copy_clipboard(self.clipboard)
     buf.delete(start, end)
     buf.end_user_action()
 
