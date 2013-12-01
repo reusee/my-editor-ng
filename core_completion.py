@@ -66,7 +66,6 @@ class Completion:
         else:
           i += 1
       if j == len(word): # match
-        print('->', w)
         yield w
 
   def cycle_completion_candidates(self, view):

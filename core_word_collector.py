@@ -1,3 +1,5 @@
+import re
+
 class WordCollector:
   def __init__(self):
     self.connect('buffer-created', self.buffer_setup_completion)
@@ -6,6 +8,8 @@ class WordCollector:
 
     self.new_signal('found-word', (str,))
     self.connect('found-word', lambda _, word: print('word:', word))
+
+    self.connect('file-loaded', self.collect_file_words)
 
   def buffer_setup_completion(self, _, buf):
     buf.attr['word-start'] = buf.create_mark(None,
@@ -78,3 +82,10 @@ class WordCollector:
     if c.isdigit(): return True
     if c in {'-', '_'}: return True
     return False
+
+  def collect_file_words(self, _, buf):
+    text = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
+    words = re.findall('[a-zA-Z0-9-_]+', text)
+    words = {w for w in words if len(w) > 1}
+    for word in words:
+      self.emit('found-word', word)
