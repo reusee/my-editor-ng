@@ -70,6 +70,8 @@ class Modal:
         self.emit('key-handler-prefix', chr(val))
       elif ret == 'is_number_prefix': # a number prefix
         pass
+      elif ret == 'propagate': # pass to system handler
+        return False
       else: # handler executed
         self.emit('key-handler-reset')
         self.n = 0
