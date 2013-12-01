@@ -1,4 +1,4 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 
 class Completion:
   def __init__(self):
@@ -13,8 +13,15 @@ class Completion:
 
     self.completion_view = CompletionView(self)
 
+    self.edit_key_handler[Gdk.KEY_Tab] = self.cycle_completion_candidates
+
+    self.completion_replacing = False # changing text
+    self.completion_candidates = []
+
   def hint_completion(self, buf):
+    if self.completion_replacing: return
     self.completion_view.hide()
+    self.completion_candidates.clear()
     if self.operation_mode != self.EDIT: return
     word_start_iter = buf.get_iter_at_mark(buf.attr['word-start'])
     word_end_iter = buf.get_iter_at_mark(buf.attr['word-end'])
@@ -23,9 +30,14 @@ class Completion:
     print('current word:', word)
     candidates = list(self.get_completion_candidates(word))
     if len(candidates) == 0: return
-    max_length = 0
     candidates = sorted(candidates, key = lambda w: len(w))
-    for w in candidates:
+    self.completion_candidates = candidates
+    self.show_candidates()
+
+  def show_candidates(self):
+    max_length = 0
+    self.completion_view.store.clear()
+    for w in self.completion_candidates:
       self.completion_view.store.append([w])
       if len(w) > max_length: max_length = len(w)
     view = self.get_current_view()
@@ -37,12 +49,11 @@ class Completion:
       iter_rect.x, iter_rect.y)
     x += win_x
     y += win_y
-    self.completion_view.move(x, y)
-    self.completion_view.resize(1, len(candidates) * 26)
+    self.completion_view.move(x, y + 20)
+    self.completion_view.resize(1, len(self.completion_candidates) * 26)
     self.completion_view.show_all()
 
   def get_completion_candidates(self, word):
-    self.completion_view.store.clear()
     for w in self.vocabulary:
       if w == word: continue
       if w[0].lower() != word[0].lower(): continue
@@ -57,6 +68,29 @@ class Completion:
       if j == len(word): # match
         print('->', w)
         yield w
+
+  def cycle_completion_candidates(self, view):
+    if len(self.completion_candidates) == 0: return 'propagate'
+
+    buf = view.get_buffer()
+    start = buf.attr['word-start']
+    end = buf.attr['word-end']
+
+    text = buf.get_text(buf.get_iter_at_mark(start),
+      buf.get_iter_at_mark(end), False)
+
+    buf.begin_user_action()
+    self.completion_replacing = True
+    buf.delete(buf.get_iter_at_mark(start), buf.get_iter_at_mark(end))
+    replace = self.completion_candidates[0]
+    buf.insert(buf.get_iter_at_mark(start), replace, -1)
+    self.completion_replacing = False
+    buf.end_user_action()
+
+    if len(self.completion_candidates) > 0:
+      self.completion_candidates = self.completion_candidates[1:]
+    self.completion_candidates.append(text)
+    self.show_candidates()
 
 class CompletionView(Gtk.Window):
   def __init__(self, parent):
