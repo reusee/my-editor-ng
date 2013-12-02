@@ -1,7 +1,11 @@
+from gi.repository import Gtk
+
 class MultipleCursor:
     def __init__(self):
         self.connect('buffer-created', lambda _, buf:
             self.setup_multiple_cursor(buf))
+        self.connect('view-created', lambda _, view:
+            view.connect('draw', self.draw_selections))
 
         self.emit('bind-command-key', 't', self.select_current_position)
 
@@ -26,6 +30,37 @@ class MultipleCursor:
 
     def buffer_add_selection(self, buf, start, end):
         buf.attr['selections'].append(Selection(start, end))
+
+    def draw_selections(self, view, cr):
+        if not view.is_focus(): return
+        buf = view.get_buffer()
+        for selection in buf.attr['selections']:
+            cr.set_source_rgb(1, 0, 0)
+            start_rect = view.get_iter_location(
+                buf.get_iter_at_mark(selection.start))
+            x, y = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET,
+                start_rect.x, start_rect.y)
+            cr.move_to(x, y)
+            cr.set_line_width(2)
+            cr.line_to(x + start_rect.width // 2, y)
+            cr.stroke()
+            cr.move_to(x, y)
+            cr.set_line_width(1)
+            cr.line_to(x, y + start_rect.height)
+            cr.stroke()
+            cr.set_source_rgb(0, 1, 0)
+            end_rect = view.get_iter_location(
+                buf.get_iter_at_mark(selection.end))
+            x, y = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET,
+                end_rect.x, end_rect.y)
+            cr.move_to(x, y)
+            cr.set_line_width(1)
+            cr.line_to(x, y + end_rect.height)
+            cr.stroke()
+            cr.move_to(x, y + end_rect.height)
+            cr.set_line_width(2)
+            cr.line_to(x - end_rect.width // 2, y + end_rect.height)
+            cr.stroke()
 
 class Selection:
     def __init__(self, start, end):
