@@ -16,6 +16,7 @@ class Terminal(Vte.Terminal):
         self.set_size(80, 25)
         self.set_cursor_blink_mode(Vte.TerminalCursorBlinkMode.OFF)
         self.set_font(Pango.FontDescription.from_string('Terminus 13'))
+        self.set_scrollback_lines(-1)
         self.connect('child-exited', lambda _: self.run_shell())
         self.run_shell()
 
