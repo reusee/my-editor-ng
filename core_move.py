@@ -22,11 +22,11 @@ class Move:
 
         self.connect('buffer-created',
             lambda _, buf: buf.connect('notify::cursor-position',
-              lambda buf, _: self.update_offset(buf)))
+              lambda buf, _: self.update_preferred_line_offset(buf)))
 
-    def update_offset(self, buf):
+    def update_preferred_line_offset(self, buf):
         if buf.attr.get('freeze', False): return
-        buf.attr['current_offset'] = buf.get_iter_at_mark(buf.get_insert()).get_line_offset()
+        buf.attr['preferred-line-offset'] = buf.get_iter_at_mark(buf.get_insert()).get_line_offset()
 
     def move_mark(self, buf, it):
         if self.selection_mode == self.NONE:
@@ -50,7 +50,7 @@ class Move:
         else:
             for i in range(n): view.backward_display_line(it)
         chars_in_line = it.get_chars_in_line() - 1
-        offset = buf.attr['current_offset']
+        offset = buf.attr['preferred-line-offset']
         if offset > chars_in_line:
             offset = chars_in_line
         if offset >= 0:

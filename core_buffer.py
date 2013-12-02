@@ -31,7 +31,7 @@ class Buffer:
 
         setattr(buf, 'attr', {
           'filename': filename,
-          'current_offset': 0,
+          'preferred-line-offset': 0,
           })
 
         if lang:
