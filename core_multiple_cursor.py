@@ -21,7 +21,16 @@ class MultipleCursor:
 
     def on_buffer_insert_text(self, buf, location, text, length):
         if self.operation_mode != self.EDIT: return
-        print('insert', location.get_offset(), text, length)
+        cursor_offset = buf.get_iter_at_mark(buf.get_insert()).get_offset()
+        if cursor_offset == location.get_offset():
+            m = buf.create_mark(None, location)
+            buf.begin_user_action()
+            for selection in buf.attr['selections']:
+                it = buf.get_iter_at_mark(selection.start)
+                buf.insert(it, text)
+            buf.end_user_action()
+            location.assign(buf.get_iter_at_mark(m))
+            buf.delete_mark(m)
 
     def select_current_position(self, view):
         buf = view.get_buffer()
