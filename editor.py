@@ -7,7 +7,6 @@ from core_view import *
 from core_defs import *
 from core_text_object import *
 from core_move import *
-from core_switcher import *
 from core_edit import *
 from core_status import *
 from core_selection import *
@@ -33,7 +32,6 @@ class Editor(Gtk.Grid,
     Defs,
     TextObject,
     Move,
-    Switcher,
     Edit,
     Status,
     Selection,
@@ -58,7 +56,6 @@ class Editor(Gtk.Grid,
         Defs.__init__(self)
         TextObject.__init__(self)
         Move.__init__(self)
-        Switcher.__init__(self)
         Edit.__init__(self)
         Status.__init__(self)
         Selection.__init__(self)
