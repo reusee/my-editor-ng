@@ -5,4 +5,3 @@ class ModPython:
 
     def setup(self, buf):
         buf.attr['indent-width'] = 4
-        print('here')

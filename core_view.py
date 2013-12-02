@@ -56,7 +56,6 @@ class View:
 
         # set indent width
         buf = view.get_buffer()
-        print(buf.attr)
         if 'indent-width' in buf.attr:
             view.set_indent_width(buf.attr['indent-width'])
         else:
