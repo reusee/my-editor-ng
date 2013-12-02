@@ -9,6 +9,7 @@ from editor import *
 class Main(Gtk.Window):
     def __init__(self):
         super().__init__()
+        self.set_title('my editor')
 
         # css
         css_provider = Gtk.CssProvider()
