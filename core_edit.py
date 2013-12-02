@@ -29,6 +29,8 @@ class Edit:
 
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
+        self.edit_key_handler[Gdk.KEY_BackSpace] = self.backspace_with_dedent
+
     def delete_selection(self, view):
         if self._delete_selection(view):
             self.enter_none_selection_mode(view)
@@ -212,3 +214,20 @@ class Edit:
             _, end = buf.get_selection_bounds()
         buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
         self.selection_mode = self.NONE
+
+    def backspace_with_dedent(self, view):
+        buf = view.get_buffer()
+        it = buf.get_iter_at_mark(buf.get_insert())
+        end = it.copy()
+        if it.backward_char():
+            buf.delete(it, end)
+        indent_width = self.default_indent_width
+        if 'indent-width' in buf.attr:
+            indent_width = buf.attr['indent-width']
+        i = it.get_line_offset() % indent_width
+        while i != 0:
+            if it.backward_char() and it.get_char() == ' ':
+                buf.delete(it, end)
+                i -= 1
+            else:
+                break
