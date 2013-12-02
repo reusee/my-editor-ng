@@ -79,6 +79,8 @@ class Status:
         cr.line_to(x, rect.height)
         cr.stroke()
         cr.set_line_width(1)
+        cr.set_source_rgb(0.8, 0.8, 0.8)
+        cr.set_line_width(1)
         cr.move_to(0, y + cursor_rect.height)
         cr.line_to(rect.width, y + cursor_rect.height)
         cr.stroke()
