@@ -37,7 +37,9 @@ class Main(Gtk.Window):
             self.editor.new_buffer()
 
         # view first buffer
-        self.editor.views[0].set_buffer(self.editor.buffers[0])
+        self.editor.switch_to_buffer(
+            self.editor.views[0],
+            self.editor.buffers[0])
 
 def main():
     win = Main()
