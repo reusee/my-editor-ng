@@ -40,10 +40,10 @@ class Main(Gtk.Window):
         self.editor.views[0].set_buffer(self.editor.buffers[0])
 
 def main():
-  win = Main()
-  win.connect('delete-event', Gtk.main_quit)
-  win.show_all()
-  Gtk.main()
+    win = Main()
+    win.connect('delete-event', Gtk.main_quit)
+    win.show_all()
+    Gtk.main()
 
 if __name__ == '__main__':
-  main()
+    main()
