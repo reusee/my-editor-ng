@@ -6,7 +6,7 @@ class Mark:
           self.setup_mark(buf))
 
     def setup_mark(self, buf):
-        buf.attr['marks'] = {}
+        buf.attr['bookmarks'] = {}
 
     def create_mark(self, view):
         def wait_key(ev):
@@ -14,7 +14,7 @@ class Mark:
             if val >= 0x20 and val <= 0x7e:
                 buf = view.get_buffer()
                 mark = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
-                buf.attr['marks'][val] = mark
+                buf.attr['bookmarks'][val] = mark
                 print('mark', chr(val))
         return wait_key
 
@@ -23,7 +23,7 @@ class Mark:
             _, val = ev.get_keyval()
             if val >= 0x20 and val <= 0x7e:
                 buf = view.get_buffer()
-                mark = buf.attr['marks'].get(val, None)
+                mark = buf.attr['bookmarks'].get(val, None)
                 if mark:
                     self.move_mark(buf, buf.get_iter_at_mark(mark))
                 view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
