@@ -54,13 +54,6 @@ class View:
             if v.is_focus():
                 self.save_buffer_position(v)
 
-        # set indent width
-        buf = view.get_buffer()
-        if 'indent-width' in buf.attr:
-            view.set_indent_width(buf.attr['indent-width'])
-        else:
-            view.set_indent_width(self.default_indent_width)
-
         view.grab_focus()
         self.emit('should-redraw')
 
