@@ -20,6 +20,7 @@ class Status:
     self.status_line.set_hexpand(True)
     self.connect('realize', lambda _: self.south_area.add(self.status_line))
     self.current_buffer_filename = Gtk.Entry()
+    self.current_buffer_filename.set_alignment(0.5)
     self.current_buffer_filename.set_hexpand(True)
     self.status_line.add(self.current_buffer_filename)
     self.status_line.show_all()

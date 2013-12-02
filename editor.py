@@ -82,7 +82,7 @@ class Editor(Gtk.Grid,
     self.attach(self.east_area, 1, 0, 1, 1)
     self.north_area = Gtk.Grid()
     self.attach(self.north_area, 0, -1, 2, 1)
-    self.south_area = Gtk.Grid()
+    self.south_area = Gtk.Grid(orientation = Gtk.Orientation.VERTICAL)
     self.attach(self.south_area, 0, 1, 2, 1)
 
     # font and style
