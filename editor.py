@@ -98,7 +98,7 @@ class Editor(Gtk.Grid,
 
     # extra modules
     #self.minimap = Minimap(self)
-    self.jedi = Jedi(self)
+    #self.jedi = Jedi(self)
     self.vte_module = VteModule(self)
 
     # first view
