@@ -15,7 +15,7 @@ class Layout:
         scroll = view.get_parent()
         grid = scroll.get_parent()
         new_view, new_scroll = self.new_view()
-        new_view.set_buffer(view.get_buffer())
+        self.switch_to_buffer(new_view, view.get_buffer())
 
         left = GObject.Value()
         left.init(GObject.TYPE_INT)
@@ -39,7 +39,7 @@ class Layout:
     def sibling_view(self, view):
         grid = view.get_parent().get_parent()
         new_view, new_scroll = self.new_view()
-        new_view.set_buffer(view.get_buffer())
+        self.switch_to_buffer(new_view, view.get_buffer())
         new_scroll.show_all()
         grid.add(new_scroll)
         self.switch_to_view(new_view)

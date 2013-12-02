@@ -20,27 +20,29 @@ class Buffer:
         self.new_signal('language-detected', (GtkSource.Buffer, str))
 
     def new_buffer(self, filename = ''):
+        if filename: filename = os.path.abspath(filename)
+
         language_manager = GtkSource.LanguageManager.get_default()
         lang = language_manager.guess_language(filename, 'plain/text')
         if lang:
             buf = GtkSource.Buffer.new_with_language(lang)
-            self.emit('language-detected', buf, lang.get_name())
         else:
             buf = GtkSource.Buffer()
         self.buffers.append(buf)
+
+        setattr(buf, 'attr', {
+          'filename': filename,
+          'current_offset': 0,
+          })
+
+        if lang:
+            self.emit('language-detected', buf, lang.get_name())
 
         buf.set_highlight_syntax(True)
         buf.set_highlight_matching_brackets(True)
         buf.set_max_undo_levels(-1)
         buf.set_style_scheme(self.style_scheme)
         buf.get_insert().set_visible(False)
-
-        if filename: filename = os.path.abspath(filename)
-
-        setattr(buf, 'attr', {
-          'filename': filename,
-          'current_offset': 0,
-          })
 
         self.emit('buffer-created', buf)
 
@@ -60,7 +62,7 @@ class Buffer:
 
     def new_buffer_then_view(self, view):
         buf = self.new_buffer()
-        view.set_buffer(buf)
+        self.switch_to_buffer(view, buf)
 
     def close_buffer(self, view):
         buf = view.get_buffer()
@@ -74,7 +76,7 @@ class Buffer:
         if index == len(self.buffers): index = 0
         for view in self.views:
             if view.get_buffer() == buf:
-                view.set_buffer(self.buffers[index])
+                self.switch_to_buffer(view, self.buffers[index])
         self.buffers.remove(buf)
         print('closed buffer of', buf.attr['filename'])
 
@@ -82,3 +84,10 @@ class Buffer:
         for v in self.views:
             if v.is_focus(): return v.get_buffer()
         return None
+
+    def switch_to_buffer(self, view, buf):
+        view.set_buffer(buf)
+        if 'indent-width' in buf.attr:
+            view.set_indent_width(buf.attr['indent-width'])
+        else:
+            view.set_indent_width(self.default_indent_width)

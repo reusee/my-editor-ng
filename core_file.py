@@ -42,7 +42,7 @@ class File:
             self.load_file(buf, filename)
         # switch to buffer
         if view.get_buffer() != buf:
-            view.set_buffer(buf)
+            self.switch_to_buffer(view, buf)
 
     def save_to_file(self, view):
         buf = view.get_buffer()
