@@ -101,7 +101,7 @@ class Editor(Gtk.Grid,
         self.vte_module = VteModule(self)
 
         # first view
-        view, scroll = self.new_view()
+        view, scroll = self.create_view()
         self.views_grid.add(scroll)
         self.connect('realize', lambda _: self.views[0].grab_focus())
 

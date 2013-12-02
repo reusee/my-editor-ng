@@ -14,7 +14,7 @@ class Layout:
     def split_view(self, view, orientation):
         scroll = view.get_parent()
         grid = scroll.get_parent()
-        new_view, new_scroll = self.new_view()
+        new_view, new_scroll = self.create_view()
         self.switch_to_buffer(new_view, view.get_buffer())
 
         left = GObject.Value()
@@ -38,7 +38,7 @@ class Layout:
 
     def sibling_view(self, view):
         grid = view.get_parent().get_parent()
-        new_view, new_scroll = self.new_view()
+        new_view, new_scroll = self.create_view()
         self.switch_to_buffer(new_view, view.get_buffer())
         new_scroll.show_all()
         grid.add(new_scroll)

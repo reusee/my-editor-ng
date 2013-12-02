@@ -18,7 +18,7 @@ class View:
 
         self.connect('view-created', self.setup_buffer_switching)
 
-    def new_view(self, buf = None):
+    def create_view(self, buf = None):
         if buf:
             view = GtkSource.View.new_with_buffer(buf)
         else:
