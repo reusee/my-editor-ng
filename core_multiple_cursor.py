@@ -8,6 +8,7 @@ class MultipleCursor:
             view.connect('draw', self.draw_selections))
 
         self.emit('bind-command-key', 't', self.select_current_position)
+        self.emit('bind-command-key', ', c', self.clear_selections)
 
     def setup_multiple_cursor(self, buf):
         buf.connect('delete-range', self.on_buffer_delete_range)
@@ -28,6 +29,10 @@ class MultipleCursor:
         end = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
         self.buffer_add_selection(buf, start, end)
 
+    def clear_selections(self, view):
+        buf = view.get_buffer()
+        buf.attr['selections'].clear()
+
     def buffer_add_selection(self, buf, start, end):
         buf.attr['selections'].append(Selection(start, end))
 
@@ -42,7 +47,7 @@ class MultipleCursor:
                 start_rect.x, start_rect.y)
             cr.move_to(x, y)
             cr.set_line_width(2)
-            cr.line_to(x + start_rect.width // 2, y)
+            cr.line_to(x + 6, y)
             cr.stroke()
             cr.move_to(x, y)
             cr.set_line_width(1)
@@ -59,7 +64,7 @@ class MultipleCursor:
             cr.stroke()
             cr.move_to(x, y + end_rect.height)
             cr.set_line_width(2)
-            cr.line_to(x - end_rect.width // 2, y + end_rect.height)
+            cr.line_to(x - 6, y + end_rect.height)
             cr.stroke()
 
 class Selection:
