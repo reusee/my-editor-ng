@@ -9,7 +9,6 @@ from core_text_object import *
 from core_move import *
 from core_edit import *
 from core_status import *
-from core_selection import *
 from core_scroll import *
 from core_layout import *
 from core_file import *
@@ -19,6 +18,7 @@ from core_search import *
 from core_word_collector import *
 from core_mark import *
 from core_completion import *
+from core_multiple_cursor import *
 
 from mod_minimap import *
 from mod_python import *
@@ -34,7 +34,6 @@ class Editor(Gtk.Grid,
     Move,
     Edit,
     Status,
-    Selection,
     Scroll,
     Layout,
     File,
@@ -44,6 +43,7 @@ class Editor(Gtk.Grid,
     WordCollector,
     Mark,
     Completion,
+    MultipleCursor,
     ):
 
     __gsignals__ = {}
@@ -58,7 +58,6 @@ class Editor(Gtk.Grid,
         Move.__init__(self)
         Edit.__init__(self)
         Status.__init__(self)
-        Selection.__init__(self)
         Scroll.__init__(self)
         Layout.__init__(self)
         File.__init__(self)
@@ -68,6 +67,7 @@ class Editor(Gtk.Grid,
         WordCollector.__init__(self)
         Mark.__init__(self)
         Completion.__init__(self)
+        MultipleCursor.__init__(self)
 
         # views
         self.views_grid = Gtk.Grid()
