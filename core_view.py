@@ -66,6 +66,7 @@ class View:
         if index < 0: index = 0
         next_view = self.views[index]
         view.freeze_notify()
+        #TODO destroy gracefully
         scroll.destroy()
         self.switch_to_view(next_view)
 

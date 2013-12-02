@@ -31,10 +31,10 @@ class Main(Gtk.Window):
 
         # buffers
         for filename in sys.argv[1:]:
-            buf = self.editor.new_buffer(filename)
+            buf = self.editor.create_buffer(filename)
             self.editor.load_file(buf, filename)
         if len(sys.argv) == 1:
-            self.editor.new_buffer()
+            self.editor.create_buffer()
 
         # view first buffer
         self.editor.switch_to_buffer(

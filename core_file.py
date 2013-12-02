@@ -38,7 +38,7 @@ class File:
             if b.attr['filename'] == filename:
                 buf = b
         if buf is None:
-            buf = self.new_buffer(filename)
+            buf = self.create_buffer(filename)
             self.load_file(buf, filename)
         # switch to buffer
         if view.get_buffer() != buf:

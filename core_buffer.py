@@ -22,7 +22,7 @@ class Buffer:
         self.emit('bind-command-key', '>', self.switch_next_buffer)
         self.emit('bind-command-key', '<', self.switch_prev_buffer)
 
-    def new_buffer(self, filename = ''):
+    def create_buffer(self, filename = ''):
         if filename: filename = os.path.abspath(filename)
 
         language_manager = GtkSource.LanguageManager.get_default()
@@ -64,7 +64,7 @@ class Buffer:
         self.emit('file-loaded', buf)
 
     def new_buffer_then_view(self, view):
-        buf = self.new_buffer()
+        buf = self.create_buffer()
         self.switch_to_buffer(view, buf)
 
     def close_buffer(self, view):
