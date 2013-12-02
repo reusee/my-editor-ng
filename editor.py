@@ -22,6 +22,7 @@ from core_mark import *
 from core_completion import *
 
 from mod_minimap import *
+from mod_python import *
 from mod_jedi import *
 from mod_vte import *
 
@@ -98,6 +99,7 @@ class Editor(Gtk.Grid,
 
         # extra modules
         #self.minimap = Minimap(self)
+        self.mod_python = ModPython(self)
         #self.jedi = Jedi(self)
         self.vte_module = VteModule(self)
 
