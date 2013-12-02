@@ -219,8 +219,11 @@ class Edit:
         buf = view.get_buffer()
         it = buf.get_iter_at_mark(buf.get_insert())
         end = it.copy()
+        nonspace_deleted = False
         if it.backward_char():
+            if it.get_char() != ' ': nonspace_deleted = True
             buf.delete(it, end)
+        if nonspace_deleted: return
         indent_width = self.default_indent_width
         if 'indent-width' in buf.attr:
             indent_width = buf.attr['indent-width']
