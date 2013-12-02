@@ -14,7 +14,6 @@ class Buffer:
             self.emit('should-redraw')))
 
         self.emit('bind-command-key', ', q', self.close_buffer)
-        self.emit('bind-command-key', ', n', self.new_buffer_then_view)
 
         self.new_signal('file-loaded', (GtkSource.Buffer,))
         self.new_signal('language-detected', (GtkSource.Buffer, str))
@@ -62,10 +61,6 @@ class Buffer:
         buf.place_cursor(buf.get_start_iter())
         buf.set_modified(False)
         self.emit('file-loaded', buf)
-
-    def new_buffer_then_view(self, view):
-        buf = self.create_buffer()
-        self.switch_to_buffer(view, buf)
 
     def close_buffer(self, view):
         buf = view.get_buffer()
