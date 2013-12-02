@@ -13,6 +13,9 @@ class Edit:
     self.emit('bind-command-key', 'p', self.paste)
     self.emit('bind-command-key', ', p', self.paste_at_next_line)
 
+    self.emit('bind-command-key', ', >', self.indent_selection)
+    #self.emit('bind-command-key', ', <', self.dedent_selection)
+
     self.emit('bind-command-key', 'u', self.undo)
     self.emit('bind-command-key', 'Y', self.redo)
 
@@ -154,3 +157,23 @@ class Edit:
     buf.end_user_action()
     self.move_mark(buf, it)
     self.enter_edit_mode()
+
+  def indent_selection(self, view, n):
+    buf = view.get_buffer()
+    if n == 0: n = 1
+    indent_string = ' ' * view.get_indent_width() * n
+    if not buf.get_has_selection(): # select current line
+      it = buf.get_iter_at_mark(buf.get_insert())
+      if not it.starts_line(): it.set_line_offset(0)
+      buf.move_mark(buf.get_selection_bound(), it)
+      if not it.ends_line(): it.forward_to_line_end()
+      buf.move_mark(buf.get_insert(), it)
+    start, end = buf.get_selection_bounds()
+    while start.compare(end) < 0:
+      if not start.starts_line():
+        start.forward_line()
+      if start.compare(end) >= 0: break
+      buf.insert(start, indent_string, -1)
+      _, end = buf.get_selection_bounds()
+    buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
+    self.selection_mode = self.NONE
