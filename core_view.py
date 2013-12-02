@@ -41,7 +41,6 @@ class View:
         view.set_indent_width(self.default_indent_width)
         view.set_insert_spaces_instead_of_tabs(True)
         view.set_smart_home_end(GtkSource.SmartHomeEndType.BEFORE)
-        view.set_highlight_current_line(True)
         view.set_show_line_marks(False)
         view.set_show_line_numbers(True)
         view.set_tab_width(2)

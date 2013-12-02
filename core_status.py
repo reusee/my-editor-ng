@@ -62,7 +62,7 @@ class Status:
         elif self.selection_mode == self.RECT:
             cr.show_text('r')
 
-        # current column
+        # current line and column
         buf = view.get_buffer()
         cursor_rect = view.get_iter_location(buf.get_iter_at_mark(buf.get_insert()))
         if buf.get_modified():
@@ -73,9 +73,14 @@ class Status:
             cr.set_line_width(2)
         else:
             cr.set_line_width(4)
-        x, _ = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET, cursor_rect.x, 0)
+        x, y = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET,
+            cursor_rect.x, cursor_rect.y)
         cr.move_to(x, 0)
         cr.line_to(x, rect.height)
+        cr.stroke()
+        cr.set_line_width(1)
+        cr.move_to(0, y + cursor_rect.height)
+        cr.line_to(rect.width, y + cursor_rect.height)
         cr.stroke()
 
     def setup_relative_line_number(self, view):
