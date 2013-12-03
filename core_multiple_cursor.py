@@ -9,6 +9,10 @@ class MultipleCursor:
 
         self.emit('bind-command-key', 't', self.toggle_selection_mark)
         self.emit('bind-command-key', ', c', self.clear_selections)
+        self.emit('bind-command-key', '{', lambda view:
+            self.jump_selection_mark(view, backward = True))
+        self.emit('bind-command-key', '}', lambda view:
+            self.jump_selection_mark(view, backward = False))
 
     def setup_multiple_cursor(self, buf):
         buf.connect('delete-range', self.on_buffer_delete_range)
@@ -67,6 +71,22 @@ class MultipleCursor:
         start = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
         end = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
         self.buffer_add_selection(buf, start, end)
+
+    def jump_selection_mark(self, view, backward = False):
+        buf = view.get_buffer()
+        offset = buf.get_iter_at_mark(buf.get_insert()).get_offset()
+        mark = None
+        min_diff = 2 ** 32
+        for selection in buf.attr['selections']:
+            diff = buf.get_iter_at_mark(selection.start).get_offset() - offset
+            if backward and diff < 0 and abs(diff) < min_diff:
+                mark = selection.start
+                min_diff = abs(diff)
+            elif not backward and diff > 0 and diff < min_diff:
+                mark = selection.start
+                min_diff = diff
+        if mark:
+            self.move_mark(buf, buf.get_iter_at_mark(mark))
 
     def clear_selections(self, view):
         buf = view.get_buffer()
