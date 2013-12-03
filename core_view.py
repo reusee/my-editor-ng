@@ -69,7 +69,8 @@ class View:
         next_view = self.views[index]
         view.freeze_notify()
         #TODO destroy gracefully
-        scroll.destroy()
+        #scroll.destroy()
+        scroll.get_parent().remove(scroll)
         self.switch_to_view(next_view)
 
     def get_current_view(self):
