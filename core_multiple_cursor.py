@@ -18,8 +18,10 @@ class MultipleCursor:
             self.jump_selection_mark(view, backward = True))
         self.emit('bind-command-key', '}', lambda view:
             self.jump_selection_mark(view, backward = False))
-        self.emit('bind-command-key', ', j',
-            self.place_selection_mark_in_lines)
+        self.emit('bind-command-key', ', j', lambda view, n:
+            self.place_selection_mark_in_lines(view, n))
+        self.emit('bind-command-key', ', k', lambda view, n:
+            self.place_selection_mark_in_lines(view, n, backward = True))
 
     def setup_multiple_cursor(self, buf):
         buf.connect('delete-range', self.on_buffer_delete_range)
@@ -133,9 +135,9 @@ class MultipleCursor:
             cr.line_to(x - 6, y + end_rect.height)
             cr.stroke()
 
-    def place_selection_mark_in_lines(self, view, n):
+    def place_selection_mark_in_lines(self, view, n, backward = False):
         buf = view.get_buffer()
         if n == 0: n = 1
         for _ in range(n):
             self.toggle_selection_mark(view)
-            self.move_line(view, 1)
+            self.move_line(view, 1, backward)
