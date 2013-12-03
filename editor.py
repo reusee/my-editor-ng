@@ -20,6 +20,11 @@ from core_mark import *
 from core_completion import *
 from core_multiple_cursor import *
 
+from core_selection import *
+from core_selection_transform_cursor import *
+from core_selection_transform_range import *
+from core_selection_operation import *
+
 from mod_minimap import *
 from mod_python import *
 from mod_jedi import *
