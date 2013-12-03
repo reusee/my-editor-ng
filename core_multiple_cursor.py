@@ -1,5 +1,10 @@
 from gi.repository import Gtk
 
+class Selection:
+    def __init__(self, start, end):
+        self.start = start # Gtk.TextMark
+        self.end = end
+
 class MultipleCursor:
     def __init__(self):
         self.connect('buffer-created', lambda _, buf:
@@ -13,6 +18,8 @@ class MultipleCursor:
             self.jump_selection_mark(view, backward = True))
         self.emit('bind-command-key', '}', lambda view:
             self.jump_selection_mark(view, backward = False))
+        self.emit('bind-command-key', ', j',
+            self.place_selection_mark_in_lines)
 
     def setup_multiple_cursor(self, buf):
         buf.connect('delete-range', self.on_buffer_delete_range)
@@ -126,7 +133,9 @@ class MultipleCursor:
             cr.line_to(x - 6, y + end_rect.height)
             cr.stroke()
 
-class Selection:
-    def __init__(self, start, end):
-        self.start = start # Gtk.TextMark
-        self.end = end
+    def place_selection_mark_in_lines(self, view, n):
+        buf = view.get_buffer()
+        if n == 0: n = 1
+        for _ in range(n):
+            self.toggle_selection_mark(view)
+            self.move_line(view, 1)
