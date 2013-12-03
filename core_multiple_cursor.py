@@ -14,20 +14,43 @@ class MultipleCursor:
         buf.connect('delete-range', self.on_buffer_delete_range)
         buf.connect('insert-text', self.on_buffer_insert_text)
         buf.attr['selections'] = []
+        buf.attr['skip-insert-delete-signals'] = False
 
     def on_buffer_delete_range(self, buf, start, end):
         if self.operation_mode != self.EDIT: return
-        print('delete', start.get_offset(), end.get_offset())
+        if buf.attr['skip-insert-delete-signals']: return
+        start_mark = buf.create_mark(None, start)
+        end_mark = buf.create_mark(None, end)
+        it = buf.get_iter_at_mark(buf.get_insert())
+        start_offset_offset = start.get_offset() - it.get_offset()
+        end_offset_offset = end.get_offset() - it.get_offset()
+        buf.begin_user_action()
+        buf.attr['skip-insert-delete-signals'] = True
+        for selection in buf.attr['selections']:
+            sel_start = buf.get_iter_at_mark(selection.start)
+            sel_end = buf.get_iter_at_mark(selection.end)
+            sel_start.set_offset(sel_start.get_offset() + start_offset_offset)
+            sel_end.set_offset(sel_end.get_offset() + end_offset_offset)
+            buf.delete(sel_start, sel_end)
+        buf.attr['skip-insert-delete-signals'] = False
+        buf.end_user_action()
+        start.assign(buf.get_iter_at_mark(start_mark))
+        end.assign(buf.get_iter_at_mark(end_mark))
+        buf.delete_mark(start_mark)
+        buf.delete_mark(end_mark)
 
     def on_buffer_insert_text(self, buf, location, text, length):
         if self.operation_mode != self.EDIT: return
+        if buf.attr['skip-insert-delete-signals']: return
         cursor_offset = buf.get_iter_at_mark(buf.get_insert()).get_offset()
         if cursor_offset == location.get_offset():
             m = buf.create_mark(None, location)
             buf.begin_user_action()
+            buf.attr['skip-insert-delete-signals'] = True
             for selection in buf.attr['selections']:
                 it = buf.get_iter_at_mark(selection.start)
                 buf.insert(it, text)
+            buf.attr['skip-insert-delete-signals'] = False
             buf.end_user_action()
             location.assign(buf.get_iter_at_mark(m))
             buf.delete_mark(m)
