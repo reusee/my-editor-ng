@@ -39,10 +39,10 @@ class TextObject:
             }
 
         def define(left, right):
-            handler['i'][left] = lambda view, n: self.text_object_pair(view, n, func, left, right)
-            handler['i'][right] = lambda view, n: self.text_object_pair(view, n, func, left, right)
-            handler['a'][left] = lambda view, n: self.text_object_pair(view, n, func, left, right, around = True)
-            handler['a'][right] = lambda view, n: self.text_object_pair(view, n, func, left, right, around = True)
+            handler['i'][left] = lambda view, n: self.text_object_brackets(view, n, func, left, right)
+            handler['i'][right] = lambda view, n: self.text_object_brackets(view, n, func, left, right)
+            handler['a'][left] = lambda view, n: self.text_object_brackets(view, n, func, left, right, around = True)
+            handler['a'][right] = lambda view, n: self.text_object_brackets(view, n, func, left, right, around = True)
         for left, right in self.BRACKETS.items():
             define(left, right)
 
@@ -206,12 +206,13 @@ class TextObject:
             func(view, start_mark, end_mark)
         buf.end_user_action()
 
-    def text_object_pair(self, view, n ,func, left, right, around = False):
+    @with_multiple_cursor
+    def text_object_brackets(self, view, n ,func, left, right, around = False, start_mark = None, end_mark = None):
         buf = view.get_buffer()
         if n == 0: n = 1
         buf.begin_user_action()
         for _ in range(n):
-            start = buf.get_iter_at_mark(buf.get_insert())
+            start = buf.get_iter_at_mark(end_mark)
             end = start.copy()
 
             balance = 0
@@ -247,7 +248,7 @@ class TextObject:
             if not found: continue
             if around: end.forward_char()
 
-            buf.move_mark(buf.get_selection_bound(), start)
-            buf.move_mark(buf.get_insert(), end)
-            func(view)
+            buf.move_mark(start_mark, start)
+            buf.move_mark(end_mark, end)
+            func(view, start_mark, end_mark)
         buf.end_user_action()
