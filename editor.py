@@ -18,7 +18,6 @@ from core_search import *
 from core_word_collector import *
 from core_mark import *
 from core_completion import *
-from core_multiple_cursor import *
 
 from core_selection import *
 from core_selection_transform_cursor import *
@@ -48,7 +47,7 @@ class Editor(Gtk.Grid,
     WordCollector,
     Mark,
     Completion,
-    MultipleCursor,
+    CoreSelection,
     ):
 
     __gsignals__ = {}
@@ -72,7 +71,7 @@ class Editor(Gtk.Grid,
         WordCollector.__init__(self)
         Mark.__init__(self)
         Completion.__init__(self)
-        MultipleCursor.__init__(self)
+        CoreSelection.__init__(self)
 
         # views
         self.views_grid = Gtk.Grid()
