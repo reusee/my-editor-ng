@@ -36,7 +36,10 @@ class Search:
         pattern = buf.attr['search-pattern']
         if not pattern: return
         content = buf.get_slice(buf.get_start_iter(), buf.get_end_iter(), False)
-        pattern = regex.compile(pattern)
+        try:
+            pattern = regex.compile(pattern)
+        except:
+            return
         start = buf.get_start_iter()
         end = start.copy()
         for m in pattern.finditer(content):
