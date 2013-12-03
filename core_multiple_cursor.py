@@ -7,7 +7,7 @@ class MultipleCursor:
         self.connect('view-created', lambda _, view:
             view.connect('draw', self.draw_selections))
 
-        self.emit('bind-command-key', 't', self.select_current_position)
+        self.emit('bind-command-key', 't', self.toggle_selection_mark)
         self.emit('bind-command-key', ', c', self.clear_selections)
 
     def setup_multiple_cursor(self, buf):
@@ -32,8 +32,15 @@ class MultipleCursor:
             location.assign(buf.get_iter_at_mark(m))
             buf.delete_mark(m)
 
-    def select_current_position(self, view):
+    def toggle_selection_mark(self, view):
         buf = view.get_buffer()
+        it = buf.get_iter_at_mark(buf.get_insert())
+        for selection in buf.attr['selections']:
+            if it.compare(buf.get_iter_at_mark(selection.start)) == 0:
+                buf.delete_mark(selection.start)
+                buf.delete_mark(selection.end)
+                buf.attr['selections'].remove(selection)
+                return
         start = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
         end = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
         self.buffer_add_selection(buf, start, end)
