@@ -109,12 +109,13 @@ class TextObject:
             return lambda ev: wait_second(self, view, ev)
         return wait_first
 
-    def text_object_sibling_line(self, view, n, func, prev = False):
+    @with_multiple_cursor
+    def text_object_sibling_line(self, view, n, func, prev = False, start_mark = None, end_mark = None):
         buf = view.get_buffer()
         if n == 0: n = 1
         buf.begin_user_action()
         for _ in range(n):
-            start = buf.get_iter_at_mark(buf.get_insert())
+            start = buf.get_iter_at_mark(end_mark)
             cur = buf.create_mark(None, start)
             if prev:
                 start.set_line_offset(0)
@@ -124,9 +125,9 @@ class TextObject:
                 start.forward_line()
                 end = start.copy()
                 end.forward_line()
-            buf.move_mark(buf.get_selection_bound(), start)
-            buf.move_mark(buf.get_insert(), end)
-            func(view)
+            buf.move_mark(start_mark, start)
+            buf.move_mark(end_mark, end)
+            func(view, start_mark, end_mark)
             buf.place_cursor(buf.get_iter_at_mark(cur)) # restore position
         buf.end_user_action()
 
