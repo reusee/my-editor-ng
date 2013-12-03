@@ -74,10 +74,10 @@ class Edit:
             buf.attr['copy-mark'] = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
         else:
             buf.move_mark(buf.attr['copy-mark'], buf.get_iter_at_mark(buf.get_insert()))
-        if not self._copy_selection(view):
+        if not self._copy_selection(view, None, None):
             return self.make_text_object_handler(self._copy_selection)
 
-    def _copy_selection(self, view):
+    def _copy_selection(self, view, _start_mark, _end_mark):
         buf = view.get_buffer()
         if buf.get_has_selection():
             buf.copy_clipboard(self.clipboard)
