@@ -1,3 +1,17 @@
+def with_multiple_cursor(func):
+    def f(self, view, *args, **kwargs):
+        buf = view.get_buffer()
+        func(self, view, *args,
+            start_mark = buf.get_selection_bound(),
+            end_mark = buf.get_insert(),
+            **kwargs)
+        for selection in buf.attr['selections']:
+            func(self, view, *args,
+                start_mark = selection.start,
+                end_mark = selection.end,
+                **kwargs)
+    return f
+
 class TextObject:
     def __init__(self):
         pass
@@ -34,39 +48,42 @@ class TextObject:
 
         return handler
 
-    def text_object_current_line(self, view, n, func):
+    @with_multiple_cursor
+    def text_object_current_line(self, view, n, func, start_mark = None, end_mark = None):
         buf = view.get_buffer()
         if n == 0: n = 1
         buf.begin_user_action()
         for _ in range(n):
-            start = buf.get_iter_at_mark(buf.get_insert())
+            start = buf.get_iter_at_mark(end_mark)
             end = start.copy()
             start.set_line_offset(0)
             end.forward_line()
-            buf.move_mark(buf.get_selection_bound(), start)
-            buf.move_mark(buf.get_insert(), end)
-            func(view)
+            print(start.get_offset(), end.get_offset())
+            buf.move_mark(start_mark, start)
+            buf.move_mark(end_mark, end)
+            func(view, start_mark, end_mark)
         buf.end_user_action()
 
     def text_object_to_char(self, view, n, func, to_end = False):
-        def wait_key(ev):
+        @with_multiple_cursor
+        def wait_key(_self, _view, ev, start_mark = None, end_mark = None):
             c = chr(ev.get_keyval()[1])
             buf = view.get_buffer()
             count = n
             if count == 0: count = 1
             buf.begin_user_action()
             for _ in range(count):
-                it = buf.get_iter_at_mark(buf.get_insert())
+                it = buf.get_iter_at_mark(start_mark)
                 line_end_iter = it.copy()
                 line_end_iter.forward_to_line_end()
                 it = it.forward_search(c, 0, line_end_iter)
                 if it:
                     if to_end: it = it[1]
                     else: it = it[0]
-                    buf.move_mark(buf.get_selection_bound(), it)
-                    func(view)
+                    buf.move_mark(end_mark, it)
+                    func(view, start_mark, end_mark)
             buf.end_user_action()
-        return wait_key
+        return lambda ev: wait_key(self, view, ev)
 
     def text_object_to_two_chars(self, view, n, func, to_end = False):
         def wait_first(ev):
