@@ -1,15 +1,15 @@
 def with_multiple_cursor(func):
     def f(self, view, *args, **kwargs):
         buf = view.get_buffer()
-        func(self, view, *args,
-            start_mark = buf.get_selection_bound(),
-            end_mark = buf.get_insert(),
-            **kwargs)
         for selection in buf.attr['selections']:
             func(self, view, *args,
                 start_mark = selection.start,
                 end_mark = selection.end,
                 **kwargs)
+        func(self, view, *args,
+            start_mark = buf.get_selection_bound(),
+            end_mark = buf.get_insert(),
+            **kwargs)
     return f
 
 class TextObject:

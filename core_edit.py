@@ -62,10 +62,11 @@ class Edit:
         else:
             return self.make_text_object_handler(self._change_selection)
 
-    def _change_selection(self, view):
+    def _change_selection(self, view, start_mark, end_mark):
         buf = view.get_buffer()
-        self._delete_selection(view, buf.get_selection_bound(), buf.get_insert())
-        self.enter_edit_mode()
+        self._delete_selection(view, start_mark, end_mark)
+        if start_mark == buf.get_selection_bound():
+            self.enter_edit_mode()
 
     def copy_selection(self, view):
         buf = view.get_buffer()
