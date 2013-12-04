@@ -156,6 +156,16 @@ class CoreSelectionTransform:
                     backward = True),
                 lambda m: self.mark_jump_to_word_edge(m, view, 0)))
 
+        def make_prefix_handler(i):
+            def f():
+                self.n = self.n * 10 + i
+                return self.command_key_handler['.']
+            return f
+
+        for i in range(0, 10):
+            self.emit('bind-command-key', '. ' + str(i),
+                make_prefix_handler(i))
+
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']
 
