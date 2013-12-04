@@ -25,6 +25,6 @@ class Mark:
                 buf = view.get_buffer()
                 mark = buf.attr['bookmarks'].get(val, None)
                 if mark:
-                    self.move_mark(buf, buf.get_iter_at_mark(mark))
+                    buf.place_cursor(buf.get_iter_at_mark(mark))
                 view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
         return wait_key

@@ -92,7 +92,7 @@ class CoreSelection:
                 mark = selection.start
                 min_diff = diff
         if mark:
-            self.move_mark(buf, buf.get_iter_at_mark(mark))
+            buf.place_cursor(buf.get_iter_at_mark(mark))
 
     def clear_selections(self, view):
         buf = view.get_buffer()

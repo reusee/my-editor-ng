@@ -167,7 +167,7 @@ class Edit:
         it.set_line_offset(0)
         while it.get_char().isspace() and not it.ends_line():
             it.forward_char()
-        self.move_mark(buf, it)
+        buf.place_cursor(it)
         self.enter_edit_mode()
 
     def change_from_first_char(self, view):
@@ -181,7 +181,7 @@ class Edit:
         if not line_end.ends_line(): it.forward_to_line_end()
         buf.delete(it, line_end)
         buf.end_user_action()
-        self.move_mark(buf, it)
+        buf.place_cursor(it)
         self.enter_edit_mode()
 
     def indent_selection(self, view, n):

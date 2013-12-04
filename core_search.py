@@ -64,10 +64,9 @@ class Search:
         if backward: func = it.backward_to_tag_toggle
         if func(tag):
             if it.ends_tag(tag):
-                if func(tag):
-                    self.move_mark(buf, it)
+                if func(tag): buf.place_cursor(it)
             else:
-                self.move_mark(buf, it)
+                buf.place_cursor(it)
         view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
 
     def search_current_word(self, view):
