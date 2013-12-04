@@ -49,19 +49,6 @@ class TextObject:
         return handler
 
     @with_multiple_cursor
-    def text_object_to_line_edge(self, view, n, func, backward = False, start_mark = None, end_mark = None):
-        buf = view.get_buffer()
-        if n == 0: n = 1
-        buf.begin_user_action()
-        for _ in range(n):
-            it = buf.get_iter_at_mark(end_mark)
-            if backward: it.set_line_offset(0)
-            else: it.forward_to_line_end()
-            buf.move_mark(start_mark, it)
-            func(view, start_mark, end_mark)
-        buf.end_user_action()
-
-    @with_multiple_cursor
     def text_object_inside_word(self, view, n, func, start_mark = None, end_mark = None):
         buf = view.get_buffer()
         if n == 0: n = 1

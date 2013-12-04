@@ -137,6 +137,15 @@ class CoreSelectionTransform:
                 lambda m: self.mark_jump_to_word_edge(m, view, 0,
                     backward = True),
                 None))
+        self.emit('bind-command-key', '. r', lambda view, n:
+            self.view_get_cursor(view).transform(
+                None,
+                lambda m: self.mark_jump_to_line_end(m, view, 0)))
+        self.emit('bind-command-key', '. R', lambda view, n:
+            self.view_get_cursor(view).transform(
+                lambda m: self.mark_jump_to_line_start_or_nonspace_char(
+                    m, view, n if n != 0 else 1),
+                None))
 
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']
