@@ -44,7 +44,7 @@ class View:
         view.set_show_line_marks(False)
         view.set_show_line_numbers(True)
         view.set_tab_width(2)
-        view.set_wrap_mode(Gtk.WrapMode.NONE)
+        view.set_wrap_mode(Gtk.WrapMode.CHAR)
 
         self.emit('view-created', view)
 

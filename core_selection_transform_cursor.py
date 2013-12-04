@@ -13,9 +13,9 @@ class CoreSelectionTransformCursor:
         for sel in selections:
             it = buf.get_iter_at_mark(sel.start)
             if not backward:
-                for i in range(n): view.forward_display_line(it)
+                for i in range(n): it.forward_line()
             else:
-                for i in range(n): view.backward_display_line(it)
+                for i in range(n): it.backward_line()
             chars_in_line = it.get_chars_in_line() - 1
             offset = buf.attr['preferred-line-offset']
             if offset > chars_in_line: offset = chars_in_line
