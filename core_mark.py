@@ -71,3 +71,15 @@ class CoreMark:
         it = buf.get_iter_at_mark(mark)
         if not it.ends_line(): it.forward_to_line_end()
         buf.move_mark(mark, it)
+
+    def mark_jump_to_empty_line(self, mark, view, n, backward = False):
+        buf = view.get_buffer()
+        it = buf.get_iter_at_mark(mark)
+        if backward: f = it.backward_line
+        else: f = it.forward_line
+        while n > 0:
+            ret = f()
+            while ret and it.get_bytes_in_line() != 1:
+                ret = f()
+            n -= 1
+        buf.move_mark(mark, it)
