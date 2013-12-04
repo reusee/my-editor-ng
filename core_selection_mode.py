@@ -21,7 +21,8 @@ class CoreSelectionMode:
     def enter_none_selection_mode(self, view):
         self.selection_mode = self.NONE
         buf = view.get_buffer()
-        buf.delete_mark(buf.attr['selection-mode-anchor'])
+        if buf.attr['selection-mode-anchor'] is not None:
+            buf.delete_mark(buf.attr['selection-mode-anchor'])
         buf.attr['selection-mode-anchor'] = None
         it = buf.get_iter_at_mark(buf.get_insert())
         buf.place_cursor(it)
