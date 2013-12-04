@@ -155,3 +155,27 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
+    def mark_jump_to_word_edge(self, mark, view, n, backward = False):
+        buf = view.get_buffer()
+        it = buf.get_iter_at_mark(mark)
+        if backward: it.backward_char()
+        at_begin = False
+        while self.is_word_char(it.get_char()):
+            if backward:
+                if not it.backward_char():
+                    at_begin = True
+                    break
+            else:
+                it.forward_char()
+        if backward and not at_begin: it.forward_char()
+        buf.move_mark(mark, it)
+        return it
+
+    def is_word_char(self, c):
+        if not c: return False
+        o = ord(c.lower())
+        if o >= ord('a') and o <= ord('z'): return True
+        if c.isdigit(): return True
+        if c in {'-', '_'}: return True
+        return False
+

@@ -128,6 +128,15 @@ class CoreSelectionTransform:
                     chr(ev1.get_keyval()[1]) + chr(ev2.get_keyval()[1]),
                     backward = True),
                 None))
+        self.emit('bind-command-key', '. w', lambda view, n:
+            self.view_get_cursor(view).transform(
+                None,
+                lambda m: self.mark_jump_to_word_edge(m, view, 0)))
+        self.emit('bind-command-key', '. W', lambda view, n:
+            self.view_get_cursor(view).transform(
+                lambda m: self.mark_jump_to_word_edge(m, view, 0,
+                    backward = True),
+                None))
 
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']

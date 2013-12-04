@@ -49,38 +49,6 @@ class TextObject:
         return handler
 
     @with_multiple_cursor
-    def text_object_to_word_edge(self, view, n, func, backward = False, start_mark = None, end_mark = None):
-        buf = view.get_buffer()
-        if n == 0: n = 1
-        buf.begin_user_action()
-        for _ in range(n):
-            it = buf.get_iter_at_mark(end_mark)
-            self.iter_to_word_edge(it, backward)
-            buf.move_mark(start_mark, it)
-            func(view, start_mark, end_mark)
-        buf.end_user_action()
-
-    def is_word_char(self, c):
-        if not c: return False
-        o = ord(c.lower())
-        if o >= ord('a') and o <= ord('z'): return True
-        if c.isdigit(): return True
-        if c in {'-', '_'}: return True
-        return False
-
-    def iter_to_word_edge(self, it, backward = False):
-        if backward: it.backward_char()
-        at_begin = False
-        while self.is_word_char(it.get_char()):
-            if backward:
-                if not it.backward_char():
-                    at_begin = True
-                    break
-            else:
-                it.forward_char()
-        if backward and not at_begin: it.forward_char()
-
-    @with_multiple_cursor
     def text_object_to_line_edge(self, view, n, func, backward = False, start_mark = None, end_mark = None):
         buf = view.get_buffer()
         if n == 0: n = 1
