@@ -60,6 +60,11 @@ class CoreSelectionTransform:
                 self.mark_jump_to_line_start(
                     m, view, n if n != 0 else 1),
                 True))
+        self.emit('bind-command-key', 'r', lambda view, n:
+            self.view_get_cursor(view).transform(lambda m:
+                self.mark_jump_to_line_end(
+                    m, view, 0),
+                True))
 
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']

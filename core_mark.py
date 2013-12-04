@@ -65,3 +65,9 @@ class CoreMark:
         else:
             it.set_line_offset(0)
         buf.move_mark(mark, it)
+
+    def mark_jump_to_line_end(self, mark, view, n):
+        buf = view.get_buffer()
+        it = buf.get_iter_at_mark(mark)
+        if not it.ends_line(): it.forward_to_line_end()
+        buf.move_mark(mark, it)
