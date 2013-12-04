@@ -14,6 +14,10 @@ class Selection:
             self.end.get_buffer().move_mark(self.end, it)
         elif end_func is not None:
             end_func(self.end)
+        buf = self.start.get_buffer()
+        if buf.attr['queue-operation'] is not None:
+            buf.attr['queue-operation']()
+            buf.attr['queue-operation'] = None
         return self
 
     def get_text(self):
@@ -44,7 +48,8 @@ class CoreSelection:
             view.connect('draw', self.draw_selections))
 
         self.emit('bind-command-key', 't', self.toggle_selection_mark)
-        self.emit('bind-command-key', ', c', self.clear_selections)
+        self.emit('bind-command-key', ', c', lambda view:
+            self.clear_selections(view.get_buffer()))
         self.emit('bind-command-key', '{', lambda view:
             self.jump_selection_mark(view, backward = True))
         self.emit('bind-command-key', '}', lambda view:
@@ -56,6 +61,7 @@ class CoreSelection:
         buf.attr['selections'] = []
         buf.attr['skip-insert-delete-signals'] = False
         buf.attr['cursor'] = Selection(buf.get_selection_bound(), buf.get_insert())
+        buf.attr['queue-operation'] = None
 
     def on_buffer_delete_range(self, buf, start, end):
         if self.operation_mode != self.EDIT: return
@@ -125,8 +131,7 @@ class CoreSelection:
         if mark:
             buf.place_cursor(buf.get_iter_at_mark(mark))
 
-    def clear_selections(self, view):
-        buf = view.get_buffer()
+    def clear_selections(self, buf):
         buf.attr['selections'].clear()
 
     def buffer_add_selection(self, buf, start, end):
