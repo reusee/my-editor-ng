@@ -11,10 +11,10 @@ class CoreSelectionTransformRange:
                 start.set_line_offset(0)
                 end.forward_line()
             else:
-                if backward: start.backward_line()
+                if backward: end.backward_line()
                 else: end.forward_line()
             for _ in range(n):
-                if backward: start.backward_line()
+                if backward: end.backward_line()
                 else: end.forward_line()
             buf.move_mark(sel.start, start)
             buf.move_mark(sel.end, end)
