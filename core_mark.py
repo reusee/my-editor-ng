@@ -24,6 +24,7 @@ class CoreMark:
         buf.attr['freeze'] = True
         buf.move_mark(mark, it)
         buf.attr['freeze'] = False
+        return it
 
     def mark_jump_relative_char(self, mark, view, n, backward = False):
         buf = view.get_buffer()
@@ -33,6 +34,7 @@ class CoreMark:
         else:
             for _ in range(n): it.forward_char()
         buf.move_mark(mark, it)
+        return it
 
     def mark_jump_to_string(self, mark, view, n, s, backward = False):
         buf = view.get_buffer()
@@ -49,12 +51,14 @@ class CoreMark:
                 if res: it = res[0]
                 else: break
         buf.move_mark(mark, it)
+        return it
 
     def mark_jump_to_line_n(self, mark, view, n):
         buf = view.get_buffer()
         it = buf.get_start_iter()
         it.set_line(n - 1)
         buf.move_mark(mark, it)
+        return it
 
     def mark_jump_to_line_start_or_nonspace_char(self, mark, view, n):
         buf = view.get_buffer()
@@ -65,12 +69,14 @@ class CoreMark:
         else:
             it.set_line_offset(0)
         buf.move_mark(mark, it)
+        return it
 
     def mark_jump_to_line_end(self, mark, view, n):
         buf = view.get_buffer()
         it = buf.get_iter_at_mark(mark)
         if not it.ends_line(): it.forward_to_line_end()
         buf.move_mark(mark, it)
+        return it
 
     def mark_jump_to_empty_line(self, mark, view, n, backward = False):
         buf = view.get_buffer()
@@ -83,6 +89,7 @@ class CoreMark:
                 ret = f()
             n -= 1
         buf.move_mark(mark, it)
+        return it
 
     def mark_jump_to_matching_bracket(self, mark, view, n):
         buf = view.get_buffer()
@@ -136,3 +143,15 @@ class CoreMark:
         if not found: return
 
         buf.move_mark(mark, it)
+        return it
+
+    def mark_jump_to_line_start(self, mark, view, n, backward = False):
+        buf = view.get_buffer()
+        it = buf.get_iter_at_mark(mark)
+        if not it.starts_line(): it.set_line_offset(0)
+        for _ in range(n - 1):
+            if backward: it.backward_line()
+            else: it.forward_line()
+        buf.move_mark(mark, it)
+        return it
+
