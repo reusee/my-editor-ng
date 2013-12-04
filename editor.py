@@ -124,3 +124,7 @@ class Editor(Gtk.Grid,
             print([e for e in dir(obj) if pattern in e.lower()])
         else:
             print(dir(obj))
+
+    def chain(self, *funcs):
+        for func in funcs:
+            func()

@@ -10,14 +10,6 @@ class Move:
         self.emit('bind-command-key', '[', lambda view: self.move_to_empty_line(view, backward = True))
         self.emit('bind-command-key', ']', lambda view: self.move_to_empty_line(view))
 
-        self.connect('buffer-created',
-            lambda _, buf: buf.connect('notify::cursor-position',
-              lambda buf, _: self.update_preferred_line_offset(buf)))
-
-    def update_preferred_line_offset(self, buf):
-        if buf.attr.get('freeze', False): return
-        buf.attr['preferred-line-offset'] = buf.get_iter_at_mark(buf.get_insert()).get_line_offset()
-
     def move_mark(self, buf, it):
         if self.selection_mode == self.NONE:
             buf.place_cursor(it)

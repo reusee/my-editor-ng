@@ -12,6 +12,10 @@ class Buffer:
         self.connect('buffer-created', lambda _, buf:
           buf.connect('notify::cursor-position', lambda buf, _:
             self.emit('should-redraw')))
+        self.connect('buffer-created', lambda _, buf:
+            buf.connect('notify::cursor-position', lambda buf, _:
+                self.with_current_view(lambda v: v.scroll_to_mark(
+                    buf.get_insert(), 0, False, 1, 0.5))))
 
         self.emit('bind-command-key', ', q', self.close_buffer)
 

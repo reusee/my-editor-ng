@@ -78,6 +78,10 @@ class View:
             if v.is_focus(): return v
         return None
 
+    def with_current_view(self, func):
+        for v in self.views:
+            if v.is_focus(): return func(v)
+
     def redraw_current_view(self):
         for v in self.views:
             if v.is_focus():
