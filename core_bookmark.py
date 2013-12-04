@@ -1,4 +1,4 @@
-class Mark:
+class Bookmark:
     def __init__(self):
         self.emit('bind-command-key', 'b', self.create_mark)
         self.emit('bind-command-key', "'", self.jump_to_mark)

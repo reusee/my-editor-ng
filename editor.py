@@ -15,10 +15,14 @@ from core_message import *
 from core_formatter import *
 from core_search import *
 from core_word_collector import *
-from core_mark import *
+from core_bookmark import *
 from core_completion import *
 
+from core_iter import *
+
 from core_selection import *
+from core_selection_transform import *
+
 from core_selection_transform_cursor import *
 from core_selection_transform_range import *
 from core_selection_operation import *
@@ -44,9 +48,11 @@ class Editor(Gtk.Grid,
     Formatter,
     Search,
     WordCollector,
-    Mark,
+    Bookmark,
     Completion,
+    CoreIter,
     CoreSelection,
+    CoreSelectionTransform,
     CoreSelectionTransformCursor,
     CoreSelectionTransformRange,
     CoreSelectionOperation,
@@ -71,9 +77,11 @@ class Editor(Gtk.Grid,
         Formatter.__init__(self)
         Search.__init__(self)
         WordCollector.__init__(self)
-        Mark.__init__(self)
+        Bookmark.__init__(self)
         Completion.__init__(self)
+        CoreIter.__init__(self)
         CoreSelection.__init__(self)
+        CoreSelectionTransform.__init__(self)
         CoreSelectionTransformCursor.__init__(self)
         CoreSelectionTransformRange.__init__(self)
         CoreSelectionOperation.__init__(self)
