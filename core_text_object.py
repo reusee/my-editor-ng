@@ -17,27 +17,6 @@ class TextObject:
         pass
 
     def make_text_object_handler(self, func):
-        handler = {
-            'w': lambda view, n: self.text_object_to_word_edge(view, n, func),
-            'W': lambda view, n: self.text_object_to_word_edge(view, n, func, backward = True),
-            'r': lambda view, n: self.text_object_to_line_edge(view, n, func),
-            'R': lambda view, n: self.text_object_to_line_edge(view, n, func, backward = True),
-            'i': {
-              'w': lambda view, n: self.text_object_inside_word(view, n, func),
-              },
-            't': lambda view, n: self.text_object_to_char(view, n, func),
-            'T': lambda view, n: self.text_object_to_two_chars(view, n, func),
-            'a': {
-              },
-            'd': lambda view, n: self.text_object_current_line(view, n, func),
-            'f': lambda view, n: self.text_object_to_char(view, n, func, to_end = True),
-            'F': lambda view, n: self.text_object_to_two_chars(view, n, func, to_end = True),
-            'j': lambda view, n: self.text_object_sibling_line(view, n, func),
-            'k': lambda view, n: self.text_object_sibling_line(view, n, func, prev = True),
-            'h': lambda view, n: self.text_object_sibling_char(view, n, func, prev = True),
-            'l': lambda view, n: self.text_object_sibling_char(view, n, func),
-            }
-
         def define(left, right):
             handler['i'][left] = lambda view, n: self.text_object_brackets(view, n, func, left, right)
             handler['i'][right] = lambda view, n: self.text_object_brackets(view, n, func, left, right)
