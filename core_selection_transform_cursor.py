@@ -24,3 +24,14 @@ class CoreSelectionTransformCursor:
         buf.move_mark(sel.start, it)
         buf.move_mark(sel.end, it)
         buf.attr['freeze'] = False
+
+    def sel_trans_jump_char(self, view, n, selections, backward = False):
+        buf = view.get_buffer()
+        for sel in selections:
+            it = buf.get_iter_at_mark(sel.start)
+            if not backward:
+                for i in range(n): it.forward_char()
+            else:
+                for i in range(n): it.backward_char()
+            buf.move_mark(sel.start, it)
+            buf.move_mark(sel.end, it)

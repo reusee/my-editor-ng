@@ -4,8 +4,6 @@ class Move:
     def __init__(self):
 
         self.emit('bind-command-key', '%', self.move_to_matching_bracket)
-        self.emit('bind-command-key', 'h', lambda view, n: self.move_char(view, n, backward = True))
-        self.emit('bind-command-key', 'l', lambda view, n: self.move_char(view, n))
         self.emit('bind-command-key', 'f', self.make_char_locator())
         self.emit('bind-command-key', 'F', self.make_char_locator(backward = True))
         self.emit('bind-command-key', ';', self.locate_last)
@@ -38,36 +36,6 @@ class Move:
             buf.move_mark(buf.get_insert(), it)
         else:
             buf.move_mark(buf.get_insert(), it)
-
-    def move_line(self, view, n, backward = False):
-        if n == 0: n = 1
-        buf = view.get_buffer()
-        it = buf.get_iter_at_mark(buf.get_insert())
-        if not backward:
-            for i in range(n): view.forward_display_line(it)
-        else:
-            for i in range(n): view.backward_display_line(it)
-        chars_in_line = it.get_chars_in_line() - 1
-        offset = buf.attr['preferred-line-offset']
-        if offset > chars_in_line:
-            offset = chars_in_line
-        if offset >= 0:
-            it.set_line_offset(offset)
-        buf.attr['freeze'] = True
-        self.move_mark(buf, it)
-        view.scroll_mark_onscreen(buf.get_insert())
-        buf.attr['freeze'] = False
-
-    def move_char(self, view, n, backward = False):
-        if n == 0: n = 1
-        buf = view.get_buffer()
-        it = buf.get_iter_at_mark(buf.get_insert())
-        if not backward:
-            for i in range(n): it.forward_char()
-        else:
-            for i in range(n): it.backward_char()
-        self.move_mark(buf, it)
-        view.scroll_mark_onscreen(buf.get_insert())
 
     def locate_last(self, view):
         if 'last_locate_func' in view.attr:

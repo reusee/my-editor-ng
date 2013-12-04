@@ -10,3 +10,11 @@ class CoreSelectionCommands:
             self.sel_trans_jump_line_with_preferred_offset(view,
                 n if n != 0 else 1,
                 [view.get_buffer().attr['cursor']], backward = True))
+        self.emit('bind-command-key', 'h', lambda view, n:
+            self.sel_trans_jump_char(view,
+                n if n != 0 else 1,
+                [view.get_buffer().attr['cursor']], backward = True))
+        self.emit('bind-command-key', 'l', lambda view, n:
+            self.sel_trans_jump_char(view,
+                n if n != 0 else 1,
+                [view.get_buffer().attr['cursor']], backward = False))
