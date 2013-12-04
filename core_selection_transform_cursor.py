@@ -16,14 +16,14 @@ class CoreSelectionTransformCursor:
                 for i in range(n): view.forward_display_line(it)
             else:
                 for i in range(n): view.backward_display_line(it)
-        chars_in_line = it.get_chars_in_line() - 1
-        offset = buf.attr['preferred-line-offset']
-        if offset > chars_in_line: offset = chars_in_line
-        if offset > 0: it.set_line_offset(offset)
-        buf.attr['freeze'] = True
-        buf.move_mark(sel.start, it)
-        buf.move_mark(sel.end, it)
-        buf.attr['freeze'] = False
+            chars_in_line = it.get_chars_in_line() - 1
+            offset = buf.attr['preferred-line-offset']
+            if offset > chars_in_line: offset = chars_in_line
+            if offset >= 0: it.set_line_offset(offset)
+            buf.attr['freeze'] = True
+            buf.move_mark(sel.start, it)
+            buf.move_mark(sel.end, it)
+            buf.attr['freeze'] = False
 
     def sel_trans_jump_char(self, view, n, selections, backward = False):
         buf = view.get_buffer()
