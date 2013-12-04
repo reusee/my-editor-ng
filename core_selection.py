@@ -6,7 +6,8 @@ class Selection:
         self.end = end
 
     def transform(self, start_func, end_func):
-        it = start_func(self.start)
+        if start_func is not None:
+            it = start_func(self.start)
         if end_func is 'func':
             start_func(self.end)
         elif end_func is 'iter':

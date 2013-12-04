@@ -94,6 +94,17 @@ class CoreSelectionTransform:
                 lambda m: self.mark_jump_to_line_start(m, view,
                     n if n != 0 else 1, backward = True),
                 lambda m: self.mark_jump_to_line_start(m, view, 2)))
+        self.emit('bind-command-key', '. f', lambda view, n: lambda ev:
+            self.view_get_cursor(view).transform(
+                None,
+                lambda m: self.mark_jump_to_string(m, view,
+                    n if n != 0 else 1, chr(ev.get_keyval()[1]))))
+        self.emit('bind-command-key', '. F', lambda view, n: lambda ev:
+            self.view_get_cursor(view).transform(
+                lambda m: self.mark_jump_to_string(m, view,
+                    n if n != 0 else 1, chr(ev.get_keyval()[1]),
+                    backward = True),
+                None))
 
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']
