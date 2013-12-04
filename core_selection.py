@@ -14,10 +14,6 @@ class Selection:
             self.end.get_buffer().move_mark(self.end, it)
         elif end_func is not None:
             end_func(self.end)
-        buf = self.start.get_buffer()
-        if buf.attr['queue-operation'] is not None:
-            buf.attr['queue-operation']()
-            buf.attr['queue-operation'] = None
         return self
 
     def get_text(self):
