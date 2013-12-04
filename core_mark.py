@@ -49,3 +49,9 @@ class CoreMark:
                 if res: it = res[0]
                 else: break
         buf.move_mark(mark, it)
+
+    def mark_jump_to_line_n(self, mark, view, n):
+        buf = view.get_buffer()
+        it = buf.get_start_iter()
+        it.set_line(n - 1)
+        buf.move_mark(mark, it)
