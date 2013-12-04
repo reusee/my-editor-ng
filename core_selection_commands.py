@@ -46,3 +46,8 @@ class CoreSelectionCommands:
                     [view.get_buffer().attr['cursor']],
                     chr(ev1.get_keyval()[1]) + chr(ev2.get_keyval()[1]),
                     backward = True))
+
+        self.emit('bind-command-key', 'g g', lambda view, n:
+            self.sel_trans_jump_to_line_n(view,
+                n if n != 0 else 1,
+                [view.get_buffer().attr['cursor']]))
