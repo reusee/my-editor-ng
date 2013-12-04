@@ -7,8 +7,12 @@ class CoreSelectionTransformRange:
         for sel in selections:
             start = buf.get_iter_at_mark(sel.start)
             end = buf.get_iter_at_mark(sel.end)
-            start.set_line_offset(0)
-            end.forward_line()
+            if start.compare(end) == 0:
+                start.set_line_offset(0)
+                end.forward_line()
+            else:
+                if backward: start.backward_line()
+                else: end.forward_line()
             for _ in range(n):
                 if backward: start.backward_line()
                 else: end.forward_line()
