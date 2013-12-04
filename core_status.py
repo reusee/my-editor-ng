@@ -57,8 +57,6 @@ class Status:
         cr.move_to(rect.width / 3 + 50, rect.height / 2 - 50)
         if self.selection_mode == self.CHAR:
             cr.show_text('c')
-        elif self.selection_mode == self.LINE:
-            cr.show_text('l')
         elif self.selection_mode == self.RECT:
             cr.show_text('r')
 

@@ -4,6 +4,7 @@ import os
 from core_modal import *
 from core_buffer import *
 from core_view import *
+from core_selection_mode import *
 from core_defs import *
 from core_text_object import *
 from core_edit import *
@@ -32,6 +33,7 @@ class Editor(Gtk.Grid,
     Modal,
     Buffer,
     View,
+    CoreSelectionMode,
     Defs,
     TextObject,
     Edit,
@@ -58,6 +60,7 @@ class Editor(Gtk.Grid,
         Modal.__init__(self)
         Buffer.__init__(self)
         View.__init__(self)
+        CoreSelectionMode.__init__(self)
         Defs.__init__(self)
         TextObject.__init__(self)
         Edit.__init__(self)

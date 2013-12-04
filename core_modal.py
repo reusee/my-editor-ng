@@ -4,7 +4,7 @@ import inspect
 class Modal:
 
     EDIT, COMMAND = range(2)
-    NONE, CHAR, LINE, RECT = range(4)
+    NONE, CHAR, RECT = range(4)
 
     def __init__(self):
 
@@ -37,9 +37,6 @@ class Modal:
 
         for i in range(0, 10):
             self.emit('bind-command-key', str(i), self.make_number_prefix_handler(i))
-
-        self.emit('bind-command-key', 'v', self.toggle_char_selection)
-        self.emit('bind-command-key', 'V', self.toggle_line_selection)
 
     def handle_key_press(self, view, ev):
         self.emit('key-pressed')
@@ -147,27 +144,3 @@ class Modal:
         self.operation_mode = self.EDIT
         self.key_handler = self.edit_key_handler
         self.emit('entered-edit-mode')
-
-    def toggle_char_selection(self, view):
-        if self.selection_mode != self.CHAR:
-            self.selection_mode = self.CHAR
-        else:
-            self.enter_none_selection_mode(view)
-
-    def toggle_line_selection(self, view):
-        if self.selection_mode != self.LINE:
-            self.selection_mode = self.LINE
-            buf = view.get_buffer()
-            it = buf.get_iter_at_mark(buf.get_insert())
-            it.set_line_offset(0)
-            buf.move_mark(buf.get_selection_bound(), it)
-            it.forward_line()
-            buf.move_mark(buf.get_insert(), it)
-        else:
-            self.enter_none_selection_mode(view)
-
-    def enter_none_selection_mode(self, view):
-        self.selection_mode = self.NONE
-        buf = view.get_buffer()
-        it = buf.get_iter_at_mark(buf.get_insert())
-        buf.place_cursor(it)
