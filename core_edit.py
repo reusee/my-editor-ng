@@ -6,7 +6,6 @@ class Edit:
         self.emit('bind-command-key', 'i', self.enter_edit_mode)
         self.emit('bind-command-key', 'I', self.enter_edit_mode_at_first_char)
 
-        self.emit('bind-command-key', 'c', self.change_selection)
         self.emit('bind-command-key', 'C', self.change_from_first_char)
         self.emit('bind-command-key', 'y', self.copy_selection)
         self.emit('bind-command-key', 'p', self.paste)
@@ -29,20 +28,6 @@ class Edit:
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
         self.edit_key_handler[Gdk.KEY_BackSpace] = self.backspace_with_dedent
-
-    def change_selection(self, view):
-        buf = view.get_buffer()
-        if self._delete_selection(view, buf.get_selection_bound(), buf.get_insert()):
-            self.enter_none_selection_mode(view)
-            self.enter_edit_mode()
-        else:
-            return self.make_text_object_handler(self._change_selection)
-
-    def _change_selection(self, view, start_mark, end_mark):
-        buf = view.get_buffer()
-        self._delete_selection(view, start_mark, end_mark)
-        if start_mark == buf.get_selection_bound():
-            self.enter_edit_mode()
 
     def copy_selection(self, view):
         buf = view.get_buffer()

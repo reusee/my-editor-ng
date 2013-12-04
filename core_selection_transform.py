@@ -109,6 +109,7 @@ class CoreSelectionTransform:
                 None,
                 lambda m: self.mark_jump_to_string(m, view,
                     n if n != 0 else 1, chr(ev.get_keyval()[1]))))
+        self.command_key_handler['.']['t'] = self.command_key_handler['.']['f']
         self.emit('bind-command-key', '. F', lambda view, n: lambda ev:
             self.view_transform_all_selections(view,
                 lambda m: self.mark_jump_to_string(m, view,
