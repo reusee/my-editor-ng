@@ -10,7 +10,7 @@ class CoreSelectionOperation:
             self.clear_selections(buf)
         else:
             buf.attr['queue-operation'] = lambda: self._delete_selection(buf)
-            return self.command_key_handler['.']
+            return self.selection_extend_handler
 
     def _delete_selection(self, buf):
         #TODO copy
@@ -32,8 +32,8 @@ class CoreSelectionOperation:
             self.enter_edit_mode()
         else:
             buf.attr['queue-operation'] = lambda: self._change_selection(buf, view)
-            return self.command_key_handler['.']
-            
+            return self.selection_extend_handler
+
     def _change_selection(self, buf, view):
         self._delete_selection(buf)
         self.enter_none_selection_mode(view)
