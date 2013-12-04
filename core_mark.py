@@ -55,3 +55,13 @@ class CoreMark:
         it = buf.get_start_iter()
         it.set_line(n - 1)
         buf.move_mark(mark, it)
+
+    def mark_jump_to_line_start(self, mark, view, n):
+        buf = view.get_buffer()
+        it = buf.get_iter_at_mark(mark)
+        if it.starts_line():
+            while it.get_char().isspace() and not it.ends_line():
+                it.forward_char()
+        else:
+            it.set_line_offset(0)
+        buf.move_mark(mark, it)

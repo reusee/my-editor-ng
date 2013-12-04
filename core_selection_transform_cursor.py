@@ -1,16 +1,4 @@
 class CoreSelectionTransformCursor:
-    def sel_trans_jump_to_line_start(self, view, n, selections):
-        buf = view.get_buffer()
-        for sel in selections:
-            it = buf.get_iter_at_mark(sel.start)
-            if it.starts_line():
-                while it.get_char().isspace() and not it.ends_line():
-                    it.forward_char()
-            else:
-                it.set_line_offset(0)
-            buf.move_mark(sel.start, it)
-            buf.move_mark(sel.end, it)
-
     def sel_trans_jump_to_line_end(self, view, n, selections):
         buf = view.get_buffer()
         for sel in selections:
