@@ -111,7 +111,7 @@ class Modal:
             f.__dict__['_param_names'] = params
         args = []
         for param in f.__dict__['_param_names']:
-            if param == 'ev': args.append(ev)
+            if param.startswith('ev'): args.append(ev.copy())
             elif param == 'n': args.append(self.n)
             elif param == 'view': args.append(view)
             elif param == 'self': continue
