@@ -61,3 +61,9 @@ class CoreSelectionTransformCursor:
             it.set_line(n - 1)
             buf.move_mark(sel.start, it)
             buf.move_mark(sel.end, it)
+
+    def sel_trans_jump_to_buffer_end(self, view, n, selections):
+        buf = view.get_buffer()
+        for sel in selections:
+            buf.move_mark(sel.start, buf.get_end_iter())
+            buf.move_mark(sel.end, buf.get_end_iter())

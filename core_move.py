@@ -5,7 +5,6 @@ class Move:
 
         self.emit('bind-command-key', '%', self.move_to_matching_bracket)
         self.emit('bind-command-key', ';', self.locate_last)
-        self.emit('bind-command-key', 'G', self.move_to_end)
         self.emit('bind-command-key', 'r', self.move_to_line_end)
         self.emit('bind-command-key', 'R', self.move_to_line_start)
         self.emit('bind-command-key', '[', lambda view: self.move_to_empty_line(view, backward = True))
@@ -35,11 +34,6 @@ class Move:
     def locate_last(self, view):
         if 'last_locate_func' in view.attr:
             view.attr['last_locate_func'](view)
-
-    def move_to_end(self, view):
-        buf = view.get_buffer()
-        self.move_mark(buf, buf.get_end_iter())
-        view.scroll_mark_onscreen(buf.get_insert())
 
     def move_to_line_start(self, view):
         buf = view.get_buffer()
