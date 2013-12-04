@@ -35,3 +35,22 @@ class CoreSelectionTransformCursor:
                 for i in range(n): it.backward_char()
             buf.move_mark(sel.start, it)
             buf.move_mark(sel.end, it)
+
+    def sel_trans_jump_search(self, view, n, selections, s, backward = False):
+        print(s)
+        buf = view.get_buffer()
+        for sel in selections:
+            it = buf.get_iter_at_mark(sel.start)
+            for _ in range(n):
+                if backward:
+                    res = it.backward_search(s, 0, buf.get_start_iter())
+                    if res: it = res[0]
+                    else: break
+                else:
+                    pin = it.copy()
+                    pin.forward_char()
+                    res = pin.forward_search(s, 0, buf.get_end_iter())
+                    if res: it = res[0]
+                    else: break
+            buf.move_mark(sel.start, it)
+            buf.move_mark(sel.end, it)

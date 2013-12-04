@@ -4,11 +4,7 @@ class Move:
     def __init__(self):
 
         self.emit('bind-command-key', '%', self.move_to_matching_bracket)
-        self.emit('bind-command-key', 'f', self.make_char_locator())
-        self.emit('bind-command-key', 'F', self.make_char_locator(backward = True))
         self.emit('bind-command-key', ';', self.locate_last)
-        self.emit('bind-command-key', 's', lambda view: self.make_two_char_locator(view))
-        self.emit('bind-command-key', 'S', lambda view: self.make_two_char_locator(view, backward = True))
         self.emit('bind-command-key', 'g g', self.move_to_line)
         self.emit('bind-command-key', 'G', self.move_to_end)
         self.emit('bind-command-key', 'r', self.move_to_line_end)
@@ -40,57 +36,6 @@ class Move:
     def locate_last(self, view):
         if 'last_locate_func' in view.attr:
             view.attr['last_locate_func'](view)
-
-    def locate_search(self, view, s, backward = False):
-        buf = view.get_buffer()
-        it = buf.get_iter_at_mark(buf.get_insert())
-        orig = it.copy()
-        if backward:
-            it = it.backward_search(s, 0, buf.get_start_iter())
-        else:
-            it.forward_char()
-            it = it.forward_search(s, 0, buf.get_end_iter())
-        if it:
-            self.move_mark(buf, it[0])
-            view.scroll_mark_onscreen(buf.get_insert())
-            return True
-        else:
-            self.move_mark(buf, orig)
-
-    def make_char_locator(self, backward = False):
-        handler = {}
-        def make(c):
-            if backward:
-                def f(view):
-                    if self.locate_search(view, c, backward = True):
-                        view.attr['last_locate_func'] = f
-                return f
-            else:
-                def f(view):
-                    if self.locate_search(view, c):
-                        view.attr['last_locate_func'] = f
-                return f
-        for i in range(0x20, 0x7F):
-            handler[chr(i)] = make(chr(i))
-        return handler
-
-    def make_two_char_locator(self, view, backward = False):
-        def step1(ev):
-            s1 = chr(ev.get_keyval()[1])
-            def step2(ev):
-                s = s1 + chr(ev.get_keyval()[1])
-                if backward:
-                    def f(view):
-                        if self.locate_search(view, s, backward = True):
-                            view.attr['last_locate_func'] = f
-                    f(view)
-                else:
-                    def f(view):
-                        if self.locate_search(view, s):
-                            view.attr['last_locate_func'] = f
-                    f(view)
-            return step2
-        return step1
 
     def move_to_line(self, view, n):
         buf = view.get_buffer()
