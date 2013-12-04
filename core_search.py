@@ -112,6 +112,7 @@ class SearchEntry(Gtk.Entry):
             if val == Gdk.KEY_Escape:
                 self.view.scroll_to_mark(self.view.get_buffer().get_insert(), 0, True, 1, 0.5)
             else:
+                self.update(None, None)
                 self.emit('done')
             self.hide()
             self.view.grab_focus()
