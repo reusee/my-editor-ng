@@ -48,52 +48,6 @@ class TextObject:
 
         return handler
 
-    def text_object_to_two_chars(self, view, n, func, to_end = False):
-        def wait_first(ev):
-            c = chr(ev.get_keyval()[1])
-            @with_multiple_cursor
-            def wait_second(_self, _view, ev, start_mark = None, end_mark = None):
-                s = c + chr(ev.get_keyval()[1])
-                buf = view.get_buffer()
-                count = n
-                if count == 0: count = 1
-                buf.begin_user_action()
-                for _ in range(count):
-                    it = buf.get_iter_at_mark(end_mark)
-                    line_end_iter = it.copy()
-                    line_end_iter.forward_to_line_end()
-                    it = it.forward_search(s, 0, line_end_iter)
-                    if it:
-                        if to_end: it = it[1]
-                        else: it = it[0]
-                        buf.move_mark(start_mark, it)
-                        func(view, start_mark, end_mark)
-                buf.end_user_action()
-            return lambda ev: wait_second(self, view, ev)
-        return wait_first
-
-    @with_multiple_cursor
-    def text_object_sibling_line(self, view, n, func, prev = False, start_mark = None, end_mark = None):
-        buf = view.get_buffer()
-        if n == 0: n = 1
-        buf.begin_user_action()
-        for _ in range(n):
-            start = buf.get_iter_at_mark(end_mark)
-            cur = buf.create_mark(None, start)
-            if prev:
-                start.set_line_offset(0)
-                end = start.copy()
-                end.backward_line()
-            else:
-                start.forward_line()
-                end = start.copy()
-                end.forward_line()
-            buf.move_mark(start_mark, start)
-            buf.move_mark(end_mark, end)
-            func(view, start_mark, end_mark)
-            buf.place_cursor(buf.get_iter_at_mark(cur)) # restore position
-        buf.end_user_action()
-
     @with_multiple_cursor
     def text_object_sibling_char(self, view, n, func, prev = False, start_mark = None, end_mark = None):
         buf = view.get_buffer()
