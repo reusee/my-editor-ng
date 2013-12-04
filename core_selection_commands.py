@@ -72,3 +72,7 @@ class CoreSelectionCommands:
                 n if n != 0 else 1,
                 [view.get_buffer().attr['cursor']],
                 backward = False))
+        self.emit('bind-command-key', '%', lambda view, n:
+            self.sel_trans_jump_matching_bracket(view,
+                n if n != 0 else 1,
+                [view.get_buffer().attr['cursor']]))
