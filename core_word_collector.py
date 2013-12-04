@@ -75,13 +75,6 @@ class WordCollector:
             buf.move_mark(buf.attr['word-end'], end_iter)
             buf.move_mark(buf.attr['word-start'], start_iter)
 
-    def is_word_char(self, c):
-        od = ord(c.lower())
-        if od >= ord('a') and od <= ord('z'): return True
-        if c.isdigit(): return True
-        if c in {'-', '_'}: return True
-        return False
-
     def collect_file_words(self, _, buf):
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
         words = re.findall('[a-zA-Z0-9-_]+', text)

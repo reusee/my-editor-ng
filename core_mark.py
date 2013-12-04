@@ -170,12 +170,3 @@ class CoreMark:
         if backward and not at_begin: it.forward_char()
         buf.move_mark(mark, it)
         return it
-
-    def is_word_char(self, c):
-        if not c: return False
-        o = ord(c.lower())
-        if o >= ord('a') and o <= ord('z'): return True
-        if c.isdigit(): return True
-        if c in {'-', '_'}: return True
-        return False
-
