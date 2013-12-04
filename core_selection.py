@@ -24,6 +24,7 @@ class CoreSelection:
         buf.connect('insert-text', self.on_buffer_insert_text)
         buf.attr['selections'] = []
         buf.attr['skip-insert-delete-signals'] = False
+        buf.attr['cursor'] = Selection(buf.get_selection_bound(), buf.get_insert())
 
     def on_buffer_delete_range(self, buf, start, end):
         if self.operation_mode != self.EDIT: return

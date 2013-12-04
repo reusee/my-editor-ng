@@ -23,6 +23,7 @@ from core_selection import *
 from core_selection_transform_cursor import *
 from core_selection_transform_range import *
 from core_selection_operation import *
+from core_selection_commands import *
 
 from mod_minimap import *
 from mod_python import *
@@ -48,6 +49,9 @@ class Editor(Gtk.Grid,
     Mark,
     Completion,
     CoreSelection,
+    CoreSelectionTransformCursor,
+    CoreSelectionOperation,
+    CoreSelectionCommands
     ):
 
     __gsignals__ = {}
@@ -72,6 +76,9 @@ class Editor(Gtk.Grid,
         Mark.__init__(self)
         Completion.__init__(self)
         CoreSelection.__init__(self)
+        CoreSelectionTransformCursor.__init__(self)
+        CoreSelectionOperation.__init__(self)
+        CoreSelectionCommands.__init__(self)
 
         # views
         self.views_grid = Gtk.Grid()

@@ -4,8 +4,6 @@ class Move:
     def __init__(self):
 
         self.emit('bind-command-key', '%', self.move_to_matching_bracket)
-        self.emit('bind-command-key', 'j', lambda view, n: self.move_line(view, n))
-        self.emit('bind-command-key', 'k', lambda view, n: self.move_line(view, n, backward = True))
         self.emit('bind-command-key', 'h', lambda view, n: self.move_char(view, n, backward = True))
         self.emit('bind-command-key', 'l', lambda view, n: self.move_char(view, n))
         self.emit('bind-command-key', 'f', self.make_char_locator())
