@@ -5,6 +5,13 @@ class Selection:
         self.start = start # Gtk.TextMark
         self.end = end
 
+    def transform(self, start_func, end_func):
+        start_func(self.start)
+        if end_func is True:
+            start_func(self.end)
+        else:
+            end_func(self.end)
+
 class CoreSelection:
     def __init__(self):
         self.connect('buffer-created', lambda _, buf:

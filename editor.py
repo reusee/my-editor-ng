@@ -18,7 +18,7 @@ from core_word_collector import *
 from core_bookmark import *
 from core_completion import *
 
-from core_iter import *
+from core_mark import *
 
 from core_selection import *
 from core_selection_transform import *
@@ -50,7 +50,7 @@ class Editor(Gtk.Grid,
     WordCollector,
     Bookmark,
     Completion,
-    CoreIter,
+    CoreMark,
     CoreSelection,
     CoreSelectionTransform,
     CoreSelectionTransformCursor,
@@ -79,7 +79,7 @@ class Editor(Gtk.Grid,
         WordCollector.__init__(self)
         Bookmark.__init__(self)
         Completion.__init__(self)
-        CoreIter.__init__(self)
+        CoreMark.__init__(self)
         CoreSelection.__init__(self)
         CoreSelectionTransform.__init__(self)
         CoreSelectionTransformCursor.__init__(self)
