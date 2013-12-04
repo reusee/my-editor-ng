@@ -6,7 +6,6 @@ class Edit:
         self.emit('bind-command-key', 'i', self.enter_edit_mode)
         self.emit('bind-command-key', 'I', self.enter_edit_mode_at_first_char)
 
-        self.emit('bind-command-key', 'd', self.delete_selection)
         self.emit('bind-command-key', 'c', self.change_selection)
         self.emit('bind-command-key', 'C', self.change_from_first_char)
         self.emit('bind-command-key', 'y', self.copy_selection)
@@ -30,29 +29,6 @@ class Edit:
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
         self.edit_key_handler[Gdk.KEY_BackSpace] = self.backspace_with_dedent
-
-    def delete_selection(self, view):
-        buf = view.get_buffer()
-        if self._delete_selection(view, buf.get_selection_bound(), buf.get_insert()):
-            self.enter_none_selection_mode(view)
-        else:
-            return self.make_text_object_handler(self._delete_selection)
-
-    def _delete_selection(self, view, start_mark, end_mark):
-        buf = view.get_buffer()
-        start_iter = buf.get_iter_at_mark(start_mark)
-        end_iter = buf.get_iter_at_mark(end_mark)
-        current_mark = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
-        if start_iter.get_offset() - end_iter.get_offset() != 0: # has selection
-            buf.begin_user_action()
-            buf.move_mark(buf.get_selection_bound(), start_iter)
-            buf.move_mark(buf.get_insert(), end_iter)
-            buf.copy_clipboard(self.clipboard)
-            buf.delete_selection(True, True)
-            buf.place_cursor(buf.get_iter_at_mark(current_mark))
-            buf.delete_mark(current_mark)
-            buf.end_user_action()
-            return True
 
     def change_selection(self, view):
         buf = view.get_buffer()
