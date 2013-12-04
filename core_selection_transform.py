@@ -176,6 +176,6 @@ class CoreSelectionTransform:
         for sel in buf.attr['selections']:
             sel.transform(start_func, end_func)
         buf.attr['cursor'].transform(start_func, end_func)
-        if buf.attr['queue-operation'] is not None:
-            buf.attr['queue-operation']()
-            buf.attr['queue-operation'] = None
+        if buf.attr['delayed-selection-operation'] is not None:
+            buf.attr['delayed-selection-operation']()
+            buf.attr['delayed-selection-operation'] = None

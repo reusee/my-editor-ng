@@ -9,7 +9,7 @@ class CoreSelectionOperation:
             self.enter_none_selection_mode(view)
             self.clear_selections(buf)
         else:
-            buf.attr['queue-operation'] = lambda: self._delete_selection(buf)
+            buf.attr['delayed-selection-operation'] = lambda: self._delete_selection(buf)
             return self.selection_extend_handler
 
     def _delete_selection(self, buf):
@@ -31,7 +31,7 @@ class CoreSelectionOperation:
             self.enter_none_selection_mode(view)
             self.enter_edit_mode()
         else:
-            buf.attr['queue-operation'] = lambda: self._change_selection(buf, view)
+            buf.attr['delayed-selection-operation'] = lambda: self._change_selection(buf, view)
             return self.selection_extend_handler
 
     def _change_selection(self, buf, view):
