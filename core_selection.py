@@ -14,6 +14,27 @@ class Selection:
             self.end.get_buffer().move_mark(self.end, it)
         elif end_func is not None:
             end_func(self.end)
+        return self
+
+    def get_text(self):
+        buf = self.start.get_buffer()
+        return buf.get_text(
+            buf.get_iter_at_mark(self.start),
+            buf.get_iter_at_mark(self.end), False)
+
+    def with_copy(self, func):
+        buf = self.start.get_buffer()
+        sel = Selection(
+            buf.create_mark(None, buf.get_iter_at_mark(self.start)),
+            buf.create_mark(None, buf.get_iter_at_mark(self.end)))
+        ret = func(sel)
+        sel.delete()
+        return ret
+
+    def delete(self):
+        buf = self.start.get_buffer()
+        buf.delete_mark(self.start)
+        buf.delete_mark(self.end)
 
 class CoreSelection:
     def __init__(self):
