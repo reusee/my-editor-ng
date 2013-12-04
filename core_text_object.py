@@ -49,21 +49,6 @@ class TextObject:
         return handler
 
     @with_multiple_cursor
-    def text_object_sibling_char(self, view, n, func, prev = False, start_mark = None, end_mark = None):
-        buf = view.get_buffer()
-        if n == 0: n = 1
-        buf.begin_user_action()
-        for _ in range(n):
-            it = buf.get_iter_at_mark(end_mark)
-            if prev:
-                it.backward_char()
-            else:
-                it.forward_char()
-            buf.move_mark(start_mark, it)
-            func(view, start_mark, end_mark)
-        buf.end_user_action()
-
-    @with_multiple_cursor
     def text_object_to_word_edge(self, view, n, func, backward = False, start_mark = None, end_mark = None):
         buf = view.get_buffer()
         if n == 0: n = 1

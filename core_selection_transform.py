@@ -94,6 +94,16 @@ class CoreSelectionTransform:
                 lambda m: self.mark_jump_to_line_start(m, view,
                     n if n != 0 else 1, backward = True),
                 lambda m: self.mark_jump_to_line_start(m, view, 2)))
+        self.emit('bind-command-key', '. h', lambda view, n:
+            self.view_get_cursor(view).transform(
+                lambda m: self.mark_jump_relative_char(m, view,
+                    n if n != 0 else 1, backward = True),
+                None))
+        self.emit('bind-command-key', '. l', lambda view, n:
+            self.view_get_cursor(view).transform(
+                None,
+                lambda m: self.mark_jump_relative_char(m, view,
+                    n if n != 0 else 1)))
         self.emit('bind-command-key', '. f', lambda view, n: lambda ev:
             self.view_get_cursor(view).transform(
                 None,
