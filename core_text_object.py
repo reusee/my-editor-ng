@@ -49,21 +49,6 @@ class TextObject:
         return handler
 
     @with_multiple_cursor
-    def text_object_inside_word(self, view, n, func, start_mark = None, end_mark = None):
-        buf = view.get_buffer()
-        if n == 0: n = 1
-        buf.begin_user_action()
-        for _ in range(n):
-            start = buf.get_iter_at_mark(end_mark)
-            end = start.copy()
-            self.iter_to_word_edge(start, backward = True)
-            self.iter_to_word_edge(end)
-            buf.move_mark(start_mark, start)
-            buf.move_mark(end_mark, end)
-            func(view, start_mark, end_mark)
-        buf.end_user_action()
-
-    @with_multiple_cursor
     def text_object_brackets(self, view, n ,func, left, right, around = False, start_mark = None, end_mark = None):
         buf = view.get_buffer()
         if n == 0: n = 1
