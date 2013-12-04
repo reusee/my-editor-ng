@@ -75,6 +75,11 @@ class CoreSelectionTransform:
                 self.mark_jump_to_empty_line(
                     m, view, n if n != 0 else 1),
                 True))
+        self.emit('bind-command-key', '%', lambda view, n:
+            self.view_get_cursor(view).transform(lambda m:
+                self.mark_jump_to_matching_bracket(
+                    m, view, 0),
+                True))
 
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']

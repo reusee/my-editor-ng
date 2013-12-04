@@ -23,7 +23,6 @@ from core_mark import *
 from core_selection import *
 from core_selection_transform import *
 
-from core_selection_transform_cursor import *
 from core_selection_transform_range import *
 from core_selection_operation import *
 from core_selection_commands import *
@@ -53,7 +52,6 @@ class Editor(Gtk.Grid,
     CoreMark,
     CoreSelection,
     CoreSelectionTransform,
-    CoreSelectionTransformCursor,
     CoreSelectionTransformRange,
     CoreSelectionOperation,
     CoreSelectionCommands
@@ -82,7 +80,6 @@ class Editor(Gtk.Grid,
         CoreMark.__init__(self)
         CoreSelection.__init__(self)
         CoreSelectionTransform.__init__(self)
-        CoreSelectionTransformCursor.__init__(self)
         CoreSelectionTransformRange.__init__(self)
         CoreSelectionOperation.__init__(self)
         CoreSelectionCommands.__init__(self)
