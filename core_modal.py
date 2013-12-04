@@ -4,7 +4,7 @@ import inspect
 class Modal:
 
     EDIT, COMMAND = range(2)
-    NONE, CHAR, RECT = range(4)
+    NONE, CHAR, RECT = range(3)
 
     def __init__(self):
 
