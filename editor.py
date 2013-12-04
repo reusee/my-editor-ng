@@ -48,6 +48,7 @@ class Editor(Gtk.Grid,
     Completion,
     CoreSelection,
     CoreSelectionTransformCursor,
+    CoreSelectionTransformRange,
     CoreSelectionOperation,
     CoreSelectionCommands
     ):
@@ -74,6 +75,7 @@ class Editor(Gtk.Grid,
         Completion.__init__(self)
         CoreSelection.__init__(self)
         CoreSelectionTransformCursor.__init__(self)
+        CoreSelectionTransformRange.__init__(self)
         CoreSelectionOperation.__init__(self)
         CoreSelectionCommands.__init__(self)
 
