@@ -62,3 +62,13 @@ class CoreSelectionCommands:
             self.sel_trans_jump_to_line_end(view,
                 n if n != 0 else 1,
                 [view.get_buffer().attr['cursor']]))
+        self.emit('bind-command-key', '[', lambda view, n:
+            self.sel_trans_jump_to_empty_line(view,
+                n if n != 0 else 1,
+                [view.get_buffer().attr['cursor']],
+                backward = True))
+        self.emit('bind-command-key', ']', lambda view, n:
+            self.sel_trans_jump_to_empty_line(view,
+                n if n != 0 else 1,
+                [view.get_buffer().attr['cursor']],
+                backward = False))

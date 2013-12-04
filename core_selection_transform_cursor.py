@@ -87,3 +87,17 @@ class CoreSelectionTransformCursor:
             if not it.ends_line(): it.forward_to_line_end()
             buf.move_mark(sel.start, it)
             buf.move_mark(sel.end, it)
+
+    def sel_trans_jump_to_empty_line(self, view, n, selections, backward = False):
+        buf = view.get_buffer()
+        for sel in selections:
+            it = buf.get_iter_at_mark(sel.start)
+            if backward: f = it.backward_line
+            else: f = it.forward_line
+            while n > 0:
+                ret = f()
+                while ret and it.get_bytes_in_line() != 1:
+                    ret = f()
+                n -= 1
+            buf.move_mark(sel.start, it)
+            buf.move_mark(sel.end, it)
