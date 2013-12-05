@@ -64,6 +64,7 @@ class Edit:
                 return False
             self.enter_none_selection_mode(view)
             self.clear_selections(buf)
+            return True
         if not func():
             buf.attr['delayed-selection-operation'] = func
             return self.selection_extend_handler
