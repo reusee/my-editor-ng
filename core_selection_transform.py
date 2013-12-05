@@ -207,24 +207,23 @@ class CoreSelectionTransform:
             self.selection_extend_handler[str(i)] = make_prefix_handler(i)
 
         # brackets in selection extend
-        def make_inside_expander(c):
-            def f(view, n):
-                print(c)
-            return f
-        def make_around_expander(c):
-            def f(view, n):
-                print(c)
+        def make_expander(left, right, around):
+            def f(view):
+                self.view_transform_all_selections(view,
+                    (self.selection_brackets_expand,
+                        view.get_buffer(), left, right),
+                    'single')
             return f
         for left, right in self.BRACKETS.items():
             self.emit('bind-command-key', '. i ' + left,
-                make_inside_expander(left))
+                make_expander(left, right, False))
             self.emit('bind-command-key', '. a ' + left,
-                make_around_expander(left))
+                make_expander(left, right, True))
             if right == left: continue
             self.emit('bind-command-key', '. i ' + right,
-                make_inside_expander(right))
+                make_expander(left, right, False))
             self.emit('bind-command-key', '. a ' + right,
-                make_around_expander(right))
+                make_expander(left, right, True))
 
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']
@@ -242,3 +241,44 @@ class CoreSelectionTransform:
         buf = view.get_buffer()
         last_transform = buf.attr['last-transform']
         self.view_transform_all_selections(view, *last_transform)
+
+    def selection_brackets_expand(self, sel, buf, left, right,
+        around = False):
+        start = buf.get_iter_at_mark(sel.end)
+        end = start.copy()
+
+        balance = 0
+        start.backward_char()
+        found = False
+        while True:
+            c = start.get_char()
+            if c == left and balance == 0:
+                found = True
+                break
+            elif c == left:
+                balance -= 1
+            elif c == right:
+                balance += 1
+            if not start.backward_char():
+                break
+        if not found: return
+        if not around: start.forward_char()
+
+        balance = 0
+        found = False
+        while True:
+            c = end.get_char()
+            if c == right and balance == 0:
+                found = True
+                break
+            elif c == right:
+                balance -= 1
+            elif c == left:
+                balance += 1
+            if not end.forward_char():
+                break
+        if not found: return
+        if around: end.forward_char()
+
+        buf.move_mark(sel.start, start)
+        buf.move_mark(sel.end, end)
