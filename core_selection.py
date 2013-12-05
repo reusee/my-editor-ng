@@ -11,7 +11,8 @@ class Selection:
         if end_func is 'func':
             start_func(self.end)
         elif end_func is 'iter':
-            self.end.get_buffer().move_mark(self.end, it)
+            buf = self.end.get_buffer()
+            buf.move_mark(self.end, it)
         elif end_func is not None:
             end_func(self.end)
         return self
