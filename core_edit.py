@@ -124,13 +124,13 @@ class Edit:
 
     def append_current_line(self, view):
         self.view_get_cursor(view).transform(
-            lambda m: self.mark_jump_to_line_end(m, view, 0),
+            (self.mark_jump_to_line_end, view, 0),
             'iter')
         self.enter_edit_mode()
 
     def append_current_pos(self, view):
         self.view_get_cursor(view).transform(
-            lambda m: self.mark_jump_relative_char(m, view, 1),
+            (self.mark_jump_relative_char, view, 1),
             'iter')
         self.enter_edit_mode()
 

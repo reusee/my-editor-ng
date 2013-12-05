@@ -4,17 +4,19 @@ class Selection:
     def __init__(self, start, end):
         self.start = start # Gtk.TextMark
         self.end = end
+        self.buf = start.get_buffer()
 
     def transform(self, start_func, end_func):
+        self.buf.attr['current-transform'] = (start_func, end_func)
         if start_func is not None:
-            it = start_func(self.start)
-        if end_func is 'func':
-            start_func(self.end)
-        elif end_func is 'iter':
-            buf = self.end.get_buffer()
-            buf.move_mark(self.end, it)
+            it = start_func[0](self.start, *start_func[1:])
+        if end_func == 'func':
+            start_func[0](self.end, *start_func[1:])
+        elif end_func == 'iter':
+            self.end.get_buffer().move_mark(self.end, it)
         elif end_func is not None:
-            end_func(self.end)
+            end_func[0](self.end, *end_func[1:])
+        self.buf.attr['last-transform'] = (start_func, end_func)
         return self
 
     def get_text(self):
@@ -61,6 +63,8 @@ class CoreSelection:
         buf.attr['skip-insert-delete-signals'] = False
         buf.attr['cursor'] = Selection(buf.get_selection_bound(), buf.get_insert())
         buf.attr['delayed-selection-operation'] = None
+        buf.attr['current-transform'] = None
+        buf.attr['last-transform'] = None
 
     def on_buffer_delete_range(self, buf, start, end):
         if self.operation_mode != self.EDIT: return
@@ -168,7 +172,6 @@ class CoreSelection:
         if n == 0: n = 1
         for _ in range(n):
             self.toggle_selection_mark(view)
-            cursor.transform(lambda m:
-                self.mark_jump_relative_line_with_preferred_offset(
-                    m, view, 1),
+            cursor.transform(
+                (self.mark_jump_relative_line_with_preferred_offset, view, 1),
                 'iter')

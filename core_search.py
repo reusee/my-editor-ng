@@ -75,10 +75,9 @@ class Search:
         end = start.copy()
         buf.attr['search-pattern'] = buf.attr['cursor'].with_copy(
             lambda se: se.transform(
-                lambda m: self.mark_jump_to_word_edge(m, view, 0,
-                    backward = True),
-                lambda m: self.mark_jump_to_word_edge(m, view, 0)
-                ).get_text())
+                (self.mark_jump_to_word_edge, view, 0, True),
+                (self.mark_jump_to_word_edge, view, 0))
+                .get_text())
         self.update_search_result(buf)
 
 class SearchEntry(Gtk.Entry):

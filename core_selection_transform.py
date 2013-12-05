@@ -3,113 +3,115 @@ class CoreSelectionTransform:
 
         # cursor moves
         self.emit('bind-command-key', 'j', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_relative_line_with_preferred_offset(
-                    m, view, n if n != 0 else 1),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_relative_line_with_preferred_offset,
+                    view, n if n != 0 else 1),
                 'iter'))
         self.emit('bind-command-key', 'k', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_relative_line_with_preferred_offset(
-                    m, view, n if n != 0 else 1, backward = True),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_relative_line_with_preferred_offset,
+                    view, n if n != 0 else 1, True),
                 'iter'))
         self.emit('bind-command-key', 'l', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_relative_char(
-                    m, view, n if n != 0 else 1),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_relative_char,
+                    view, n if n != 0 else 1),
                 'iter'))
         self.emit('bind-command-key', 'h', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_relative_char(
-                    m, view, n if n != 0 else 1, backward = True),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_relative_char,
+                    view, n if n != 0 else 1, True),
                 'iter'))
         self.emit('bind-command-key', 'f', lambda view, n: lambda ev:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_string(
-                    m, view, n if n != 0 else 1, chr(ev.get_keyval()[1])),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_string,
+                    view, n if n != 0 else 1, chr(ev.get_keyval()[1])),
                 'iter'))
         self.emit('bind-command-key', 'F', lambda view, n: lambda ev:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_string(
-                    m, view, n if n != 0 else 1, chr(ev.get_keyval()[1]),
-                    backward = True),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_string,
+                    view, n if n != 0 else 1, chr(ev.get_keyval()[1]),
+                    True),
                 'iter'))
         self.emit('bind-command-key', 's', lambda view, n:
             lambda ev1: lambda ev2:
-                self.view_get_cursor(view).transform(lambda m:
-                    self.mark_jump_to_string(m, view, n if n != 0 else 1,
+                self.view_get_cursor(view).transform(
+                    (self.mark_jump_to_string,
+                        view, n if n != 0 else 1,
                         chr(ev1.get_keyval()[1]) +
                         chr(ev2.get_keyval()[1])),
                     'iter'))
         self.emit('bind-command-key', 'S', lambda view, n:
             lambda ev1: lambda ev2:
-                self.view_get_cursor(view).transform(lambda m:
-                    self.mark_jump_to_string(m, view, n if n != 0 else 1,
+                self.view_get_cursor(view).transform(
+                    (self.mark_jump_to_string,
+                        view, n if n != 0 else 1,
                         chr(ev1.get_keyval()[1]) +
-                        chr(ev2.get_keyval()[1]), backward = True),
+                        chr(ev2.get_keyval()[1]), True),
                     'iter'))
         self.emit('bind-command-key', 'g g', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_line_n(
-                    m, view, n if n != 0 else 1),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_line_n,
+                    view, n if n != 0 else 1),
                 'iter'))
         self.emit('bind-command-key', 'G', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_line_n(
-                    m, view, view.get_buffer().get_line_count()),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_line_n,
+                    view, view.get_buffer().get_line_count()),
                 'iter'))
         self.emit('bind-command-key', 'R', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_line_start_or_nonspace_char(
-                    m, view, n if n != 0 else 1),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_line_start_or_nonspace_char,
+                    view, n if n != 0 else 1),
                 'iter'))
         self.emit('bind-command-key', 'r', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_line_end(
-                    m, view, 0),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_line_end,
+                    view, 0),
                 'iter'))
         self.emit('bind-command-key', '[', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_empty_line(
-                    m, view, n if n != 0 else 1, backward = True),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_empty_line,
+                    view, n if n != 0 else 1, True),
                 'iter'))
         self.emit('bind-command-key', ']', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_empty_line(
-                    m, view, n if n != 0 else 1),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_empty_line,
+                    view, n if n != 0 else 1),
                 'iter'))
         self.emit('bind-command-key', '%', lambda view, n:
-            self.view_get_cursor(view).transform(lambda m:
-                self.mark_jump_to_matching_bracket(
-                    m, view, 0),
+            self.view_get_cursor(view).transform(
+                (self.mark_jump_to_matching_bracket,
+                    view, 0),
                 'iter'))
 
         # selection moves
         self.emit('bind-command-key', ', j', lambda view, n:
-            self.view_transform_all_selections(view, lambda m:
-                self.mark_jump_relative_line_with_preferred_offset(
-                    m, view, n if n != 0 else 1),
+            self.view_transform_all_selections(view,
+                (self.mark_jump_relative_line_with_preferred_offset,
+                    view, n if n != 0 else 1),
                 'func'))
         self.emit('bind-command-key', ', k', lambda view, n:
-            self.view_transform_all_selections(view, lambda m:
-                self.mark_jump_relative_line_with_preferred_offset(
-                    m, view, n if n != 0 else 1, backward = True),
+            self.view_transform_all_selections(view,
+                (self.mark_jump_relative_line_with_preferred_offset,
+                    view, n if n != 0 else 1, True),
                 'func'))
         self.emit('bind-command-key', ', h', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_relative_char(m, view,
-                    n if n != 0 else 1, backward = True),
+                (self.mark_jump_relative_char,
+                    view, n if n != 0 else 1, True),
                 'func'))
         self.emit('bind-command-key', ', l', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_relative_char(m, view,
-                    n if n != 0 else 1),
+                (self.mark_jump_relative_char,
+                    view, n if n != 0 else 1),
                 'func'))
 
         # extends
         self.emit('bind-command-key', '. j', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_to_line_start(m, view, 1),
-                lambda m: self.mark_jump_to_line_start(m, view,
+                (self.mark_jump_to_line_start, view, 1),
+                (self.mark_jump_to_line_start, view,
                     n + 1 if n != 0 else 2)))
         self.command_key_handler['.']['d'], = (
             self.command_key_handler['.']['j'],)
@@ -117,82 +119,79 @@ class CoreSelectionTransform:
             self.command_key_handler['.']['j'],)
         self.emit('bind-command-key', '. k', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_to_line_start(m, view,
-                    n if n != 0 else 1, backward = True),
-                lambda m: self.mark_jump_to_line_start(m, view, 2)))
+                (self.mark_jump_to_line_start, view,
+                    n if n != 0 else 1, True),
+                (self.mark_jump_to_line_start, view, 2)))
         self.emit('bind-command-key', '. h', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_relative_char(m, view,
-                    n if n != 0 else 1, backward = True),
+                (self.mark_jump_relative_char, view,
+                    n if n != 0 else 1, True),
                 None))
         self.emit('bind-command-key', '. l', lambda view, n:
             self.view_transform_all_selections(view,
                 None,
-                lambda m: self.mark_jump_relative_char(m, view,
+                (self.mark_jump_relative_char, view,
                     n if n != 0 else 1)))
         self.emit('bind-command-key', '. f', lambda view, n: lambda ev:
             self.view_transform_all_selections(view,
                 None,
-                lambda m: self.mark_jump_to_string(m, view,
+                (self.mark_jump_to_string, view,
                     n if n != 0 else 1, chr(ev.get_keyval()[1]))))
         self.command_key_handler['.']['t'], = (
             self.command_key_handler['.']['f'],)
         self.emit('bind-command-key', '. F', lambda view, n: lambda ev:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_to_string(m, view,
-                    n if n != 0 else 1, chr(ev.get_keyval()[1]),
-                    backward = True),
+                (self.mark_jump_to_string, view,
+                    n if n != 0 else 1, chr(ev.get_keyval()[1]), True),
                 None))
         self.emit('bind-command-key', '. s', lambda view, n:
             lambda ev1: lambda ev2:
                 self.view_transform_all_selections(view,
                     None,
-                    lambda m: self.mark_jump_to_string(m, view,
+                    (self.mark_jump_to_string, view,
                         n if n != 0 else 1,
                         chr(ev1.get_keyval()[1])
                         + chr(ev2.get_keyval()[1]))))
         self.emit('bind-command-key', '. S', lambda view, n:
             lambda ev1: lambda ev2:
                 self.view_transform_all_selections(view,
-                    lambda m: self.mark_jump_to_string(m, view,
+                    (self.mark_jump_to_string, view,
                         n if n != 0 else 1,
                         chr(ev1.get_keyval()[1])
                         + chr(ev2.get_keyval()[1]),
-                        backward = True),
+                        True),
                     None))
         self.emit('bind-command-key', '. w', lambda view, n:
             self.view_transform_all_selections(view,
                 None,
-                lambda m: self.mark_jump_to_word_edge(m, view, 0)))
+                (self.mark_jump_to_word_edge, view, 0)))
         self.emit('bind-command-key', '. W', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_to_word_edge(m, view, 0,
-                    backward = True),
+                (self.mark_jump_to_word_edge, view, 0, True),
                 None))
         self.emit('bind-command-key', '. r', lambda view, n:
             self.view_transform_all_selections(view,
                 None,
-                lambda m: self.mark_jump_to_line_end(m, view, 0)))
+                (self.mark_jump_to_line_end, view, 0)))
         self.emit('bind-command-key', '. R', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_to_line_start_or_nonspace_char(
-                    m, view, n if n != 0 else 1),
+                (self.mark_jump_to_line_start_or_nonspace_char,
+                    view, n if n != 0 else 1),
                 None))
         self.emit('bind-command-key', '. [', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_to_empty_line(
-                    m, view, n if n != 0 else 1, backward = True),
+                (self.mark_jump_to_empty_line, view,
+                    n if n != 0 else 1, True),
                 None))
         self.emit('bind-command-key', '. ]', lambda view, n:
             self.view_transform_all_selections(view,
                 None,
-                lambda m: self.mark_jump_to_empty_line(
-                    m, view, n if n != 0 else 1)))
+                (self.mark_jump_to_empty_line, view,
+                    n if n != 0 else 1)))
         self.emit('bind-command-key', '. i w', lambda view, n:
             self.view_transform_all_selections(view,
-                lambda m: self.mark_jump_to_word_edge(m, view, 0,
-                    backward = True),
-                lambda m: self.mark_jump_to_word_edge(m, view, 0)))
+                (self.mark_jump_to_word_edge, view, 0, True),
+                (self.mark_jump_to_word_edge, view, 0)))
 
         self.selection_extend_handler = self.command_key_handler['.']
 
