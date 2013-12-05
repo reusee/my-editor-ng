@@ -4,14 +4,12 @@ class CoreSelectionOperation:
 
     def delete_selection(self, buf):
         deleted = False
-        buf.begin_user_action()
         for sel in buf.attr['selections']:
             start_iter = buf.get_iter_at_mark(sel.start)
             end_iter = buf.get_iter_at_mark(sel.end)
             if start_iter.compare(end_iter) != 0: deleted = True
             buf.delete(start_iter, end_iter)
         deleted = buf.delete_selection(True, True)
-        buf.end_user_action()
         return deleted
 
     def copy_selection(self, buf):
@@ -22,7 +20,6 @@ class CoreSelectionOperation:
         return False
 
     def indent_selection(self, buf, indent_string):
-        buf.begin_user_action()
         for sel in buf.attr['selections'] + [buf.attr['cursor']]:
             start = buf.get_iter_at_mark(sel.start)
             end = buf.get_iter_at_mark(sel.end)
@@ -33,10 +30,7 @@ class CoreSelectionOperation:
                 buf.insert(start, indent_string, -1)
                 end = buf.get_iter_at_mark(sel.end)
 
-        buf.end_user_action()
-
     def dedent_selection(self, buf, dedent_level):
-        buf.begin_user_action()
         for sel in buf.attr['selections'] + [buf.attr['cursor']]:
             start = buf.get_iter_at_mark(sel.start)
             end = buf.get_iter_at_mark(sel.end)
@@ -50,4 +44,3 @@ class CoreSelectionOperation:
                     buf.delete(start, it)
                 start.forward_line()
                 end = buf.get_iter_at_mark(sel.end)
-        buf.end_user_action()

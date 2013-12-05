@@ -96,7 +96,6 @@ class Edit:
 
     def newline_above(self, view):
         buf = view.get_buffer()
-        buf.begin_user_action()
         it = buf.get_iter_at_mark(buf.get_insert())
         it.set_line_offset(0)
         line_end_iter = it.copy()
@@ -108,13 +107,11 @@ class Edit:
         buf.insert(it, '\n')
         it.backward_line()
         buf.insert(it, ' ' * indent_level)
-        buf.end_user_action()
         buf.place_cursor(it)
         self.enter_edit_mode()
 
     def newline_below(self, view):
         buf = view.get_buffer()
-        buf.begin_user_action()
         it = buf.get_iter_at_mark(buf.get_insert())
         if not it.ends_line(): it.forward_to_line_end()
         st = it.copy()
@@ -122,7 +119,6 @@ class Edit:
         while st.get_char() == ' ' and st.compare(it) < 0:
             st.forward_char()
         buf.insert(it, '\n' + ' ' * st.get_line_offset())
-        buf.end_user_action()
         buf.place_cursor(it)
         self.enter_edit_mode()
 
@@ -140,7 +136,6 @@ class Edit:
 
     def delete_current_char(self, view):
         buf = view.get_buffer()
-        buf.begin_user_action()
         start = buf.get_iter_at_mark(buf.get_insert())
         end = start.copy()
         end.forward_char()
@@ -148,7 +143,6 @@ class Edit:
         buf.move_mark(buf.get_selection_bound(), end)
         buf.copy_clipboard(self.clipboard)
         buf.delete(start, end)
-        buf.end_user_action()
 
     def enter_edit_mode_at_first_char(self, view):
         buf = view.get_buffer()
@@ -161,7 +155,6 @@ class Edit:
 
     def change_from_first_char(self, view):
         buf = view.get_buffer()
-        buf.begin_user_action()
         it = buf.get_iter_at_mark(buf.get_insert())
         it.set_line_offset(0)
         while it.get_char().isspace() and not it.ends_line():
@@ -169,7 +162,6 @@ class Edit:
         line_end = it.copy()
         if not line_end.ends_line(): it.forward_to_line_end()
         buf.delete(it, line_end)
-        buf.end_user_action()
         buf.place_cursor(it)
         self.enter_edit_mode()
 
@@ -204,7 +196,6 @@ class Edit:
         it = buf.get_iter_at_mark(buf.get_insert())
         end = it.copy()
         nonspace_deleted = False
-        buf.begin_user_action()
         if it.backward_char():
             if it.get_char() != ' ': nonspace_deleted = True
             buf.delete(it, end)
@@ -219,4 +210,3 @@ class Edit:
                 i -= 1
             else:
                 break
-        buf.end_user_action()
