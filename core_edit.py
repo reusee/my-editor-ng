@@ -183,12 +183,14 @@ class Edit:
             if not it.ends_line(): it.forward_to_line_end()
             buf.move_mark(buf.get_insert(), it)
         start, end = buf.get_selection_bounds()
+        buf.begin_user_action()
         while start.compare(end) < 0:
             if not start.starts_line():
                 start.forward_line()
             if start.compare(end) >= 0: break
             buf.insert(start, indent_string, -1)
             _, end = buf.get_selection_bounds()
+        buf.end_user_action()
         buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
         self.selection_mode = self.NONE
 
@@ -205,6 +207,7 @@ class Edit:
         start, end = buf.get_selection_bounds()
         if not start.starts_line():
             start.forward_line()
+        buf.begin_user_action()
         while start.compare(end) < 0:
             it = start.copy()
             while it.get_char() == ' ' and it.get_line_offset() < dedent_level:
@@ -213,6 +216,7 @@ class Edit:
                 buf.delete(start, it)
             start.forward_line()
             _, end = buf.get_selection_bounds()
+        buf.end_user_action()
         buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
         self.selection_mode = self.NONE
 
