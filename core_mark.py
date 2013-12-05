@@ -5,9 +5,9 @@ class CoreMark:
               lambda buf, _: self.update_preferred_line_offset(buf)))
 
     def update_preferred_line_offset(self, buf):
-        last_transform = buf.attr['last-transform']
-        if last_transform and last_transform[0]:
-            if last_transform[0][0] == self.mark_jump_relative_line_with_preferred_offset:
+        current_transform = buf.attr['current-transform']
+        if current_transform and current_transform[0]:
+            if current_transform[0][0] == self.mark_jump_relative_line_with_preferred_offset:
                 return
         buf.attr['preferred-line-offset'] = buf.get_iter_at_mark(
             buf.get_insert()).get_line_offset()
