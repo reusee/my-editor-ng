@@ -8,14 +8,17 @@ class Selection:
 
     def transform(self, start_func, end_func):
         self.buf.attr['current-transform'] = (start_func, end_func)
-        if start_func is not None:
-            it = start_func[0](self.start, *start_func[1:])
-        if end_func == 'func':
-            start_func[0](self.end, *start_func[1:])
-        elif end_func == 'iter':
-            self.end.get_buffer().move_mark(self.end, it)
-        elif end_func is not None:
-            end_func[0](self.end, *end_func[1:])
+        if end_func == 'single': # start_func's first param is Selection
+            start_func[0](self, *start_func[1:])
+        else: # start_func and end_func take mark as first param
+            if start_func is not None:
+                it = start_func[0](self.start, *start_func[1:])
+            if end_func == 'func': # use the same func on end
+                start_func[0](self.end, *start_func[1:])
+            elif end_func == 'iter': # use the same iter for end
+                self.end.get_buffer().move_mark(self.end, it)
+            elif end_func is not None:
+                end_func[0](self.end, *end_func[1:])
         self.buf.attr['last-transform'] = (start_func, end_func)
         return self
 
