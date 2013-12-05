@@ -5,7 +5,9 @@ class CoreMark:
               lambda buf, _: self.update_preferred_line_offset(buf)))
 
     def update_preferred_line_offset(self, buf):
+        print(buf.attr)
         if buf.attr.get('freeze', False): return
+        print('update preferred-line-offset')
         buf.attr['preferred-line-offset'] = buf.get_iter_at_mark(
             buf.get_insert()).get_line_offset()
 
@@ -19,10 +21,13 @@ class CoreMark:
             for _ in range(n): it.forward_line()
         chars_in_line = it.get_chars_in_line() - 1
         offset = buf.attr['preferred-line-offset']
+        print(offset)
         if offset > chars_in_line: offset = chars_in_line
         if offset >= 0: it.set_line_offset(offset)
         buf.attr['freeze'] = True
+        print('freeze')
         buf.move_mark(mark, it)
+        print('thraw')
         buf.attr['freeze'] = False
         return it
 

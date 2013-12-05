@@ -196,14 +196,34 @@ class CoreSelectionTransform:
 
         self.selection_extend_handler = self.command_key_handler['.']
 
+        # numeric prefix in selection extend
         def make_prefix_handler(i):
             def f():
                 self.n = self.n * 10 + i
                 return self.selection_extend_handler
             return f
-
         for i in range(0, 10):
             self.selection_extend_handler[str(i)] = make_prefix_handler(i)
+
+        # brackets in selection extend
+        def make_inside_expander(c):
+            def f(view, n):
+                print(c)
+            return f
+        def make_around_expander(c):
+            def f(view, n):
+                print(c)
+            return f
+        for left, right in self.BRACKETS.items():
+            self.emit('bind-command-key', '. i ' + left,
+                make_inside_expander(left))
+            self.emit('bind-command-key', '. a ' + left,
+                make_around_expander(left))
+            if right == left: continue
+            self.emit('bind-command-key', '. i ' + right,
+                make_inside_expander(right))
+            self.emit('bind-command-key', '. a ' + right,
+                make_around_expander(right))
 
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']
