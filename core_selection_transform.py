@@ -91,6 +91,8 @@ class CoreSelectionTransform:
                     n + 1 if n != 0 else 2)))
         self.command_key_handler['.']['d'], = (
             self.command_key_handler['.']['j'],)
+        self.command_key_handler['.']['y'], = (
+            self.command_key_handler['.']['j'],)
         self.emit('bind-command-key', '. k', lambda view, n:
             self.view_transform_all_selections(view,
                 lambda m: self.mark_jump_to_line_start(m, view,

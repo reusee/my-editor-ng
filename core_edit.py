@@ -69,6 +69,7 @@ class Edit:
             return self.selection_extend_handler
 
     def paste(self, view):
+        #TODO multiple clipboard
         buf = view.get_buffer()
         buf.paste_clipboard(self.clipboard, None, True)
 
