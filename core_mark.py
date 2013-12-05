@@ -5,7 +5,10 @@ class CoreMark:
               lambda buf, _: self.update_preferred_line_offset(buf)))
 
     def update_preferred_line_offset(self, buf):
-        if buf.attr.get('freeze', False): return
+        last_transform = buf.attr['last-transform']
+        if last_transform:
+            if last_transform[0][0] == self.mark_jump_relative_line_with_preferred_offset:
+                return
         buf.attr['preferred-line-offset'] = buf.get_iter_at_mark(
             buf.get_insert()).get_line_offset()
 
@@ -21,9 +24,7 @@ class CoreMark:
         offset = buf.attr['preferred-line-offset']
         if offset > chars_in_line: offset = chars_in_line
         if offset >= 0: it.set_line_offset(offset)
-        buf.attr['freeze'] = True
         buf.move_mark(mark, it)
-        buf.attr['freeze'] = False
         return it
 
     def mark_jump_relative_char(self, mark, view, n, backward = False):
