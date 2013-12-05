@@ -20,3 +20,5 @@ class CoreSelectionOperation:
             buf.copy_clipboard(self.clipboard)
             return True
         return False
+
+    #TODO selection indent / dedent

@@ -156,6 +156,16 @@ class CoreSelectionTransform:
                 lambda m: self.mark_jump_to_line_start_or_nonspace_char(
                     m, view, n if n != 0 else 1),
                 None))
+        self.emit('bind-command-key', '. [', lambda view, n:
+            self.view_transform_all_selections(view,
+                lambda m: self.mark_jump_to_empty_line(
+                    m, view, n if n != 0 else 1, backward = True),
+                None))
+        self.emit('bind-command-key', '. ]', lambda view, n:
+            self.view_transform_all_selections(view,
+                None,
+                lambda m: self.mark_jump_to_empty_line(
+                    m, view, n if n != 0 else 1)))
         self.emit('bind-command-key', '. i w', lambda view, n:
             self.view_transform_all_selections(view,
                 lambda m: self.mark_jump_to_word_edge(m, view, 0,
