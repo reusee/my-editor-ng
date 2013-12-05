@@ -225,6 +225,7 @@ class Edit:
         it = buf.get_iter_at_mark(buf.get_insert())
         end = it.copy()
         nonspace_deleted = False
+        buf.begin_user_action()
         if it.backward_char():
             if it.get_char() != ' ': nonspace_deleted = True
             buf.delete(it, end)
@@ -239,3 +240,4 @@ class Edit:
                 i -= 1
             else:
                 break
+        buf.end_user_action()
