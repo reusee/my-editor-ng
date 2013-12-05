@@ -3,7 +3,7 @@ from gi.repository import Gtk, GObject, cairo, Gdk
 class Layout:
     def __init__(self):
         self.emit('bind-command-key', ', v', lambda view: self.split_view(view, Gtk.Orientation.VERTICAL))
-        self.emit('bind-command-key', ', h', lambda view: self.split_view(view, Gtk.Orientation.HORIZONTAL))
+        self.emit('bind-command-key', ', f', lambda view: self.split_view(view, Gtk.Orientation.HORIZONTAL))
         self.emit('bind-command-key', ', s', self.sibling_view)
 
         self.emit('bind-command-key', 'J', self.south_view)
