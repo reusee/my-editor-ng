@@ -6,7 +6,7 @@ class CoreMark:
 
     def update_preferred_line_offset(self, buf):
         last_transform = buf.attr['last-transform']
-        if last_transform:
+        if last_transform and last_transform[0]:
             if last_transform[0][0] == self.mark_jump_relative_line_with_preferred_offset:
                 return
         buf.attr['preferred-line-offset'] = buf.get_iter_at_mark(
