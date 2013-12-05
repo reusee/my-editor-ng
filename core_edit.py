@@ -6,6 +6,10 @@ class Edit:
         self.emit('bind-command-key', 'i', self.enter_edit_mode)
         self.emit('bind-command-key', 'I', self.enter_edit_mode_at_first_char)
 
+        self.emit('bind-command-key', 'd', self.cmd_delete_selection)
+        self.emit('bind-command-key', 'c', self.cmd_change_selection)
+        self.emit('bind-command-key', 'y', self.cmd_copy_selection)
+
         self.emit('bind-command-key', 'C', self.change_from_first_char)
         self.emit('bind-command-key', 'p', self.paste)
         self.emit('bind-command-key', ', p', self.paste_at_next_line)
@@ -27,6 +31,42 @@ class Edit:
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
         self.edit_key_handler[Gdk.KEY_BackSpace] = self.backspace_with_dedent
+
+    def cmd_delete_selection(self, view):
+        buf = view.get_buffer()
+        def func():
+            if not self.copy_selection(buf): # nothing is selected
+                return False
+            self.delete_selection(buf)
+            self.enter_none_selection_mode(view)
+            self.clear_selections(buf)
+            return True
+        if not func():
+            buf.attr['delayed-selection-operation'] = func
+            return self.selection_extend_handler
+
+    def cmd_change_selection(self, view):
+        buf = view.get_buffer()
+        def func():
+            if not self.copy_selection(buf): # nothing is selected
+                return False
+            self.delete_selection(buf)
+            self.enter_edit_mode()
+            return True
+        if not func():
+            buf.attr['delayed-selection-operation'] = func
+            return self.selection_extend_handler
+
+    def cmd_copy_selection(self, view):
+        buf = view.get_buffer()
+        def func():
+            if not self.copy_selection(buf): # nothing is selected
+                return False
+            self.enter_none_selection_mode(view)
+            self.clear_selections(buf)
+        if not func():
+            buf.attr['delayed-selection-operation'] = func
+            return self.selection_extend_handler
 
     def paste(self, view):
         buf = view.get_buffer()
