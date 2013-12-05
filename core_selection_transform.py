@@ -89,6 +89,8 @@ class CoreSelectionTransform:
                 lambda m: self.mark_jump_to_line_start(m, view, 1),
                 lambda m: self.mark_jump_to_line_start(m, view,
                     n + 1 if n != 0 else 2)))
+        self.command_key_handler['.']['d'], = (
+            self.command_key_handler['.']['j'],)
         self.emit('bind-command-key', '. k', lambda view, n:
             self.view_transform_all_selections(view,
                 lambda m: self.mark_jump_to_line_start(m, view,
@@ -109,7 +111,8 @@ class CoreSelectionTransform:
                 None,
                 lambda m: self.mark_jump_to_string(m, view,
                     n if n != 0 else 1, chr(ev.get_keyval()[1]))))
-        self.command_key_handler['.']['t'] = self.command_key_handler['.']['f']
+        self.command_key_handler['.']['t'], = (
+            self.command_key_handler['.']['f'],)
         self.emit('bind-command-key', '. F', lambda view, n: lambda ev:
             self.view_transform_all_selections(view,
                 lambda m: self.mark_jump_to_string(m, view,
