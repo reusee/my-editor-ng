@@ -1,7 +1,7 @@
 class CoreSelectionTransform:
     def __init__(self):
 
-        # moves
+        # cursor moves
         self.emit('bind-command-key', 'j', lambda view, n:
             self.view_get_cursor(view).transform(lambda m:
                 self.mark_jump_relative_line_with_preferred_offset(
@@ -82,6 +82,28 @@ class CoreSelectionTransform:
                 self.mark_jump_to_matching_bracket(
                     m, view, 0),
                 'iter'))
+
+        # selection moves
+        self.emit('bind-command-key', ', j', lambda view, n:
+            self.view_transform_all_selections(view, lambda m:
+                self.mark_jump_relative_line_with_preferred_offset(
+                    m, view, n if n != 0 else 1),
+                'func'))
+        self.emit('bind-command-key', ', k', lambda view, n:
+            self.view_transform_all_selections(view, lambda m:
+                self.mark_jump_relative_line_with_preferred_offset(
+                    m, view, n if n != 0 else 1, backward = True),
+                'func'))
+        self.emit('bind-command-key', ', h', lambda view, n:
+            self.view_transform_all_selections(view,
+                lambda m: self.mark_jump_relative_char(m, view,
+                    n if n != 0 else 1, backward = True),
+                'func'))
+        self.emit('bind-command-key', ', l', lambda view, n:
+            self.view_transform_all_selections(view,
+                lambda m: self.mark_jump_relative_char(m, view,
+                    n if n != 0 else 1),
+                'func'))
 
         # extends
         self.emit('bind-command-key', '. j', lambda view, n:
