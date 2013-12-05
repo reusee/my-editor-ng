@@ -14,8 +14,8 @@ class Edit:
         self.emit('bind-command-key', 'p', self.paste)
         self.emit('bind-command-key', ', p', self.paste_at_next_line)
 
-        self.emit('bind-command-key', ', >', self.indent_selection)
-        self.emit('bind-command-key', ', <', self.dedent_selection)
+        self.emit('bind-command-key', ', >', self.cmd_indent_selection)
+        self.emit('bind-command-key', ', <', self.cmd_dedent_selection)
 
         self.emit('bind-command-key', 'u', self.undo)
         self.emit('bind-command-key', 'Y', self.redo)
@@ -172,9 +172,9 @@ class Edit:
         buf.place_cursor(it)
         self.enter_edit_mode()
 
-    def indent_selection(self, view, n):
-        buf = view.get_buffer()
+    def cmd_indent_selection(self, view, n):
         if n == 0: n = 1
+        buf = view.get_buffer()
         indent_string = ' ' * view.get_indent_width() * n
         if not buf.get_has_selection(): # select current line
             it = buf.get_iter_at_mark(buf.get_insert())
@@ -182,21 +182,12 @@ class Edit:
             buf.move_mark(buf.get_selection_bound(), it)
             if not it.ends_line(): it.forward_to_line_end()
             buf.move_mark(buf.get_insert(), it)
-        start, end = buf.get_selection_bounds()
-        buf.begin_user_action()
-        while start.compare(end) < 0:
-            if not start.starts_line():
-                start.forward_line()
-            if start.compare(end) >= 0: break
-            buf.insert(start, indent_string, -1)
-            _, end = buf.get_selection_bounds()
-        buf.end_user_action()
-        buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
-        self.selection_mode = self.NONE
+        self.indent_selection(buf, indent_string)
+        self.enter_none_selection_mode(view)
 
-    def dedent_selection(self, view, n):
-        buf = view.get_buffer()
+    def cmd_dedent_selection(self, view, n):
         if n == 0: n = 1
+        buf = view.get_buffer()
         dedent_level = view.get_indent_width() * n
         if not buf.get_has_selection(): # select current line
             it = buf.get_iter_at_mark(buf.get_insert())
@@ -204,21 +195,8 @@ class Edit:
             buf.move_mark(buf.get_selection_bound(), it)
             if not it.ends_line(): it.forward_to_line_end()
             buf.move_mark(buf.get_insert(), it)
-        start, end = buf.get_selection_bounds()
-        if not start.starts_line():
-            start.forward_line()
-        buf.begin_user_action()
-        while start.compare(end) < 0:
-            it = start.copy()
-            while it.get_char() == ' ' and it.get_line_offset() < dedent_level:
-                it.forward_char()
-            if it.get_line_offset() <= dedent_level:
-                buf.delete(start, it)
-            start.forward_line()
-            _, end = buf.get_selection_bounds()
-        buf.end_user_action()
-        buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
-        self.selection_mode = self.NONE
+        self.dedent_selection(buf, dedent_level)
+        self.enter_none_selection_mode(view)
 
     def backspace_with_dedent(self, view):
         buf = view.get_buffer()
