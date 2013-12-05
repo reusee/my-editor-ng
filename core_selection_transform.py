@@ -234,7 +234,9 @@ class CoreSelectionTransform:
             sel.transform(start_func, end_func)
         buf.attr['cursor'].transform(start_func, end_func)
         if buf.attr['delayed-selection-operation'] is not None:
+            buf.begin_user_action()
             buf.attr['delayed-selection-operation']()
+            buf.end_user_action()
             buf.attr['delayed-selection-operation'] = None
 
     def redo_transform(self, view):
