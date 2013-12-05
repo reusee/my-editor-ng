@@ -71,6 +71,15 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
+    def mark_jump_to_first_nonspace_char(self, mark, view, n):
+        buf = view.get_buffer()
+        it = buf.get_iter_at_mark(mark)
+        it.set_line_offset(0)
+        while it.get_char().isspace() and not it.ends_line():
+            it.forward_char()
+        buf.move_mark(mark, it)
+        return it
+
     def mark_jump_to_line_end(self, mark, view, n):
         buf = view.get_buffer()
         it = buf.get_iter_at_mark(mark)

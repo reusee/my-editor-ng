@@ -7,7 +7,6 @@ class Edit:
         self.emit('bind-command-key', 'I', self.enter_edit_mode_at_first_char)
 
         self.emit('bind-command-key', 'C', self.change_from_first_char)
-        self.emit('bind-command-key', 'y', self.copy_selection)
         self.emit('bind-command-key', 'p', self.paste)
         self.emit('bind-command-key', ', p', self.paste_at_next_line)
 
@@ -28,23 +27,6 @@ class Edit:
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
         self.edit_key_handler[Gdk.KEY_BackSpace] = self.backspace_with_dedent
-
-    def copy_selection(self, view):
-        buf = view.get_buffer()
-        if 'copy-mark' not in buf.attr:
-            buf.attr['copy-mark'] = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
-        else:
-            buf.move_mark(buf.attr['copy-mark'], buf.get_iter_at_mark(buf.get_insert()))
-        if not self._copy_selection(view, None, None):
-            return self.make_text_object_handler(self._copy_selection)
-
-    def _copy_selection(self, view, _start_mark, _end_mark):
-        buf = view.get_buffer()
-        if buf.get_has_selection():
-            buf.copy_clipboard(self.clipboard)
-            self.enter_none_selection_mode(view)
-            buf.place_cursor(buf.get_iter_at_mark(buf.attr['copy-mark']))
-            return True
 
     def paste(self, view):
         buf = view.get_buffer()
