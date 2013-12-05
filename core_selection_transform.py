@@ -1,6 +1,8 @@
 class CoreSelectionTransform:
     def __init__(self):
 
+        self.emit('bind-command-key', ';', self.redo_transform)
+
         # cursor moves
         self.emit('bind-command-key', 'j', lambda view, n:
             self.view_get_cursor(view).transform(
@@ -235,3 +237,8 @@ class CoreSelectionTransform:
         if buf.attr['delayed-selection-operation'] is not None:
             buf.attr['delayed-selection-operation']()
             buf.attr['delayed-selection-operation'] = None
+
+    def redo_transform(self, view):
+        buf = view.get_buffer()
+        last_transform = buf.attr['last-transform']
+        self.view_transform_all_selections(view, *last_transform)
