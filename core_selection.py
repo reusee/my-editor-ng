@@ -50,6 +50,8 @@ class CoreSelection:
             self.jump_selection_mark(view, backward = True))
         self.emit('bind-command-key', '}', lambda view:
             self.jump_selection_mark(view, backward = False))
+        self.emit('bind-command-key', 'T',
+            self.toggle_selections_vertically)
 
     def setup_multiple_cursor(self, buf):
         buf.connect('delete-range', self.on_buffer_delete_range)
@@ -163,3 +165,13 @@ class CoreSelection:
             cr.set_line_width(2)
             cr.line_to(x - 6, y + end_rect.height)
             cr.stroke()
+
+    def toggle_selections_vertically(self, view, n):
+        cursor = self.view_get_cursor(view)
+        if n == 0: n = 1
+        for _ in range(n):
+            self.toggle_selection_mark(view)
+            cursor.transform(lambda m:
+                self.mark_jump_relative_line_with_preferred_offset(
+                    m, view, 1),
+                'iter')
