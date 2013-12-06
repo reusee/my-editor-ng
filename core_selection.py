@@ -29,7 +29,7 @@ class CoreSelection:
             self.jump_selection_mark(view, backward = True))
         self.emit('bind-command-key', '}', lambda view:
             self.jump_selection_mark(view, backward = False))
-        self.emit('bind-command-key', 'T',
+        self.emit('bind-command-key', 'm t',
             self.toggle_selections_vertically)
 
     def setup_multiple_cursor(self, buf):

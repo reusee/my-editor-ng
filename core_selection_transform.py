@@ -58,7 +58,7 @@ class CoreSelectionTransform:
                 (self.mark_jump_to_string,
                     n if n != 0 else 1, chr(ev.get_keyval()[1])),
                 ('iter',), 'cursor').apply(buf))
-        self.emit('bind-command-key', 'F', lambda buf, n: lambda ev:
+        self.emit('bind-command-key', 'm f', lambda buf, n: lambda ev:
             Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1, chr(ev.get_keyval()[1]),
@@ -71,7 +71,7 @@ class CoreSelectionTransform:
                     chr(ev1.get_keyval()[1]) +
                     chr(ev2.get_keyval()[1])),
                 ('iter',), 'cursor').apply(buf))
-        self.emit('bind-command-key', 'S', lambda buf, n:
+        self.emit('bind-command-key', 'm s', lambda buf, n:
             lambda ev1: lambda ev2: Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1,
@@ -86,7 +86,7 @@ class CoreSelectionTransform:
             (self.mark_jump_to_line_n,
                 buf.get_line_count()),
             ('iter',), 'cursor').apply(buf))
-        self.emit('bind-command-key', 'R', lambda buf, n: Transform(
+        self.emit('bind-command-key', 'm r', lambda buf, n: Transform(
             (self.mark_jump_to_line_start_or_nonspace_char,
                 n if n != 0 else 1),
             ('iter',), 'cursor').apply(buf))
@@ -152,7 +152,7 @@ class CoreSelectionTransform:
                 'all').apply(buf))
         self.command_key_handler['v']['t'], = (
             self.command_key_handler['v']['f'],)
-        self.emit('bind-command-key', 'v F', lambda buf, n: lambda ev:
+        self.emit('bind-command-key', 'v m f', lambda buf, n: lambda ev:
             Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1, chr(ev.get_keyval()[1]), True),
@@ -165,7 +165,7 @@ class CoreSelectionTransform:
                     chr(ev1.get_keyval()[1])
                     + chr(ev2.get_keyval()[1])),
                 'all').apply(buf))
-        self.emit('bind-command-key', 'v S', lambda buf, n:
+        self.emit('bind-command-key', 'v m s', lambda buf, n:
             lambda ev1: lambda ev2: Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1,
@@ -176,13 +176,13 @@ class CoreSelectionTransform:
         self.emit('bind-command-key', 'v w', lambda buf, n: Transform(
             (None,),
             (self.mark_jump_to_word_edge, 0), 'all').apply(buf))
-        self.emit('bind-command-key', 'v W', lambda buf, n: Transform(
+        self.emit('bind-command-key', 'v m w', lambda buf, n: Transform(
             (self.mark_jump_to_word_edge, 0, True),
             (None,), 'all').apply(buf))
         self.emit('bind-command-key', 'v r', lambda buf, n: Transform(
             (None,),
             (self.mark_jump_to_line_end, 0), 'all').apply(buf))
-        self.emit('bind-command-key', 'v R', lambda buf, n: Transform(
+        self.emit('bind-command-key', 'v m r', lambda buf, n: Transform(
             (self.mark_jump_to_line_start_or_nonspace_char,
                 n if n != 0 else 1),
             (None,), 'all').apply(buf))
