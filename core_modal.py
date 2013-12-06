@@ -24,6 +24,7 @@ class Modal:
 
         self.new_signal('key-handler-reset', ())
         self.new_signal('key-handler-prefix', (str,))
+        self.new_signal('key-handler-execute', (object, object))
 
         self.new_signal('entered-edit-mode', ())
         self.new_signal('entered-command-mode', ())
@@ -111,7 +112,8 @@ class Modal:
             elif param == 'view': args.append(view)
             elif param == 'buf': args.append(view.get_buffer())
             elif param == 'self': continue
-            else: print(param); handler_error
+            else: print('unknown param', param); handler_error
+        self.emit('key-handler-execute', f, args)
         return f(*args)
 
     def bind_key_handler(self, cur, seq, handler):
