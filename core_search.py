@@ -4,7 +4,7 @@ from core_selection_transform import Transform
 
 class Search:
     def __init__(self):
-        self.search_entry = SearchEntry()
+        self.search_entry = SearchEntry(self)
         self.connect('realize', lambda _:
           self.south_area.attach(self.search_entry, 0, -1, 1, 1))
 
@@ -30,6 +30,8 @@ class Search:
         buf.attr['search-result-tag'] = tag
         buf.attr['search-pattern'] = ''
         buf.connect('changed', self.update_search_result)
+        buf.attr['search-range-start'] = buf.create_mark(None, buf.get_start_iter())
+        buf.attr['search-range-end'] = buf.create_mark(None, buf.get_end_iter())
 
     def update_search_result(self, buf):
         buf.remove_tag_by_name('search-result',
@@ -43,9 +45,12 @@ class Search:
             return
         start = buf.get_start_iter()
         end = start.copy()
+        range_start = buf.get_iter_at_mark(buf.attr['search-range-start'])
+        range_end = buf.get_iter_at_mark(buf.attr['search-range-end'])
         for m in pattern.finditer(content):
             start.set_offset(m.start())
             end.set_offset(m.end())
+            if not start.in_range(range_start, range_end): continue
             buf.apply_tag_by_name('search-result', start, end)
 
     def on_search_entry_update(self, entry, buf):
@@ -86,8 +91,9 @@ class SearchEntry(Gtk.Entry):
       'done': (GObject.SIGNAL_RUN_FIRST, None, ()),
     }
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, editor):
+        Gtk.Entry.__init__(self)
+        self.editor = editor
         self.set_hexpand(True)
         self.set_alignment(0.5)
         self.connect('key-press-event', self.on_key_press_event)
@@ -106,6 +112,14 @@ class SearchEntry(Gtk.Entry):
         self.show_all()
         self.grab_focus()
         buf = self.view.get_buffer()
+        if buf.get_has_selection():
+            start, end = buf.get_selection_bounds()
+            buf.move_mark(buf.attr['search-range-start'], start)
+            buf.move_mark(buf.attr['search-range-end'], end)
+            self.editor.clear_selections(buf)
+        else:
+            buf.move_mark(buf.attr['search-range-start'], buf.get_start_iter())
+            buf.move_mark(buf.attr['search-range-end'], buf.get_end_iter)
 
     def on_key_press_event(self, _, ev):
         _, val = ev.get_keyval()
