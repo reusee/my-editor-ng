@@ -76,6 +76,7 @@ class Search:
                 (self.mark_jump_to_word_edge, 0),
                 'cursor').apply(buf)
         buf.attr['search-pattern'] = buf.attr['cursor'].get_text()
+        self.clear_selections(buf)
         self.update_search_result(buf)
 
 class SearchEntry(Gtk.Entry):
