@@ -20,7 +20,9 @@ class CoreSelection:
         self.connect('view-created', lambda _, view:
             view.connect('draw', self.draw_selections))
 
-        self.emit('bind-command-key', 't', self.toggle_selection_mark)
+        self.emit('bind-command-key', 't',
+            lambda buf: self.toggle_selection_mark(buf))
+        self.emit('bind-command-key', ', t', self.place_selection_to_search_results)
         self.emit('bind-command-key', ', c', lambda view:
             self.clear_selections(view.get_buffer()))
         self.emit('bind-command-key', '{', lambda view:
@@ -78,16 +80,17 @@ class CoreSelection:
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']
 
-    def toggle_selection_mark(self, buf):
-        it = buf.get_iter_at_mark(buf.get_insert())
+    def toggle_selection_mark(self, buf, it = None):
+        if it is None:
+            it = buf.get_iter_at_mark(buf.get_insert())
         for selection in buf.attr['selections']:
             if it.compare(buf.get_iter_at_mark(selection.start)) == 0:
                 buf.delete_mark(selection.start)
                 buf.delete_mark(selection.end)
                 buf.attr['selections'].remove(selection)
                 return
-        start = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
-        end = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
+        start = buf.create_mark(None, it)
+        end = buf.create_mark(None, it)
         self.buffer_add_selection(buf, start, end)
 
     def jump_selection_mark(self, view, backward = False):
@@ -151,3 +154,11 @@ class CoreSelection:
             Transform(
                 (self.mark_jump_relative_line_with_preferred_offset, 1),
                 ('iter',), 'cursor').apply(buf)
+
+    def place_selection_to_search_results(self, buf):
+        self.clear_selections(buf)
+        it = buf.get_start_iter()
+        tag = buf.attr['search-result-tag']
+        while it.forward_to_tag_toggle(tag):
+            if it.ends_tag(tag): continue
+            self.toggle_selection_mark(buf, it)
