@@ -7,7 +7,6 @@ from core_view import *
 from core_defs import *
 from core_edit import *
 from core_status import *
-from core_scroll import *
 from core_layout import *
 from core_file import *
 from core_message import *
@@ -34,7 +33,6 @@ class Editor(Gtk.Grid,
     Defs,
     Edit,
     Status,
-    Scroll,
     Layout,
     File,
     Message,
@@ -59,7 +57,6 @@ class Editor(Gtk.Grid,
         Defs.__init__(self)
         Edit.__init__(self)
         Status.__init__(self)
-        Scroll.__init__(self)
         Layout.__init__(self)
         File.__init__(self)
         Message.__init__(self)
