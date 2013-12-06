@@ -107,11 +107,7 @@ class SearchEntry(Gtk.Entry):
         self.emit('update', self.view.get_buffer())
 
     def run(self, view, is_backward = False):
-        self.view = view
-        self.is_backward = is_backward
-        self.show_all()
-        self.grab_focus()
-        buf = self.view.get_buffer()
+        buf = view.get_buffer()
         if buf.get_has_selection():
             start, end = buf.get_selection_bounds()
             buf.move_mark(buf.attr['search-range-start'], start)
@@ -120,6 +116,10 @@ class SearchEntry(Gtk.Entry):
         else:
             buf.move_mark(buf.attr['search-range-start'], buf.get_start_iter())
             buf.move_mark(buf.attr['search-range-end'], buf.get_end_iter())
+        self.view = view
+        self.is_backward = is_backward
+        self.show_all()
+        self.grab_focus()
 
     def on_key_press_event(self, _, ev):
         _, val = ev.get_keyval()
