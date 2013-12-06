@@ -1,199 +1,202 @@
+class Transform:
+    def __init__(self, start_func, end_func, target):
+        self.start_func = start_func[0]
+        self.start_args = start_func[1:]
+        self.end_func = end_func[0]
+        self.end_args = end_func[1:]
+        self.target = target
+
+    def apply(self, buf):
+        buf.attr['current-transform'] = self
+        targets = [buf.attr['cursor']]
+        if self.target == 'all':
+            targets += buf.attr['selections']
+        for sel in targets:
+            if self.end_func == 'single': # single param of Selection
+                self.start_func(sel, buf, *self.start_args)
+            else:
+                if self.start_func is not None:
+                    it = self.start_func(sel.start, buf, *self.start_args)
+                if self.end_func == 'func':
+                    self.start_func(sel.end, buf, *self.start_args)
+                elif self.end_func == 'iter':
+                    buf.move_mark(sel.end, it)
+                elif self.end_func is not None:
+                    self.end_func(sel.end, buf, *self.end_args)
+        if buf.attr['delayed-selection-operation'] is not None:
+            buf.begin_user_action()
+            buf.attr['delayed-selection-operation']()
+            buf.end_user_action()
+            buf.attr['delayed-selection-operation'] = None
+        buf.attr['last-transform'] = self
+
 class CoreSelectionTransform:
     def __init__(self):
 
-        self.emit('bind-command-key', ';', self.redo_transform)
+        self.emit('bind-command-key', ';', lambda buf:
+            buf.attr['last-transform'].apply(buf))
 
         # cursor moves
-        self.emit('bind-command-key', 'j', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_relative_line_with_preferred_offset,
-                    view, n if n != 0 else 1),
-                'iter'))
-        self.emit('bind-command-key', 'k', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_relative_line_with_preferred_offset,
-                    view, n if n != 0 else 1, True),
-                'iter'))
-        self.emit('bind-command-key', 'l', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_relative_char,
-                    view, n if n != 0 else 1),
-                'iter'))
-        self.emit('bind-command-key', 'h', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_relative_char,
-                    view, n if n != 0 else 1, True),
-                'iter'))
-        self.emit('bind-command-key', 'f', lambda view, n: lambda ev:
-            self.view_get_cursor(view).transform(
+        self.emit('bind-command-key', 'j', lambda buf, n: Transform(
+            (self.mark_jump_relative_line_with_preferred_offset,
+                n if n != 0 else 1),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'k', lambda buf, n: Transform(
+            (self.mark_jump_relative_line_with_preferred_offset,
+                n if n != 0 else 1, True),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'l', lambda buf, n: Transform(
+            (self.mark_jump_relative_char,
+                n if n != 0 else 1),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'h', lambda buf, n: Transform(
+            (self.mark_jump_relative_char,
+                n if n != 0 else 1, True),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'f', lambda buf, n: lambda ev:
+            Transform(
                 (self.mark_jump_to_string,
-                    view, n if n != 0 else 1, chr(ev.get_keyval()[1])),
-                'iter'))
-        self.emit('bind-command-key', 'F', lambda view, n: lambda ev:
-            self.view_get_cursor(view).transform(
+                    n if n != 0 else 1, chr(ev.get_keyval()[1])),
+                ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'F', lambda buf, n: lambda ev:
+            Transform(
                 (self.mark_jump_to_string,
-                    view, n if n != 0 else 1, chr(ev.get_keyval()[1]),
+                    n if n != 0 else 1, chr(ev.get_keyval()[1]),
                     True),
-                'iter'))
-        self.emit('bind-command-key', 's', lambda view, n:
-            lambda ev1: lambda ev2:
-                self.view_get_cursor(view).transform(
-                    (self.mark_jump_to_string,
-                        view, n if n != 0 else 1,
-                        chr(ev1.get_keyval()[1]) +
-                        chr(ev2.get_keyval()[1])),
-                    'iter'))
-        self.emit('bind-command-key', 'S', lambda view, n:
-            lambda ev1: lambda ev2:
-                self.view_get_cursor(view).transform(
-                    (self.mark_jump_to_string,
-                        view, n if n != 0 else 1,
-                        chr(ev1.get_keyval()[1]) +
-                        chr(ev2.get_keyval()[1]), True),
-                    'iter'))
-        self.emit('bind-command-key', 'g g', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_to_line_n,
-                    view, n if n != 0 else 1),
-                'iter'))
-        self.emit('bind-command-key', 'G', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_to_line_n,
-                    view, view.get_buffer().get_line_count()),
-                'iter'))
-        self.emit('bind-command-key', 'R', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_to_line_start_or_nonspace_char,
-                    view, n if n != 0 else 1),
-                'iter'))
-        self.emit('bind-command-key', 'r', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_to_line_end,
-                    view, 0),
-                'iter'))
-        self.emit('bind-command-key', '[', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_to_empty_line,
-                    view, n if n != 0 else 1, True),
-                'iter'))
-        self.emit('bind-command-key', ']', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_to_empty_line,
-                    view, n if n != 0 else 1),
-                'iter'))
-        self.emit('bind-command-key', '%', lambda view, n:
-            self.view_get_cursor(view).transform(
-                (self.mark_jump_to_matching_bracket,
-                    view, 0),
-                'iter'))
+                ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 's', lambda buf, n:
+            lambda ev1: lambda ev2: Transform(
+                (self.mark_jump_to_string,
+                    n if n != 0 else 1,
+                    chr(ev1.get_keyval()[1]) +
+                    chr(ev2.get_keyval()[1])),
+                ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'S', lambda buf, n:
+            lambda ev1: lambda ev2: Transform(
+                (self.mark_jump_to_string,
+                    n if n != 0 else 1,
+                    chr(ev1.get_keyval()[1]) +
+                    chr(ev2.get_keyval()[1]), True),
+                ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'g g', lambda buf, n: Transform(
+            (self.mark_jump_to_line_n,
+                n if n != 0 else 1),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'G', lambda buf, n: Transform(
+            (self.mark_jump_to_line_n,
+                buf.get_line_count()),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'R', lambda buf, n: Transform(
+            (self.mark_jump_to_line_start_or_nonspace_char,
+                n if n != 0 else 1),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', 'r', lambda buf, n: Transform(
+            (self.mark_jump_to_line_end, 0),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', '[', lambda buf, n: Transform(
+            (self.mark_jump_to_empty_line,
+                n if n != 0 else 1, True),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', ']', lambda buf, n: Transform(
+            (self.mark_jump_to_empty_line,
+                n if n != 0 else 1),
+            ('iter',), 'cursor').apply(buf))
+        self.emit('bind-command-key', '%', lambda buf, n: Transform(
+            (self.mark_jump_to_matching_bracket, 0),
+            ('iter',), 'cursor').apply(buf))
 
         # selection moves
-        self.emit('bind-command-key', ', j', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_relative_line_with_preferred_offset,
-                    view, n if n != 0 else 1),
-                'func'))
-        self.emit('bind-command-key', ', k', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_relative_line_with_preferred_offset,
-                    view, n if n != 0 else 1, True),
-                'func'))
-        self.emit('bind-command-key', ', h', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_relative_char,
-                    view, n if n != 0 else 1, True),
-                'func'))
-        self.emit('bind-command-key', ', l', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_relative_char,
-                    view, n if n != 0 else 1),
-                'func'))
+        self.emit('bind-command-key', ', j', lambda buf, n: Transform(
+            (self.mark_jump_relative_line_with_preferred_offset,
+                n if n != 0 else 1),
+            ('func',), 'all').apply(buf))
+        self.emit('bind-command-key', ', k', lambda buf, n: Transform(
+            (self.mark_jump_relative_line_with_preferred_offset,
+                n if n != 0 else 1, True),
+            ('func',), 'all').apply(buf))
+        self.emit('bind-command-key', ', h', lambda buf, n: Transform(
+            (self.mark_jump_relative_char,
+                n if n != 0 else 1, True),
+            ('func',), 'all').apply(buf))
+        self.emit('bind-command-key', ', l', lambda buf, n: Transform(
+            (self.mark_jump_relative_char,
+                n if n != 0 else 1),
+            ('func',), 'all').apply(buf))
 
         # extends
-        self.emit('bind-command-key', '. j', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_to_line_start, view, 1),
-                (self.mark_jump_to_line_start, view,
-                    n + 1 if n != 0 else 2)))
+        self.emit('bind-command-key', '. j', lambda buf, n: Transform(
+            (self.mark_jump_to_line_start, 1),
+            (self.mark_jump_to_line_start,
+                n + 1 if n != 0 else 2), 'all').apply(buf))
         self.command_key_handler['.']['d'], = (
             self.command_key_handler['.']['j'],)
         self.command_key_handler['.']['y'], = (
             self.command_key_handler['.']['j'],)
-        self.emit('bind-command-key', '. k', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_to_line_start, view,
-                    n if n != 0 else 1, True),
-                (self.mark_jump_to_line_start, view, 2)))
-        self.emit('bind-command-key', '. h', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_relative_char, view,
-                    n if n != 0 else 1, True),
-                None))
-        self.emit('bind-command-key', '. l', lambda view, n:
-            self.view_transform_all_selections(view,
-                None,
-                (self.mark_jump_relative_char, view,
-                    n if n != 0 else 1)))
-        self.emit('bind-command-key', '. f', lambda view, n: lambda ev:
-            self.view_transform_all_selections(view,
-                None,
-                (self.mark_jump_to_string, view,
-                    n if n != 0 else 1, chr(ev.get_keyval()[1]))))
+        self.emit('bind-command-key', '. k', lambda buf, n: Transform(
+            (self.mark_jump_to_line_start,
+                n if n != 0 else 1, True),
+            (self.mark_jump_to_line_start, 2), 'all').apply(buf))
+        self.emit('bind-command-key', '. h', lambda buf, n: Transform(
+            (self.mark_jump_relative_char,
+                n if n != 0 else 1, True),
+            (None,), 'all').apply(buf))
+        self.emit('bind-command-key', '. l', lambda buf, n: Transform(
+            (None,),
+            (self.mark_jump_relative_char,
+                n if n != 0 else 1), 'all').apply(buf))
+        self.emit('bind-command-key', '. f', lambda buf, n: lambda ev:
+            Transform(
+                (None,),
+                (self.mark_jump_to_string,
+                    n if n != 0 else 1, chr(ev.get_keyval()[1])),
+                'all').apply(buf))
         self.command_key_handler['.']['t'], = (
             self.command_key_handler['.']['f'],)
-        self.emit('bind-command-key', '. F', lambda view, n: lambda ev:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_to_string, view,
+        self.emit('bind-command-key', '. F', lambda buf, n: lambda ev:
+            Transform(
+                (self.mark_jump_to_string,
                     n if n != 0 else 1, chr(ev.get_keyval()[1]), True),
-                None))
-        self.emit('bind-command-key', '. s', lambda view, n:
-            lambda ev1: lambda ev2:
-                self.view_transform_all_selections(view,
-                    None,
-                    (self.mark_jump_to_string, view,
-                        n if n != 0 else 1,
-                        chr(ev1.get_keyval()[1])
-                        + chr(ev2.get_keyval()[1]))))
-        self.emit('bind-command-key', '. S', lambda view, n:
-            lambda ev1: lambda ev2:
-                self.view_transform_all_selections(view,
-                    (self.mark_jump_to_string, view,
-                        n if n != 0 else 1,
-                        chr(ev1.get_keyval()[1])
-                        + chr(ev2.get_keyval()[1]),
-                        True),
-                    None))
-        self.emit('bind-command-key', '. w', lambda view, n:
-            self.view_transform_all_selections(view,
-                None,
-                (self.mark_jump_to_word_edge, view, 0)))
-        self.emit('bind-command-key', '. W', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_to_word_edge, view, 0, True),
-                None))
-        self.emit('bind-command-key', '. r', lambda view, n:
-            self.view_transform_all_selections(view,
-                None,
-                (self.mark_jump_to_line_end, view, 0)))
-        self.emit('bind-command-key', '. R', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_to_line_start_or_nonspace_char,
-                    view, n if n != 0 else 1),
-                None))
-        self.emit('bind-command-key', '. [', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_to_empty_line, view,
-                    n if n != 0 else 1, True),
-                None))
-        self.emit('bind-command-key', '. ]', lambda view, n:
-            self.view_transform_all_selections(view,
-                None,
-                (self.mark_jump_to_empty_line, view,
-                    n if n != 0 else 1)))
-        self.emit('bind-command-key', '. i w', lambda view, n:
-            self.view_transform_all_selections(view,
-                (self.mark_jump_to_word_edge, view, 0, True),
-                (self.mark_jump_to_word_edge, view, 0)))
+                (None,), 'all').apply(buf))
+        self.emit('bind-command-key', '. s', lambda buf, n:
+            lambda ev1: lambda ev2: Transform(
+                (None,),
+                (self.mark_jump_to_string,
+                    n if n != 0 else 1,
+                    chr(ev1.get_keyval()[1])
+                    + chr(ev2.get_keyval()[1])),
+                'all').apply(buf))
+        self.emit('bind-command-key', '. S', lambda buf, n:
+            lambda ev1: lambda ev2: Transform(
+                (self.mark_jump_to_string,
+                    n if n != 0 else 1,
+                    chr(ev1.get_keyval()[1])
+                    + chr(ev2.get_keyval()[1]),
+                    True),
+                (None,), 'all').apply(buf))
+        self.emit('bind-command-key', '. w', lambda buf, n: Transform(
+            (None,),
+            (self.mark_jump_to_word_edge, 0), 'all').apply(buf))
+        self.emit('bind-command-key', '. W', lambda buf, n: Transform(
+            (self.mark_jump_to_word_edge, 0, True),
+            (None,), 'all').apply(buf))
+        self.emit('bind-command-key', '. r', lambda buf, n: Transform(
+            (None,),
+            (self.mark_jump_to_line_end, 0), 'all').apply(buf))
+        self.emit('bind-command-key', '. R', lambda buf, n: Transform(
+            (self.mark_jump_to_line_start_or_nonspace_char,
+                n if n != 0 else 1),
+            (None,), 'all').apply(buf))
+        self.emit('bind-command-key', '. [', lambda buf, n: Transform(
+            (self.mark_jump_to_empty_line,
+                n if n != 0 else 1, True),
+            (None,), 'all').apply(buf))
+        self.emit('bind-command-key', '. ]', lambda buf, n: Transform(
+            (None,),
+            (self.mark_jump_to_empty_line,
+                n if n != 0 else 1), 'all').apply(buf))
+        self.emit('bind-command-key', '. i w', lambda buf, n: Transform(
+            (self.mark_jump_to_word_edge, 0, True),
+            (self.mark_jump_to_word_edge, 0), 'all').apply(buf))
 
         self.selection_extend_handler = self.command_key_handler['.']
 
@@ -208,11 +211,10 @@ class CoreSelectionTransform:
 
         # brackets in selection extend
         def make_expander(left, right, around):
-            def f(view):
-                self.view_transform_all_selections(view,
-                    (self.selection_brackets_expand,
-                        view.get_buffer(), left, right),
-                    'single')
+            def f(buf):
+                Transform(
+                    (self.selection_brackets_expand, left, right, around),
+                    ('single',), 'all').apply(buf)
             return f
         for left, right in self.BRACKETS.items():
             self.emit('bind-command-key', '. i ' + left,
@@ -224,25 +226,6 @@ class CoreSelectionTransform:
                 make_expander(left, right, False))
             self.emit('bind-command-key', '. a ' + right,
                 make_expander(left, right, True))
-
-    def view_get_cursor(self, view):
-        return view.get_buffer().attr['cursor']
-
-    def view_transform_all_selections(self, view, start_func, end_func):
-        buf = view.get_buffer()
-        for sel in buf.attr['selections']:
-            sel.transform(start_func, end_func)
-        buf.attr['cursor'].transform(start_func, end_func)
-        if buf.attr['delayed-selection-operation'] is not None:
-            buf.begin_user_action()
-            buf.attr['delayed-selection-operation']()
-            buf.end_user_action()
-            buf.attr['delayed-selection-operation'] = None
-
-    def redo_transform(self, view):
-        buf = view.get_buffer()
-        last_transform = buf.attr['last-transform']
-        self.view_transform_all_selections(view, *last_transform)
 
     def selection_brackets_expand(self, sel, buf, left, right,
         around = False):

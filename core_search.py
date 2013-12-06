@@ -1,5 +1,6 @@
 from gi.repository import Gtk, Gdk, GObject, GtkSource
 import regex
+from core_selection_transform import Transform
 
 class Search:
     def __init__(self):
@@ -69,15 +70,12 @@ class Search:
                 buf.place_cursor(it)
         view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
 
-    def search_current_word(self, view):
-        buf = view.get_buffer()
-        start = buf.get_iter_at_mark(buf.get_insert())
-        end = start.copy()
-        buf.attr['search-pattern'] = buf.attr['cursor'].with_copy(
-            lambda se: se.transform(
-                (self.mark_jump_to_word_edge, view, 0, True),
-                (self.mark_jump_to_word_edge, view, 0))
-                .get_text())
+    def search_current_word(self, buf):
+        Transform(
+                (self.mark_jump_to_word_edge, 0, True),
+                (self.mark_jump_to_word_edge, 0),
+                'cursor').apply(buf)
+        buf.attr['search-pattern'] = buf.attr['cursor'].get_text()
         self.update_search_result(buf)
 
 class SearchEntry(Gtk.Entry):

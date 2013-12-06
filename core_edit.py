@@ -1,4 +1,5 @@
 from gi.repository import Gtk, Gdk
+from core_selection_transform import *
 
 class Edit:
     def __init__(self):
@@ -122,16 +123,16 @@ class Edit:
         buf.place_cursor(it)
         self.enter_edit_mode()
 
-    def append_current_line(self, view):
-        self.view_get_cursor(view).transform(
-            (self.mark_jump_to_line_end, view, 0),
-            'iter')
+    def append_current_line(self, buf):
+        Transform(
+            (self.mark_jump_to_line_end, 0),
+            ('iter',), 'cursor').apply(buf)
         self.enter_edit_mode()
 
-    def append_current_pos(self, view):
-        self.view_get_cursor(view).transform(
-            (self.mark_jump_relative_char, view, 1),
-            'iter')
+    def append_current_pos(self, buf):
+        Transform(
+            (self.mark_jump_relative_char, 1),
+            ('iter',), 'cursor').apply(buf)
         self.enter_edit_mode()
 
     def delete_current_char(self, view):

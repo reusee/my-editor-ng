@@ -6,15 +6,14 @@ class CoreMark:
 
     def update_preferred_line_offset(self, buf):
         current_transform = buf.attr['current-transform']
-        if current_transform and current_transform[0]:
-            if current_transform[0][0] == self.mark_jump_relative_line_with_preferred_offset:
+        if current_transform is not None:
+            if current_transform.start_func == self.mark_jump_relative_line_with_preferred_offset:
                 return
         buf.attr['preferred-line-offset'] = buf.get_iter_at_mark(
             buf.get_insert()).get_line_offset()
 
-    def mark_jump_relative_line_with_preferred_offset(self, mark, view, n,
+    def mark_jump_relative_line_with_preferred_offset(self, mark, buf, n,
         backward = False):
-        buf = view.get_buffer()
         it = buf.get_iter_at_mark(mark)
         if backward:
             for _ in range(n): it.backward_line()
@@ -27,8 +26,7 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_relative_char(self, mark, view, n, backward = False):
-        buf = view.get_buffer()
+    def mark_jump_relative_char(self, mark, buf, n, backward = False):
         it = buf.get_iter_at_mark(mark)
         if backward:
             for _ in range(n): it.backward_char()
@@ -37,8 +35,7 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_string(self, mark, view, n, s, backward = False):
-        buf = view.get_buffer()
+    def mark_jump_to_string(self, mark, buf, n, s, backward = False):
         it = buf.get_iter_at_mark(mark)
         for _ in range(n):
             if backward:
@@ -54,15 +51,13 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_line_n(self, mark, view, n):
-        buf = view.get_buffer()
+    def mark_jump_to_line_n(self, mark, buf, n):
         it = buf.get_start_iter()
         it.set_line(n - 1)
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_line_start_or_nonspace_char(self, mark, view, n):
-        buf = view.get_buffer()
+    def mark_jump_to_line_start_or_nonspace_char(self, mark, buf, n):
         it = buf.get_iter_at_mark(mark)
         if it.starts_line():
             while it.get_char().isspace() and not it.ends_line():
@@ -72,8 +67,7 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_first_nonspace_char(self, mark, view, n):
-        buf = view.get_buffer()
+    def mark_jump_to_first_nonspace_char(self, mark, buf, n):
         it = buf.get_iter_at_mark(mark)
         it.set_line_offset(0)
         while it.get_char().isspace() and not it.ends_line():
@@ -81,15 +75,13 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_line_end(self, mark, view, n):
-        buf = view.get_buffer()
+    def mark_jump_to_line_end(self, mark, buf, n):
         it = buf.get_iter_at_mark(mark)
         if not it.ends_line(): it.forward_to_line_end()
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_empty_line(self, mark, view, n, backward = False):
-        buf = view.get_buffer()
+    def mark_jump_to_empty_line(self, mark, buf, n, backward = False):
         it = buf.get_iter_at_mark(mark)
         if backward: f = it.backward_line
         else: f = it.forward_line
@@ -101,8 +93,7 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_matching_bracket(self, mark, view, n):
-        buf = view.get_buffer()
+    def mark_jump_to_matching_bracket(self, mark, buf, n):
         it = buf.get_iter_at_mark(mark)
 
         start = it.get_char()
@@ -155,8 +146,7 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_line_start(self, mark, view, n, backward = False):
-        buf = view.get_buffer()
+    def mark_jump_to_line_start(self, mark, buf, n, backward = False):
         it = buf.get_iter_at_mark(mark)
         if not it.starts_line(): it.set_line_offset(0)
         for _ in range(n - 1):
@@ -165,8 +155,7 @@ class CoreMark:
         buf.move_mark(mark, it)
         return it
 
-    def mark_jump_to_word_edge(self, mark, view, n, backward = False):
-        buf = view.get_buffer()
+    def mark_jump_to_word_edge(self, mark, buf, n, backward = False):
         it = buf.get_iter_at_mark(mark)
         if backward: it.backward_char()
         at_begin = False

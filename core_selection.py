@@ -1,4 +1,5 @@
 from gi.repository import Gtk
+from core_selection_transform import Transform
 
 class Selection:
     def __init__(self, start, end):
@@ -6,41 +7,11 @@ class Selection:
         self.end = end
         self.buf = start.get_buffer()
 
-    def transform(self, start_func, end_func):
-        self.buf.attr['current-transform'] = (start_func, end_func)
-        if end_func == 'single': # start_func's first param is Selection
-            start_func[0](self, *start_func[1:])
-        else: # start_func and end_func take mark as first param
-            if start_func is not None:
-                it = start_func[0](self.start, *start_func[1:])
-            if end_func == 'func': # use the same func on end
-                start_func[0](self.end, *start_func[1:])
-            elif end_func == 'iter': # use the same iter for end
-                self.end.get_buffer().move_mark(self.end, it)
-            elif end_func is not None:
-                end_func[0](self.end, *end_func[1:])
-        self.buf.attr['last-transform'] = (start_func, end_func)
-        return self
-
     def get_text(self):
         buf = self.start.get_buffer()
         return buf.get_text(
             buf.get_iter_at_mark(self.start),
             buf.get_iter_at_mark(self.end), False)
-
-    def with_copy(self, func):
-        buf = self.start.get_buffer()
-        sel = Selection(
-            buf.create_mark(None, buf.get_iter_at_mark(self.start)),
-            buf.create_mark(None, buf.get_iter_at_mark(self.end)))
-        ret = func(sel)
-        sel.delete()
-        return ret
-
-    def delete(self):
-        buf = self.start.get_buffer()
-        buf.delete_mark(self.start)
-        buf.delete_mark(self.end)
 
 class CoreSelection:
     def __init__(self):
@@ -104,8 +75,10 @@ class CoreSelection:
             location.assign(buf.get_iter_at_mark(m))
             buf.delete_mark(m)
 
-    def toggle_selection_mark(self, view):
-        buf = view.get_buffer()
+    def view_get_cursor(self, view):
+        return view.get_buffer().attr['cursor']
+
+    def toggle_selection_mark(self, buf):
         it = buf.get_iter_at_mark(buf.get_insert())
         for selection in buf.attr['selections']:
             if it.compare(buf.get_iter_at_mark(selection.start)) == 0:
@@ -170,11 +143,10 @@ class CoreSelection:
             cr.line_to(x - 6, y + end_rect.height)
             cr.stroke()
 
-    def toggle_selections_vertically(self, view, n):
-        cursor = self.view_get_cursor(view)
+    def toggle_selections_vertically(self, buf, n):
         if n == 0: n = 1
         for _ in range(n):
-            self.toggle_selection_mark(view)
-            cursor.transform(
-                (self.mark_jump_relative_line_with_preferred_offset, view, 1),
-                'iter')
+            self.toggle_selection_mark(buf)
+            Transform(
+                (self.mark_jump_relative_line_with_preferred_offset, 1),
+                ('iter',), 'cursor').apply(buf)
