@@ -20,7 +20,7 @@ class Search:
           lambda view: self.search_entry.run(view, is_backward = True))
         self.emit('bind-command-key', 'n', lambda view:
           self.next_search_result(view))
-        self.emit('bind-command-key', 'm', lambda view:
+        self.emit('bind-command-key', 'N', lambda view:
           self.next_search_result(view, backward = True))
         self.emit('bind-command-key', '*', self.search_current_word)
 
