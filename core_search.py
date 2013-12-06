@@ -81,6 +81,8 @@ class Search:
                 (self.mark_jump_to_word_edge, 0),
                 'cursor').apply(buf)
         buf.attr['search-pattern'] = buf.attr['cursor'].get_text()
+        buf.move_mark(buf.attr['search-range-start'], buf.get_start_iter())
+        buf.move_mark(buf.attr['search-range-end'], buf.get_end_iter())
         self.clear_selections(buf)
         self.update_search_result(buf)
 
