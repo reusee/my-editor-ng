@@ -5,7 +5,7 @@ import time
 class File:
     def __init__(self):
 
-        self.emit('bind-command-key', ', t', self.open_file_chooser)
+        self.emit('bind-command-key', ', b', self.open_file_chooser)
         self.file_chooser = FileChooser()
         self.connect('realize', lambda _: self.north_area.add(self.file_chooser))
         self.file_chooser.connect('done', self.open_file)
