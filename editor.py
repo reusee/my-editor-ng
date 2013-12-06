@@ -10,7 +10,7 @@ from core_status import *
 from core_layout import *
 from core_file import *
 from core_message import *
-from core_formatter import *
+from core_format import *
 from core_search import *
 from core_word_collector import *
 from core_bookmark import *
@@ -36,7 +36,7 @@ class Editor(Gtk.Grid,
     Layout,
     File,
     Message,
-    Formatter,
+    CoreFormat,
     Search,
     WordCollector,
     Bookmark,
@@ -60,7 +60,7 @@ class Editor(Gtk.Grid,
         Layout.__init__(self)
         File.__init__(self)
         Message.__init__(self)
-        Formatter.__init__(self)
+        CoreFormat.__init__(self)
         Search.__init__(self)
         WordCollector.__init__(self)
         Bookmark.__init__(self)

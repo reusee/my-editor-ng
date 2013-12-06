@@ -1,4 +1,4 @@
-class Formatter:
+class CoreFormat:
     def __init__(self):
         self.connect('before-saving', self.strip_trailing_whitespace)
         self.connect('before-saving', self.ensure_last_newline)
