@@ -81,7 +81,6 @@ class Modal:
                     lambda: self.insert_delay_chars(view))
             self.emit('key-handler-prefix', chr(val))
         else: # no handler
-            print('no handler')
             if is_edit_mode:
                 if self.delay_chars_timer:
                     GObject.source_remove(self.delay_chars_timer)
@@ -89,6 +88,7 @@ class Modal:
                 self.key_handler = self.edit_key_handler
                 return False
             else:
+                print('no handler')
                 self.key_handler = self.command_key_handler
             self.emit('key-handler-reset')
         return True
