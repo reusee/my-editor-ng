@@ -91,7 +91,7 @@ class Editor(Gtk.Grid,
         self.default_font = Pango.FontDescription.from_string('Terminus 13')
         self.style_scheme_manager = GtkSource.StyleSchemeManager.get_default()
         self.style_scheme_manager.append_search_path(os.path.dirname(__file__))
-        self.style_scheme = self.style_scheme_manager.get_scheme('molokai')
+        self.style_scheme = self.style_scheme_manager.get_scheme('solarizeddark')
 
         # screen
         screen = Gdk.Screen.get_default()
