@@ -119,7 +119,7 @@ class SearchEntry(Gtk.Entry):
             self.editor.clear_selections(buf)
         else:
             buf.move_mark(buf.attr['search-range-start'], buf.get_start_iter())
-            buf.move_mark(buf.attr['search-range-end'], buf.get_end_iter)
+            buf.move_mark(buf.attr['search-range-end'], buf.get_end_iter())
 
     def on_key_press_event(self, _, ev):
         _, val = ev.get_keyval()
