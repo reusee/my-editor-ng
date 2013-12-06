@@ -4,12 +4,10 @@ import inspect
 class Modal:
 
     EDIT, COMMAND = range(2)
-    NONE, CHAR, RECT = range(3)
 
     def __init__(self):
 
         self.operation_mode = self.COMMAND
-        self.selection_mode = self.NONE
         self.command_key_handler = {}
         self.edit_key_handler = {}
 

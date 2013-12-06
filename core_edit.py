@@ -39,7 +39,6 @@ class Edit:
             if not self.copy_selection(buf): # nothing is selected
                 return False
             self.delete_selection(buf)
-            self.enter_none_selection_mode(view)
             self.clear_selections(buf)
             return True
         if not func():
@@ -63,7 +62,6 @@ class Edit:
         def func():
             if not self.copy_selection(buf): # nothing is selected
                 return False
-            self.enter_none_selection_mode(view)
             self.clear_selections(buf)
             return True
         if not func():
@@ -177,7 +175,7 @@ class Edit:
             if not it.ends_line(): it.forward_to_line_end()
             buf.move_mark(buf.get_insert(), it)
         self.indent_selection(buf, indent_string)
-        self.enter_none_selection_mode(view)
+        self.clear_selections(buf)
 
     def cmd_dedent_selection(self, view, n):
         if n == 0: n = 1
@@ -190,7 +188,7 @@ class Edit:
             if not it.ends_line(): it.forward_to_line_end()
             buf.move_mark(buf.get_insert(), it)
         self.dedent_selection(buf, dedent_level)
-        self.enter_none_selection_mode(view)
+        self.clear_selections(buf)
 
     def backspace_with_dedent(self, view):
         buf = view.get_buffer()

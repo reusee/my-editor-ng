@@ -53,13 +53,6 @@ class Status:
         if self.n != 0: t = str(self.n) + t
         cr.show_text(t)
 
-        # selection_mode
-        cr.move_to(rect.width / 3 + 50, rect.height / 2 - 50)
-        if self.selection_mode == self.CHAR:
-            cr.show_text('c')
-        elif self.selection_mode == self.RECT:
-            cr.show_text('r')
-
         # current line and column
         buf = view.get_buffer()
         cursor_rect = view.get_iter_location(buf.get_iter_at_mark(buf.get_insert()))

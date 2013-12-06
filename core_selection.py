@@ -107,6 +107,7 @@ class CoreSelection:
             buf.place_cursor(buf.get_iter_at_mark(mark))
 
     def clear_selections(self, buf):
+        buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
         buf.attr['selections'].clear()
 
     def buffer_add_selection(self, buf, start, end):
