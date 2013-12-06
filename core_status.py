@@ -6,10 +6,6 @@ class Status:
         self.connect('view-created', lambda _, view:
             view.connect('draw', self.draw_status))
 
-        # relative numer
-        self.connect('view-created', lambda _, view:
-            self.setup_relative_line_number(view))
-
         # command
         self.command_prefix = []
         self.connect('key-handler-reset', lambda w: self.command_prefix.clear())
@@ -75,27 +71,3 @@ class Status:
         cr.move_to(0, y + cursor_rect.height)
         cr.line_to(rect.width, y + cursor_rect.height)
         cr.stroke()
-
-    def setup_relative_line_number(self, view):
-        gutter = view.get_gutter(Gtk.TextWindowType.LEFT)
-        renderer = RelativeNumberRenderer(view)
-        gutter.insert(renderer, 0)
-        view.attr['_relative_line_number_renderer'] = renderer
-
-class RelativeNumberRenderer(GtkSource.GutterRendererText):
-    def __init__(self, view):
-        GtkSource.GutterRendererText.__init__(self)
-        self.set_alignment(1, 1)
-        self.view = view
-
-    def do_query_data(self, start, end, state):
-        if not self.view.is_focus():
-            self.set_text('', -1)
-            self.set_size(0)
-            return
-        buf = start.get_buffer()
-        current_line = buf.get_iter_at_mark(buf.get_insert()).get_line()
-        text = str(abs(start.get_line() - current_line))
-        self.set_text(text, -1)
-        self.set_size(30)
-        self.queue_draw()
