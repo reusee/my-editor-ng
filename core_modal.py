@@ -111,6 +111,7 @@ class Modal:
             if param.startswith('ev'): args.append(ev.copy())
             elif param == 'n': args.append(self.n)
             elif param == 'view': args.append(view)
+            elif param == 'buf': args.append(view.get_buffer())
             elif param == 'self': continue
             else: print(param); handler_error
         return f(*args)
