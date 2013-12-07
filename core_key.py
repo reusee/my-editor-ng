@@ -15,13 +15,6 @@ class CoreKey:
         self.connect('key-pressed', lambda _, ev:
           self.emit('should-redraw'))
 
-        self.new_signal('bind-command-key', (str, object))
-        self.new_signal('bind-edit-key', (str, object))
-        self.connect('bind-command-key',
-            lambda _, seq, handler: self.bind_key_handler(self.command_key_handler, seq, handler))
-        self.connect('bind-edit-key',
-            lambda _, seq, handler: self.bind_key_handler(self.edit_key_handler, seq, handler))
-
         self.new_signal('key-done', ())
         self.new_signal('key-prefix', (str,))
         self.new_signal('key-handler-execute', (object, object))
@@ -35,7 +28,7 @@ class CoreKey:
         self.delay_chars_timer = None
 
         for i in range(0, 10):
-            self.emit('bind-command-key', str(i), self.make_number_prefix_handler(i))
+            self.bind_command_key(str(i), self.make_number_prefix_handler(i))
 
     def handle_key_press(self, view, ev):
         self.emit('key-pressed', ev.copy())
@@ -115,6 +108,12 @@ class CoreKey:
             else: print('unknown param', param); handler_error
         self.emit('key-handler-execute', f, args)
         return f(*args)
+
+    def bind_command_key(self, seq, handler):
+        self.bind_key_handler(self.command_key_handler, seq, handler)
+
+    def bind_edit_key(self, seq, handler):
+        self.bind_key_handler(self.edit_key_handler, seq, handler)
 
     def bind_key_handler(self, cur, seq, handler):
         seq = seq.split(' ')

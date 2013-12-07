@@ -6,7 +6,7 @@ class VteModule:
         self.terminal = Terminal()
         editor.south_area.add(self.terminal)
         editor.connect('realize', lambda _: self.terminal.hide())
-        editor.emit('bind-command-key', ', e', self.terminal.open)
+        editor.bind_command_key(', e', self.terminal.open)
 
 class Terminal(Vte.Terminal):
     def __init__(self):

@@ -14,15 +14,15 @@ class Search:
         self.search_entry.connect('done', lambda entry:
           self.next_search_result(entry.view, entry.is_backward))
 
-        self.emit('bind-command-key', '/',
+        self.bind_command_key('/',
           lambda view: self.search_entry.run(view))
-        self.emit('bind-command-key', '?',
+        self.bind_command_key('?',
           lambda view: self.search_entry.run(view, is_backward = True))
-        self.emit('bind-command-key', 'n', lambda view:
+        self.bind_command_key('n', lambda view:
           self.next_search_result(view))
-        self.emit('bind-command-key', 'N', lambda view:
+        self.bind_command_key('N', lambda view:
           self.next_search_result(view, backward = True))
-        self.emit('bind-command-key', '*', self.search_current_word)
+        self.bind_command_key('*', self.search_current_word)
 
     def setup_search(self, _, buf):
         tag = buf.create_tag('search-result', foreground = '#FFFF00')

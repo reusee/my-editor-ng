@@ -4,30 +4,30 @@ from core_selection_transform import Transform
 class Edit:
     def __init__(self):
 
-        self.emit('bind-command-key', 'i', self.enter_edit_mode)
-        self.emit('bind-command-key', 'I', self.enter_edit_mode_at_first_char)
+        self.bind_command_key('i', self.enter_edit_mode)
+        self.bind_command_key('I', self.enter_edit_mode_at_first_char)
 
-        self.emit('bind-command-key', 'd', self.cmd_delete_selection)
-        self.emit('bind-command-key', 'c', self.cmd_change_selection)
-        self.emit('bind-command-key', 'y', self.cmd_copy_selection)
+        self.bind_command_key('d', self.cmd_delete_selection)
+        self.bind_command_key('c', self.cmd_change_selection)
+        self.bind_command_key('y', self.cmd_copy_selection)
 
-        self.emit('bind-command-key', 'C', self.change_from_first_char)
-        self.emit('bind-command-key', 'p', self.paste)
-        self.emit('bind-command-key', ', p', self.paste_at_next_line)
+        self.bind_command_key('C', self.change_from_first_char)
+        self.bind_command_key('p', self.paste)
+        self.bind_command_key(', p', self.paste_at_next_line)
 
-        self.emit('bind-command-key', ', >', self.cmd_indent_selection)
-        self.emit('bind-command-key', ', <', self.cmd_dedent_selection)
+        self.bind_command_key(', >', self.cmd_indent_selection)
+        self.bind_command_key(', <', self.cmd_dedent_selection)
 
-        self.emit('bind-command-key', 'u', self.undo)
-        self.emit('bind-command-key', 'Y', self.redo)
+        self.bind_command_key('u', self.undo)
+        self.bind_command_key('Y', self.redo)
 
-        self.emit('bind-command-key', 'o', self.newline_below)
-        self.emit('bind-command-key', 'O', self.newline_above)
-        self.emit('bind-command-key', 'a', self.append_current_pos)
-        self.emit('bind-command-key', 'A', self.append_current_line)
-        self.emit('bind-command-key', 'x', self.delete_current_char)
+        self.bind_command_key('o', self.newline_below)
+        self.bind_command_key('O', self.newline_above)
+        self.bind_command_key('a', self.append_current_pos)
+        self.bind_command_key('A', self.append_current_line)
+        self.bind_command_key('x', self.delete_current_char)
 
-        self.emit('bind-edit-key', 'k d', self.enter_command_mode)
+        self.bind_edit_key('k d', self.enter_command_mode)
 
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 

@@ -9,7 +9,7 @@ class View:
             view.connect('key-press-event', self.handle_key_press))
         self.connect('destroy', lambda _: [v.freeze_notify() for v in self.views])
 
-        self.emit('bind-command-key', ', z', self.close_view)
+        self.bind_command_key(', z', self.close_view)
 
         self.new_signal('should-redraw', ())
         self.connect('should-redraw', lambda _: self.redraw_current_view())
@@ -18,15 +18,15 @@ class View:
 
         self.connect('view-created', self.setup_buffer_switching)
 
-        self.emit('bind-command-key', '>', self.switch_next_buffer)
-        self.emit('bind-command-key', '<', self.switch_prev_buffer)
+        self.bind_command_key('>', self.switch_next_buffer)
+        self.bind_command_key('<', self.switch_prev_buffer)
 
         # scroll
-        self.emit('bind-command-key', 'M', self.page_down)
-        self.emit('bind-command-key', 'U', self.page_up)
-        self.emit('bind-command-key', 'z t', lambda view: self.scroll_cursor(view, 1, 0))
-        self.emit('bind-command-key', 'z b', lambda view: self.scroll_cursor(view, 1, 1))
-        self.emit('bind-command-key', 'z z', lambda view: self.scroll_cursor(view, 1, 0.5))
+        self.bind_command_key('M', self.page_down)
+        self.bind_command_key('U', self.page_up)
+        self.bind_command_key('z t', lambda view: self.scroll_cursor(view, 1, 0))
+        self.bind_command_key('z b', lambda view: self.scroll_cursor(view, 1, 1))
+        self.bind_command_key('z z', lambda view: self.scroll_cursor(view, 1, 0.5))
 
     def create_view(self, buf = None):
         if buf:

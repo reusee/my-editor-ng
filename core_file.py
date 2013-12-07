@@ -5,12 +5,12 @@ import time
 class File:
     def __init__(self):
 
-        self.emit('bind-command-key', ', b', self.open_file_chooser)
+        self.bind_command_key(', b', self.open_file_chooser)
         self.file_chooser = FileChooser()
         self.connect('realize', lambda _: self.north_area.add(self.file_chooser))
         self.file_chooser.connect('done', self.open_file)
 
-        self.emit('bind-command-key', ', w', self.save_to_file)
+        self.bind_command_key(', w', self.save_to_file)
         self.file_backup_dir = os.path.join(os.path.expanduser('~'), '.my-editor-file-backup')
         if not os.path.exists(self.file_backup_dir):
             os.mkdir(self.file_backup_dir)

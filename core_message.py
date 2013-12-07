@@ -8,10 +8,10 @@ class Message:
 
         self.connect('realize', lambda _: self.south_area.add(self.message_board))
 
-        self.emit('bind-command-key', ', , ,',
+        self.bind_command_key(', , ,',
           lambda: self.show_message('yes, sir ' + str(time.time())))
-        self.emit('bind-command-key', ', , m', self.show_message_history)
-        self.emit('bind-command-key', ', , c', self.clear_messages)
+        self.bind_command_key(', , m', self.show_message_history)
+        self.bind_command_key(', , c', self.clear_messages)
 
         self.new_signal('show-message', (str,))
         self.connect('show-message', lambda _, text: self.show_message(text))

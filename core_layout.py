@@ -2,14 +2,14 @@ from gi.repository import Gtk, GObject, cairo, Gdk
 
 class Layout:
     def __init__(self):
-        self.emit('bind-command-key', ', v', lambda view: self.split_view(view, Gtk.Orientation.VERTICAL))
-        self.emit('bind-command-key', ', f', lambda view: self.split_view(view, Gtk.Orientation.HORIZONTAL))
-        self.emit('bind-command-key', ', s', self.sibling_view)
+        self.bind_command_key(', v', lambda view: self.split_view(view, Gtk.Orientation.VERTICAL))
+        self.bind_command_key(', f', lambda view: self.split_view(view, Gtk.Orientation.HORIZONTAL))
+        self.bind_command_key(', s', self.sibling_view)
 
-        self.emit('bind-command-key', 'J', self.south_view)
-        self.emit('bind-command-key', 'K', self.north_view)
-        self.emit('bind-command-key', 'H', self.west_view)
-        self.emit('bind-command-key', 'L', self.east_view)
+        self.bind_command_key('J', self.south_view)
+        self.bind_command_key('K', self.north_view)
+        self.bind_command_key('H', self.west_view)
+        self.bind_command_key('L', self.east_view)
 
     def split_view(self, view, orientation):
         scroll = view.get_parent()

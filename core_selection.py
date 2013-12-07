@@ -20,16 +20,16 @@ class CoreSelection:
         self.connect('view-created', lambda _, view:
             view.connect('draw', self.draw_selections))
 
-        self.emit('bind-command-key', 't',
+        self.bind_command_key('t',
             lambda buf: self.toggle_selection_mark(buf))
-        self.emit('bind-command-key', ', t', self.place_selection_to_search_results)
-        self.emit('bind-command-key', ', c', lambda view:
+        self.bind_command_key(', t', self.place_selection_to_search_results)
+        self.bind_command_key(', c', lambda view:
             self.clear_selections(view.get_buffer()))
-        self.emit('bind-command-key', '{', lambda view:
+        self.bind_command_key('{', lambda view:
             self.jump_selection_mark(view, backward = True))
-        self.emit('bind-command-key', '}', lambda view:
+        self.bind_command_key('}', lambda view:
             self.jump_selection_mark(view, backward = False))
-        self.emit('bind-command-key', 'm t',
+        self.bind_command_key('m t',
             self.toggle_selections_vertically)
 
     def setup_multiple_cursor(self, buf):
