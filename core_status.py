@@ -105,4 +105,3 @@ class RelativeNumberRenderer(GtkSource.GutterRendererText):
         text = str(abs(start.get_line() - current_line))
         self.set_text(text, -1)
         self.set_size(30)
-        self.queue_draw()

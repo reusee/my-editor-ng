@@ -1,4 +1,5 @@
 from gi.repository import GtkSource, Gtk, GObject
+import time
 
 class View:
     def __init__(self):
@@ -13,6 +14,7 @@ class View:
 
         self.new_signal('should-redraw', ())
         self.connect('should-redraw', lambda _: self.redraw_current_view())
+        self.redraw_time = int(time.time() * 1000)
 
         self.default_indent_width = 2
 
@@ -90,9 +92,12 @@ class View:
             if v.is_focus(): return func(v)
 
     def redraw_current_view(self):
+        if int(time.time() * 1000) - self.redraw_time < 30:
+            return
         for v in self.views:
             if v.is_focus():
                 v.queue_draw()
+                self.redraw_time = int(time.time() * 1000)
                 return
 
     def setup_buffer_switching(self, _, view):
