@@ -139,7 +139,7 @@ class CoreKey:
         self.key_handler = self.command_key_handler
         self.n = 0
         self.emit('key-done')
-        self.emt('entered-command-mode')
+        self.emit('entered-command-mode')
 
     def enter_edit_mode(self):
         self.operation_mode = self.EDIT
