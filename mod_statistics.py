@@ -5,7 +5,7 @@ class ModStatistics:
         self.current_keys = []
 
     def collect_key(self, _, ev):
-        print(ev.get_keyval()[1])
+        print(chr(ev.get_keyval()[1]))
 
     def key_reseted(self, _):
         print('reset')
