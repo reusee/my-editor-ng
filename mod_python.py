@@ -2,38 +2,37 @@ class ModPython:
     def __init__(self, editor):
         self.editor = editor
         editor.connect('language-detected', lambda _, buf, lang:
-            self.setup(buf) if lang == 'Python' else None)
+            self.setup_python(buf) if lang == 'Python' else None)
+        editor.connect('buffer-created', lambda _, buf:
+            self.setup(buf) if 'language' in buf.attr
+            and buf.attr['language'] == 'Python' else None)
+
+    def setup_python(self, buf):
+        buf.attr['indent-width'] = 4
+        buf.attr['language'] = 'Python'
 
     def setup(self, buf):
-        buf.attr['indent-width'] = 4
+        self.add_line_start_abbre(buf, 'ii', 'import ')
+        self.add_line_start_abbre(buf, 'dd', 'def ')
+        self.add_line_start_abbre(buf, 'cc', 'class ')
+        self.add_line_start_abbre(buf, 'ss', 'self.')
+        self.add_line_start_abbre(buf, 'for', 'for ')
+        self.add_line_start_abbre(buf, 'if', 'if ')
+        self.add_line_start_abbre(buf, 'rr', 'return ')
+        self.add_line_start_abbre(buf, 'ww', 'while ')
+        self.add_line_start_abbre(buf, 'ee', 'elif ')
+        self.add_line_start_abbre(buf, 'll', 'else:')
 
-        self.define_abbreviation('dd', 'def ', self.at_line_start)
-        self.define_abbreviation('ii', 'import ', self.at_line_start)
-        self.define_abbreviation('cc', 'class ', self.at_line_start)
-        self.define_abbreviation('ss', 'self.', self.at_line_start)
-        self.define_abbreviation('if', 'if ', self.at_line_start)
-        self.define_abbreviation('ff', 'for ', self.at_line_start)
-        self.define_abbreviation('ww', 'while ', self.at_line_start)
-        self.define_abbreviation('pp', 'print(', self.at_line_start)
-        self.define_abbreviation('rr', 'return ', self.at_line_start)
-
-    def at_line_start(self, buf):
-        return all(self.iter_to_line_start(buf.get_iter_at_mark(buf.get_insert()),
-            lambda c: c.isspace())) or buf.get_iter_at_mark(buf.get_insert()).get_offset() == 0
-
-    def define_abbreviation(self, cmd, replace, predict):
-        def f(buf):
-            insert = cmd
-            if predict(buf):
-                insert = replace
-            buf.insert(buf.get_iter_at_mark(buf.get_insert()),
-                insert, -1)
-        self.editor.emit('bind-edit-key', ' '.join(c for c in cmd), f)
-
-    def iter_to_line_start(self, it, func):
-        start = it.copy()
-        start.set_line_offset(0)
-        it.backward_char()
-        while it.compare(start) >= 0:
-            yield func(it.get_char())
-            it.backward_char()
+    def add_line_start_abbre(self, buf, s, replace):
+        def callback(buf):
+            it = buf.get_iter_at_mark(buf.get_insert())
+            for _ in range(len(s)): it.backward_char()
+            start = it.copy()
+            start.set_line_offset(0)
+            while start.compare(it) < 0 and not start.ends_line():
+                if start.get_char().isspace(): start.forward_char()
+                else: break
+            if start.compare(it) != 0: return
+            buf.delete(start, buf.get_iter_at_mark(buf.get_insert()))
+            buf.insert(start, replace, -1)
+        self.editor.add_pattern(buf, s, callback)
