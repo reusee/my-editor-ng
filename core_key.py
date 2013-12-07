@@ -11,8 +11,8 @@ class CoreKey:
         self.command_key_handler = {}
         self.edit_key_handler = {}
 
-        self.new_signal('key-pressed', ())
-        self.connect('key-pressed', lambda _:
+        self.new_signal('key-pressed', (Gdk.Event,))
+        self.connect('key-pressed', lambda _, ev:
           self.emit('should-redraw'))
 
         self.new_signal('bind-command-key', (str, object))
@@ -38,7 +38,7 @@ class CoreKey:
             self.emit('bind-command-key', str(i), self.make_number_prefix_handler(i))
 
     def handle_key_press(self, view, ev):
-        self.emit('key-pressed')
+        self.emit('key-pressed', ev.copy())
         _, val = ev.get_keyval()
         if val == Gdk.KEY_Shift_L or val == Gdk.KEY_Shift_R:
             return False
