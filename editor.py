@@ -20,13 +20,13 @@ from core_selection import *
 from core_selection_transform import *
 from core_selection_operation import *
 from core_macro import *
-from core_statistics import *
 from core_pattern_match import *
 
 from mod_minimap import *
 from mod_python import *
 from mod_jedi import *
 from mod_vte import *
+from mod_statistics import *
 
 class Editor(Gtk.Grid,
     CoreKey,
@@ -48,7 +48,6 @@ class Editor(Gtk.Grid,
     CoreSelectionTransform,
     CoreSelectionOperation,
     CoreMacro,
-    CoreStatistics,
     CorePatternMatch,
     ):
 
@@ -75,7 +74,6 @@ class Editor(Gtk.Grid,
         CoreSelectionTransform.__init__(self)
         CoreSelectionOperation.__init__(self)
         CoreMacro.__init__(self)
-        CoreStatistics.__init__(self)
         CorePatternMatch.__init__(self)
 
         # views
@@ -108,6 +106,7 @@ class Editor(Gtk.Grid,
         self.mod_python = ModPython(self)
         #self.jedi = Jedi(self)
         self.vte_module = VteModule(self)
+        self.mod_stat = ModStatistics(self)
 
         # first view
         view, scroll = self.create_view()
