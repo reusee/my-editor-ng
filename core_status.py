@@ -50,6 +50,7 @@ class Status:
         # command
         cr.set_font_size(128)
         t = ''.join(self.command_prefix)
+        if t == ' ': t = '_'
         if self.n != 0: t = str(self.n) + t
         cr.show_text(t)
 
