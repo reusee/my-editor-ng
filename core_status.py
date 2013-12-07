@@ -53,6 +53,12 @@ class Status:
         if self.n != 0: t = str(self.n) + t
         cr.show_text(t)
 
+        # number of selections
+        cr.move_to(rect.width * 0.8, 100)
+        number_of_selections = len(view.get_buffer().attr['selections'])
+        if  number_of_selections > 0:
+            cr.show_text(str(number_of_selections))
+
         # current line and column
         buf = view.get_buffer()
         cursor_rect = view.get_iter_location(buf.get_iter_at_mark(buf.get_insert()))
