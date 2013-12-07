@@ -1,7 +1,7 @@
 from gi.repository import Gtk, Pango, GtkSource, GObject
 import os
 
-from core_modal import *
+from core_key import *
 from core_buffer import *
 from core_view import *
 from core_defs import *
@@ -27,7 +27,7 @@ from mod_jedi import *
 from mod_vte import *
 
 class Editor(Gtk.Grid,
-    Modal,
+    CoreKey,
     Buffer,
     View,
     Defs,
@@ -52,7 +52,7 @@ class Editor(Gtk.Grid,
 
     def __init__(self):
         super().__init__()
-        Modal.__init__(self)
+        CoreKey.__init__(self)
         Buffer.__init__(self)
         View.__init__(self)
         Defs.__init__(self)

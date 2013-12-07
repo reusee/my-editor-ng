@@ -1,7 +1,7 @@
 from gi.repository import GObject, Gtk, Gdk
 import inspect
 
-class Modal:
+class CoreKey:
 
     EDIT, COMMAND = range(2)
 
