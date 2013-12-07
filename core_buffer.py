@@ -18,7 +18,7 @@ class Buffer:
                     buf.get_insert(), 0, False, 1, 0.5)
                     if v.get_buffer() == buf else None)))
 
-        self.bind_command_key(', q', self.close_buffer)
+        self.bind_command_key(',q', self.close_buffer)
 
         self.new_signal('file-loaded', (GtkSource.Buffer,))
         self.new_signal('language-detected', (GtkSource.Buffer, str))

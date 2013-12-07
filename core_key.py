@@ -116,7 +116,7 @@ class CoreKey:
         self.bind_key_handler(self.edit_key_handler, seq, handler)
 
     def bind_key_handler(self, cur, seq, handler):
-        seq = seq.split(' ')
+        seq = [c for c in seq]
         for key in seq[:len(seq) - 1]:
             if key not in cur:
                 cur[key] = {}

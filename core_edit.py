@@ -13,10 +13,10 @@ class Edit:
 
         self.bind_command_key('C', self.change_from_first_char)
         self.bind_command_key('p', self.paste)
-        self.bind_command_key(', p', self.paste_at_next_line)
+        self.bind_command_key(',p', self.paste_at_next_line)
 
-        self.bind_command_key(', >', self.cmd_indent_selection)
-        self.bind_command_key(', <', self.cmd_dedent_selection)
+        self.bind_command_key(',>', self.cmd_indent_selection)
+        self.bind_command_key(',<', self.cmd_dedent_selection)
 
         self.bind_command_key('u', self.undo)
         self.bind_command_key('Y', self.redo)
@@ -27,7 +27,7 @@ class Edit:
         self.bind_command_key('A', self.append_current_line)
         self.bind_command_key('x', self.delete_current_char)
 
-        self.bind_edit_key('k d', self.enter_command_mode)
+        self.bind_edit_key('kd', self.enter_command_mode)
 
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 

@@ -22,14 +22,14 @@ class CoreSelection:
 
         self.bind_command_key('t',
             lambda buf: self.toggle_selection_mark(buf))
-        self.bind_command_key(', t', self.place_selection_to_search_results)
-        self.bind_command_key(', c', lambda view:
+        self.bind_command_key(',t', self.place_selection_to_search_results)
+        self.bind_command_key(',c', lambda view:
             self.clear_selections(view.get_buffer()))
         self.bind_command_key('{', lambda view:
             self.jump_selection_mark(view, backward = True))
         self.bind_command_key('}', lambda view:
             self.jump_selection_mark(view, backward = False))
-        self.bind_command_key('m t',
+        self.bind_command_key('mt',
             self.toggle_selections_vertically)
 
     def setup_multiple_cursor(self, buf):

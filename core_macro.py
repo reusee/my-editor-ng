@@ -7,8 +7,8 @@ class CoreMacro:
         self.recording_macro = False
         self.recorded_key_events = []
 
-        self.bind_command_key('. w', self.toggle_macro_recording)
-        self.bind_command_key('m w', self.replay_macro)
+        self.bind_command_key('.w', self.toggle_macro_recording)
+        self.bind_command_key('mw', self.replay_macro)
 
     def record_key_events(self, _, ev):
         if not self.recording_macro: return

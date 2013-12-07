@@ -9,7 +9,7 @@ class View:
             view.connect('key-press-event', self.handle_key_press))
         self.connect('destroy', lambda _: [v.freeze_notify() for v in self.views])
 
-        self.bind_command_key(', z', self.close_view)
+        self.bind_command_key(',z', self.close_view)
 
         self.new_signal('should-redraw', ())
         self.connect('should-redraw', lambda _: self.redraw_current_view())
@@ -24,9 +24,9 @@ class View:
         # scroll
         self.bind_command_key('M', self.page_down)
         self.bind_command_key('U', self.page_up)
-        self.bind_command_key('z t', lambda view: self.scroll_cursor(view, 1, 0))
-        self.bind_command_key('z b', lambda view: self.scroll_cursor(view, 1, 1))
-        self.bind_command_key('z z', lambda view: self.scroll_cursor(view, 1, 0.5))
+        self.bind_command_key('zt', lambda view: self.scroll_cursor(view, 1, 0))
+        self.bind_command_key('zb', lambda view: self.scroll_cursor(view, 1, 1))
+        self.bind_command_key('zz', lambda view: self.scroll_cursor(view, 1, 0.5))
 
     def create_view(self, buf = None):
         if buf:

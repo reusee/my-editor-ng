@@ -58,7 +58,7 @@ class CoreSelectionTransform:
                 (self.mark_jump_to_string,
                     n if n != 0 else 1, chr(ev.get_keyval()[1])),
                 ('iter',), 'cursor').apply(buf))
-        self.bind_command_key('m f', lambda buf, n: lambda ev:
+        self.bind_command_key('mf', lambda buf, n: lambda ev:
             Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1, chr(ev.get_keyval()[1]),
@@ -71,14 +71,14 @@ class CoreSelectionTransform:
                     chr(ev1.get_keyval()[1]) +
                     chr(ev2.get_keyval()[1])),
                 ('iter',), 'cursor').apply(buf))
-        self.bind_command_key('m s', lambda buf, n:
+        self.bind_command_key('ms', lambda buf, n:
             lambda ev1: lambda ev2: Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1,
                     chr(ev1.get_keyval()[1]) +
                     chr(ev2.get_keyval()[1]), True),
                 ('iter',), 'cursor').apply(buf))
-        self.bind_command_key('g g', lambda buf, n: Transform(
+        self.bind_command_key('gg', lambda buf, n: Transform(
             (self.mark_jump_to_line_n,
                 n if n != 0 else 1),
             ('iter',), 'cursor').apply(buf))
@@ -86,7 +86,7 @@ class CoreSelectionTransform:
             (self.mark_jump_to_line_n,
                 buf.get_line_count()),
             ('iter',), 'cursor').apply(buf))
-        self.bind_command_key('m r', lambda buf, n: Transform(
+        self.bind_command_key('mr', lambda buf, n: Transform(
             (self.mark_jump_to_line_start_or_nonspace_char,
                 n if n != 0 else 1),
             ('iter',), 'cursor').apply(buf))
@@ -106,25 +106,25 @@ class CoreSelectionTransform:
             ('iter',), 'cursor').apply(buf))
 
         # selection moves
-        self.bind_command_key(', j', lambda buf, n: Transform(
+        self.bind_command_key(',j', lambda buf, n: Transform(
             (self.mark_jump_relative_line_with_preferred_offset,
                 n if n != 0 else 1),
             ('func',), 'all').apply(buf))
-        self.bind_command_key(', k', lambda buf, n: Transform(
+        self.bind_command_key(',k', lambda buf, n: Transform(
             (self.mark_jump_relative_line_with_preferred_offset,
                 n if n != 0 else 1, True),
             ('func',), 'all').apply(buf))
-        self.bind_command_key(', h', lambda buf, n: Transform(
+        self.bind_command_key(',h', lambda buf, n: Transform(
             (self.mark_jump_relative_char,
                 n if n != 0 else 1, True),
             ('func',), 'all').apply(buf))
-        self.bind_command_key(', l', lambda buf, n: Transform(
+        self.bind_command_key(',l', lambda buf, n: Transform(
             (self.mark_jump_relative_char,
                 n if n != 0 else 1),
             ('func',), 'all').apply(buf))
 
         # extends
-        self.bind_command_key('v j', lambda buf, n: Transform(
+        self.bind_command_key('vj', lambda buf, n: Transform(
             (self.mark_jump_to_line_start, 1),
             (self.mark_jump_to_line_start,
                 n + 1 if n != 0 else 2), 'all').apply(buf))
@@ -132,19 +132,19 @@ class CoreSelectionTransform:
             self.command_key_handler['v']['j'],)
         self.command_key_handler['v']['y'], = (
             self.command_key_handler['v']['j'],)
-        self.bind_command_key('v k', lambda buf, n: Transform(
+        self.bind_command_key('vk', lambda buf, n: Transform(
             (self.mark_jump_to_line_start,
                 n if n != 0 else 1, True),
             (self.mark_jump_to_line_start, 2), 'all').apply(buf))
-        self.bind_command_key('v h', lambda buf, n: Transform(
+        self.bind_command_key('vh', lambda buf, n: Transform(
             (self.mark_jump_relative_char,
                 n if n != 0 else 1, True),
             (None,), 'all').apply(buf))
-        self.bind_command_key('v l', lambda buf, n: Transform(
+        self.bind_command_key('vl', lambda buf, n: Transform(
             (None,),
             (self.mark_jump_relative_char,
                 n if n != 0 else 1), 'all').apply(buf))
-        self.bind_command_key('v f', lambda buf, n: lambda ev:
+        self.bind_command_key('vf', lambda buf, n: lambda ev:
             Transform(
                 (None,),
                 (self.mark_jump_to_string,
@@ -152,12 +152,12 @@ class CoreSelectionTransform:
                 'all').apply(buf))
         self.command_key_handler['v']['t'], = (
             self.command_key_handler['v']['f'],)
-        self.bind_command_key('v m f', lambda buf, n: lambda ev:
+        self.bind_command_key('vmf', lambda buf, n: lambda ev:
             Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1, chr(ev.get_keyval()[1]), True),
                 (None,), 'all').apply(buf))
-        self.bind_command_key('v s', lambda buf, n:
+        self.bind_command_key('vs', lambda buf, n:
             lambda ev1: lambda ev2: Transform(
                 (None,),
                 (self.mark_jump_to_string,
@@ -165,7 +165,7 @@ class CoreSelectionTransform:
                     chr(ev1.get_keyval()[1])
                     + chr(ev2.get_keyval()[1])),
                 'all').apply(buf))
-        self.bind_command_key('v m s', lambda buf, n:
+        self.bind_command_key('vms', lambda buf, n:
             lambda ev1: lambda ev2: Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1,
@@ -173,28 +173,28 @@ class CoreSelectionTransform:
                     + chr(ev2.get_keyval()[1]),
                     True),
                 (None,), 'all').apply(buf))
-        self.bind_command_key('v w', lambda buf, n: Transform(
+        self.bind_command_key('vw', lambda buf, n: Transform(
             (None,),
             (self.mark_jump_to_word_edge, 0), 'all').apply(buf))
-        self.bind_command_key('v m w', lambda buf, n: Transform(
+        self.bind_command_key('vmw', lambda buf, n: Transform(
             (self.mark_jump_to_word_edge, 0, True),
             (None,), 'all').apply(buf))
-        self.bind_command_key('v r', lambda buf, n: Transform(
+        self.bind_command_key('vr', lambda buf, n: Transform(
             (None,),
             (self.mark_jump_to_line_end, 0), 'all').apply(buf))
-        self.bind_command_key('v m r', lambda buf, n: Transform(
+        self.bind_command_key('vmr', lambda buf, n: Transform(
             (self.mark_jump_to_line_start_or_nonspace_char,
                 n if n != 0 else 1),
             (None,), 'all').apply(buf))
-        self.bind_command_key('v [', lambda buf, n: Transform(
+        self.bind_command_key('v[', lambda buf, n: Transform(
             (self.mark_jump_to_empty_line,
                 n if n != 0 else 1, True),
             (None,), 'all').apply(buf))
-        self.bind_command_key('v ]', lambda buf, n: Transform(
+        self.bind_command_key('v]', lambda buf, n: Transform(
             (None,),
             (self.mark_jump_to_empty_line,
                 n if n != 0 else 1), 'all').apply(buf))
-        self.bind_command_key('v i w', lambda buf, n: Transform(
+        self.bind_command_key('viw', lambda buf, n: Transform(
             (self.mark_jump_to_word_edge, 0, True),
             (self.mark_jump_to_word_edge, 0), 'all').apply(buf))
 
@@ -217,14 +217,14 @@ class CoreSelectionTransform:
                     ('single',), 'all').apply(buf)
             return f
         for left, right in self.BRACKETS.items():
-            self.bind_command_key('v i ' + left,
+            self.bind_command_key('vi' + left,
                 make_expander(left, right, False))
-            self.bind_command_key('v a ' + left,
+            self.bind_command_key('va' + left,
                 make_expander(left, right, True))
             if right == left: continue
-            self.bind_command_key('v i ' + right,
+            self.bind_command_key('vi' + right,
                 make_expander(left, right, False))
-            self.bind_command_key('v a ' + right,
+            self.bind_command_key('va' + right,
                 make_expander(left, right, True))
 
     def selection_brackets_expand(self, sel, buf, left, right,

@@ -2,9 +2,9 @@ from gi.repository import Gtk, GObject, cairo, Gdk
 
 class Layout:
     def __init__(self):
-        self.bind_command_key(', v', lambda view: self.split_view(view, Gtk.Orientation.VERTICAL))
-        self.bind_command_key(', f', lambda view: self.split_view(view, Gtk.Orientation.HORIZONTAL))
-        self.bind_command_key(', s', self.sibling_view)
+        self.bind_command_key(',v', lambda view: self.split_view(view, Gtk.Orientation.VERTICAL))
+        self.bind_command_key(',f', lambda view: self.split_view(view, Gtk.Orientation.HORIZONTAL))
+        self.bind_command_key(',s', self.sibling_view)
 
         self.bind_command_key('J', self.south_view)
         self.bind_command_key('K', self.north_view)
