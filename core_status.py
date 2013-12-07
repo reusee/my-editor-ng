@@ -12,8 +12,8 @@ class Status:
 
         # command
         self.command_prefix = []
-        self.connect('key-handler-reset', lambda w: self.command_prefix.clear())
-        self.connect('key-handler-prefix', lambda w, c: self.command_prefix.append(c))
+        self.connect('key-done', lambda w: self.command_prefix.clear())
+        self.connect('key-prefix', lambda w, c: self.command_prefix.append(c))
 
         # status line
         self.status_line = Gtk.Grid()

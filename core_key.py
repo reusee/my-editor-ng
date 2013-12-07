@@ -22,8 +22,8 @@ class CoreKey:
         self.connect('bind-edit-key',
             lambda _, seq, handler: self.bind_key_handler(self.edit_key_handler, seq, handler))
 
-        self.new_signal('key-handler-reset', ())
-        self.new_signal('key-handler-prefix', (str,))
+        self.new_signal('key-done', ())
+        self.new_signal('key-prefix', (str,))
         self.new_signal('key-handler-execute', (object, object))
 
         self.new_signal('entered-edit-mode', ())
@@ -63,16 +63,16 @@ class CoreKey:
             ret = self.execute_key_handler(handler, view, ev)
             if callable(ret): # another function handler
                 self.key_handler = ret
-                self.emit('key-handler-prefix', chr(val))
+                self.emit('key-prefix', chr(val))
             elif isinstance(ret, dict): # another dict handler
                 self.key_handler = ret
-                self.emit('key-handler-prefix', chr(val))
+                self.emit('key-prefix', chr(val))
             elif ret == 'is_number_prefix': # a number prefix
                 pass
             elif ret == 'propagate': # pass to system handler
                 return False
             else: # handler executed
-                self.emit('key-handler-reset')
+                self.emit('key-done')
                 self.n = 0
         elif isinstance(handler, dict): # sub dict handler
             self.key_handler = handler
@@ -80,7 +80,7 @@ class CoreKey:
                 self.delay_chars.append(chr(val))
                 self.delay_chars_timer = GObject.timeout_add(200,
                     lambda: self.insert_delay_chars(view))
-            self.emit('key-handler-prefix', chr(val))
+            self.emit('key-prefix', chr(val))
         else: # no handler
             if is_edit_mode:
                 if self.delay_chars_timer:
@@ -91,7 +91,7 @@ class CoreKey:
             else:
                 print('no handler')
                 self.key_handler = self.command_key_handler
-            self.emit('key-handler-reset')
+            self.emit('key-done')
         return True
 
     def insert_delay_chars(self, view):
@@ -99,7 +99,7 @@ class CoreKey:
         buf.insert(buf.get_iter_at_mark(buf.get_insert()), ''.join(self.delay_chars))
         self.key_handler = self.edit_key_handler
         self.delay_chars.clear()
-        self.emit('key-handler-reset')
+        self.emit('key-done')
 
     def execute_key_handler(self, f, view, ev):
         if '_param_names' not in f.__dict__:
@@ -138,8 +138,8 @@ class CoreKey:
         self.operation_mode = self.COMMAND
         self.key_handler = self.command_key_handler
         self.n = 0
-        self.emit('key-handler-reset')
-        self.emit('entered-command-mode')
+        self.emit('key-donekey-handler-reset')
+        self.emt('entered-command-mode')
 
     def enter_edit_mode(self):
         self.operation_mode = self.EDIT

@@ -3,7 +3,7 @@ class CoreMacro:
         self.macros = {}
 
         self.connect('key-pressed', self.record_key_events)
-        self.connect('key-handler-reset', self.new_key_event_group)
+        self.connect('key-done', self.new_key_event_group)
         self.recording_macro = False
         self.recorded_key_events = []
 
