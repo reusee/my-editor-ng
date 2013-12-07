@@ -1,5 +1,5 @@
 from gi.repository import Gtk, Gdk
-from core_selection_transform import *
+from core_selection_transform import Transform
 
 class Edit:
     def __init__(self):

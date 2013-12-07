@@ -1,32 +1,32 @@
-from gi.repository import Gtk, Pango, GtkSource, GObject
+from gi.repository import Gtk, Pango, GtkSource, GObject, Gdk
 import os
 
-from core_key import *
-from core_buffer import *
-from core_view import *
-from core_defs import *
-from core_edit import *
-from core_status import *
-from core_layout import *
-from core_file import *
-from core_message import *
-from core_format import *
-from core_search import *
-from core_word_collector import *
-from core_bookmark import *
-from core_completion import *
-from core_mark import *
-from core_selection import *
-from core_selection_transform import *
-from core_selection_operation import *
-from core_macro import *
-from core_pattern_match import *
+from core_key import CoreKey
+from core_buffer import Buffer
+from core_view import View
+from core_defs import Defs
+from core_edit import Edit
+from core_status import Status
+from core_layout import Layout
+from core_file import File
+from core_message import Message
+from core_format import CoreFormat
+from core_search import Search
+from core_word_collector import WordCollector
+from core_bookmark import Bookmark
+from core_completion import Completion
+from core_mark import CoreMark
+from core_selection import CoreSelection
+from core_selection_transform import CoreSelectionTransform
+from core_selection_operation import CoreSelectionOperation
+from core_macro import CoreMacro
+from core_pattern_match import CorePatternMatch
 
-from mod_minimap import *
-from mod_python import *
-from mod_jedi import *
-from mod_vte import *
-from mod_statistics import *
+from mod_minimap import Minimap
+from mod_python import ModPython
+from mod_jedi import Jedi
+from mod_vte import VteModule
+from mod_statistics import ModStatistics
 
 class Editor(Gtk.Grid,
     CoreKey,

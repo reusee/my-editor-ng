@@ -4,7 +4,7 @@ from gi.repository import Gtk, Gdk
 import sys
 import os
 
-from editor import *
+from editor import Editor
 
 class Main(Gtk.Window):
     def __init__(self):
