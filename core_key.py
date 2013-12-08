@@ -98,6 +98,7 @@ class CoreKey:
         self.key_handler = self.edit_key_handler
         self.delay_chars.clear()
         self.emit('key-done')
+        self.delay_chars_timer = None
 
     def execute_key_handler(self, f, view, ev):
         if '_param_names' not in f.__dict__:
