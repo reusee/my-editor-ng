@@ -76,7 +76,8 @@ class View:
 
     def save_current_buffer_cursor_position(self, view):
         buf = view.get_buffer()
-        mark = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
+        mark = buf.create_mark(None,
+            buf.get_iter_at_mark(buf.get_insert()), True)
         view.attr['buffer-cursor-position'][buf] = mark
 
     def restore_current_buffer_cursor_position(self, view):

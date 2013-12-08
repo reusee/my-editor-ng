@@ -30,8 +30,10 @@ class Search:
         buf.attr['search-result-tag'] = tag
         buf.attr['search-pattern'] = ''
         buf.connect('changed', self.update_search_result)
-        buf.attr['search-range-start'] = buf.create_mark(None, buf.get_start_iter())
-        buf.attr['search-range-end'] = buf.create_mark(None, buf.get_end_iter())
+        buf.attr['search-range-start'] = buf.create_mark(None,
+            buf.get_start_iter(), True)
+        buf.attr['search-range-end'] = buf.create_mark(None,
+            buf.get_end_iter(), True)
 
     def update_search_result(self, buf):
         buf.remove_tag_by_name('search-result',

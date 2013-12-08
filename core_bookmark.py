@@ -13,7 +13,7 @@ class Bookmark:
         buf.attr['bookmarks'] = {}
 
         buf.attr['mark-last-leave-edit'] = buf.create_mark(None,
-            buf.get_iter_at_mark(buf.get_insert()))
+            buf.get_iter_at_mark(buf.get_insert()), True)
         self.connect('entered-command-mode', lambda _:
             buf.move_mark(buf.attr['mark-last-leave-edit'],
                 buf.get_iter_at_mark(buf.get_insert())))
@@ -23,7 +23,8 @@ class Bookmark:
             _, val = ev.get_keyval()
             if val >= 0x20 and val <= 0x7e:
                 buf = view.get_buffer()
-                mark = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
+                mark = buf.create_mark(None,
+                    buf.get_iter_at_mark(buf.get_insert()), True)
                 buf.attr['bookmarks'][val] = mark
                 print('mark', chr(val))
         return wait_key
