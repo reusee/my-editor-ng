@@ -1,4 +1,4 @@
-from gi.repository import GObject, Gtk, Gdk, GLib
+from gi.repository import GObject, Gtk, Gdk, GLib, GtkSource
 import inspect
 
 class CoreKey:
@@ -11,9 +11,10 @@ class CoreKey:
         self.command_key_handler = {}
         self.edit_key_handler = {}
 
-        self.new_signal('key-pressed', (Gdk.Event,))
-        self.connect('key-pressed', lambda _, ev:
+        self.new_signal('key-pressed', (GtkSource.View, Gdk.Event,))
+        self.connect('key-pressed', lambda _, view, ev:
           self.emit('should-redraw'))
+        self.key_pressed_return_value = False
 
         self.new_signal('key-done', ())
         self.new_signal('key-prefix', (str,))
@@ -34,7 +35,10 @@ class CoreKey:
         self.bind_edit_key('kd', self.enter_command_mode)
 
     def handle_key_press(self, view, ev):
-        self.emit('key-pressed', ev.copy())
+        self.emit('key-pressed', view, ev.copy())
+        if self.key_pressed_return_value:
+            self.key_pressed_return_value = False
+            return True
         _, val = ev.get_keyval()
         if val == Gdk.KEY_Shift_L or val == Gdk.KEY_Shift_R:
             return False

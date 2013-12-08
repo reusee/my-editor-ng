@@ -4,7 +4,7 @@ class ModStatistics:
         editor.connect('key-done', self.key_reseted)
         self.current_keys = []
 
-    def collect_key(self, _, ev):
+    def collect_key(self, _, view, ev):
         #print(chr(ev.get_keyval()[1]))
         pass
 

@@ -10,7 +10,7 @@ class CoreMacro:
         self.bind_command_key('.w', self.toggle_macro_recording)
         self.bind_command_key('mw', self.replay_macro)
 
-    def record_key_events(self, _, ev):
+    def record_key_events(self, _, view, ev):
         if not self.recording_macro: return
         self.recorded_key_events[-1].append(ev.copy())
 
