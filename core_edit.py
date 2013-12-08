@@ -25,6 +25,7 @@ class Edit:
     def paste(self, view, n):
         #TODO multiple clipboard
         buf = view.get_buffer()
+        if n == 0: n = 1
         for _ in range(n):
             buf.paste_clipboard(self.clipboard, None, True)
 
