@@ -26,9 +26,9 @@ class View:
         # scroll
         self.bind_command_key('M', self.page_down)
         self.bind_command_key('U', self.page_up)
-        self.bind_command_key('zt', lambda view: self.scroll_cursor(view, 1, 0))
-        self.bind_command_key('zb', lambda view: self.scroll_cursor(view, 1, 1))
-        self.bind_command_key('zz', lambda view: self.scroll_cursor(view, 1, 0.5))
+        self.bind_command_key('gt', lambda view: self.scroll_cursor(view, 1, 0))
+        self.bind_command_key('gb', lambda view: self.scroll_cursor(view, 1, 1))
+        self.bind_command_key('gm', lambda view: self.scroll_cursor(view, 1, 0.5))
 
     def create_view(self, buf = None):
         if buf:

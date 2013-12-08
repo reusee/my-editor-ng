@@ -22,6 +22,7 @@ from core_selection_operation import CoreSelectionOperation
 from core_macro import CoreMacro
 from core_pattern_match import CorePatternMatch
 from core_terminal import CoreTerminal
+from core_folding import CoreFolding
 
 from mod_minimap import Minimap
 from mod_python import ModPython
@@ -49,7 +50,8 @@ class Editor(Gtk.Grid,
     CoreSelectionOperation,
     CoreMacro,
     CorePatternMatch,
-    CoreTerminal
+    CoreTerminal,
+    CoreFolding,
     ):
 
     __gsignals__ = {}
@@ -77,6 +79,7 @@ class Editor(Gtk.Grid,
         CoreMacro.__init__(self)
         CorePatternMatch.__init__(self)
         CoreTerminal.__init__(self)
+        CoreFolding.__init__(self)
 
         # views
         self.views_grid = Gtk.Grid()
