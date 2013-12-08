@@ -71,7 +71,7 @@ class View:
         view.grab_focus()
         # restore saved buffer cursor position
         self.restore_current_buffer_cursor_position(view)
-        view.scroll_mark_onscreen(buf.get_insert())
+        view.scroll_to_mark(buf.get_insert(), 0, False, 0, 0)
         self.emit('should-redraw')
 
     def save_current_buffer_cursor_position(self, view):

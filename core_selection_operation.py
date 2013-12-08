@@ -1,6 +1,10 @@
 class CoreSelectionOperation:
     def __init__(self):
-        pass
+        self.bind_command_key('d', self.cmd_delete_selection)
+        self.bind_command_key('c', self.cmd_change_selection)
+        self.bind_command_key('y', self.cmd_copy_selection)
+        self.bind_command_key(',>', self.cmd_indent_selection)
+        self.bind_command_key(',<', self.cmd_dedent_selection)
 
     def delete_selection(self, buf):
         deleted = False
@@ -19,6 +23,41 @@ class CoreSelectionOperation:
             return True
         return False
 
+    def cmd_delete_selection(self, view):
+        buf = view.get_buffer()
+        def func():
+            if not self.copy_selection(buf): # nothing is selected
+                return False
+            self.delete_selection(buf)
+            self.clear_selections(buf)
+            return True
+        if not func():
+            buf.attr['delayed-selection-operation'] = func
+            return self.selection_extend_handler
+
+    def cmd_change_selection(self, view):
+        buf = view.get_buffer()
+        def func():
+            if not self.copy_selection(buf): # nothing is selected
+                return False
+            self.delete_selection(buf)
+            self.enter_edit_mode()
+            return True
+        if not func():
+            buf.attr['delayed-selection-operation'] = func
+            return self.selection_extend_handler
+
+    def cmd_copy_selection(self, view):
+        buf = view.get_buffer()
+        def func():
+            if not self.copy_selection(buf): # nothing is selected
+                return False
+            self.clear_selections(buf)
+            return True
+        if not func():
+            buf.attr['delayed-selection-operation'] = func
+            return self.selection_extend_handler
+
     def indent_selection(self, buf, indent_string):
         for sel in buf.attr['selections'] + [buf.attr['cursor']]:
             start = buf.get_iter_at_mark(sel.start)
@@ -29,6 +68,19 @@ class CoreSelectionOperation:
                 if start.compare(end) >= 0: break
                 buf.insert(start, indent_string, -1)
                 end = buf.get_iter_at_mark(sel.end)
+
+    def cmd_indent_selection(self, view, n):
+        if n == 0: n = 1
+        buf = view.get_buffer()
+        indent_string = ' ' * view.get_indent_width() * n
+        if not buf.get_has_selection(): # select current line
+            it = buf.get_iter_at_mark(buf.get_insert())
+            if not it.starts_line(): it.set_line_offset(0)
+            buf.move_mark(buf.get_selection_bound(), it)
+            if not it.ends_line(): it.forward_to_line_end()
+            buf.move_mark(buf.get_insert(), it)
+        self.indent_selection(buf, indent_string)
+        self.clear_selections(buf)
 
     def dedent_selection(self, buf, dedent_level):
         for sel in buf.attr['selections'] + [buf.attr['cursor']]:
@@ -44,3 +96,15 @@ class CoreSelectionOperation:
                     buf.delete(start, it)
                 start.forward_line()
                 end = buf.get_iter_at_mark(sel.end)
+    def cmd_dedent_selection(self, view, n):
+        if n == 0: n = 1
+        buf = view.get_buffer()
+        dedent_level = view.get_indent_width() * n
+        if not buf.get_has_selection(): # select current line
+            it = buf.get_iter_at_mark(buf.get_insert())
+            if not it.starts_line(): it.set_line_offset(0)
+            buf.move_mark(buf.get_selection_bound(), it)
+            if not it.ends_line(): it.forward_to_line_end()
+            buf.move_mark(buf.get_insert(), it)
+        self.dedent_selection(buf, dedent_level)
+        self.clear_selections(buf)

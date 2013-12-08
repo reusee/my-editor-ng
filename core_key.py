@@ -30,6 +30,9 @@ class CoreKey:
         for i in range(0, 10):
             self.bind_command_key(str(i), self.make_number_prefix_handler(i))
 
+        self.bind_command_key('i', self.enter_edit_mode)
+        self.bind_edit_key('kd', self.enter_command_mode)
+
     def handle_key_press(self, view, ev):
         self.emit('key-pressed', ev.copy())
         _, val = ev.get_keyval()
