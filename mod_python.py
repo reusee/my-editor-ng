@@ -28,7 +28,6 @@ class ModPython:
             while start.compare(it) < 0 and not start.ends_line():
                 if start.get_char().isspace(): start.forward_char()
                 else: break
-            print(start.get_offset(), it.get_offset())
             if start.compare(it) != 0: return
             buf.begin_user_action()
             buf.delete(start, buf.get_iter_at_mark(buf.get_insert()))
