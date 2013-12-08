@@ -8,12 +8,14 @@ class CoreSelectionOperation:
 
     def delete_selection(self, buf):
         deleted = False
+        buf.begin_user_action()
         for sel in buf.attr['selections']:
             start_iter = buf.get_iter_at_mark(sel.start)
             end_iter = buf.get_iter_at_mark(sel.end)
             if start_iter.compare(end_iter) != 0: deleted = True
             buf.delete(start_iter, end_iter)
         deleted = buf.delete_selection(True, True)
+        buf.end_user_action()
         return deleted
 
     def copy_selection(self, buf):
@@ -66,7 +68,9 @@ class CoreSelectionOperation:
                 if not start.starts_line():
                     start.forward_line()
                 if start.compare(end) >= 0: break
+                buf.begin_user_action()
                 buf.insert(start, indent_string, -1)
+                buf.end_user_action()
                 end = buf.get_iter_at_mark(sel.end)
 
     def cmd_indent_selection(self, view, n):
@@ -93,7 +97,9 @@ class CoreSelectionOperation:
                     it.get_line_offset() < dedent_level:
                     it.forward_char()
                 if it.get_line_offset() <= dedent_level:
+                    buf.begin_user_action()
                     buf.delete(start, it)
+                    buf.end_user_action()
                 start.forward_line()
                 end = buf.get_iter_at_mark(sel.end)
     def cmd_dedent_selection(self, view, n):

@@ -70,7 +70,9 @@ class CoreSelection:
                 + buf.attr['delete-range-start-offset'])
             sel_end.set_offset(sel_end.get_offset()
                 + buf.attr['delete-range-end-offset'])
+            buf.begin_user_action()
             buf.delete(sel_start, sel_end)
+            buf.end_user_action()
         buf.attr['skip-insert-delete-signals'] = False
         start.assign(buf.get_iter_at_mark(start_mark))
         end.assign(buf.get_iter_at_mark(end_mark))
@@ -86,7 +88,9 @@ class CoreSelection:
             buf.attr['skip-insert-delete-signals'] = True
             for selection in buf.attr['selections']:
                 it = buf.get_iter_at_mark(selection.start)
+                buf.begin_user_action()
                 buf.insert(it, text)
+                buf.end_user_action()
             buf.attr['skip-insert-delete-signals'] = False
             location.assign(buf.get_iter_at_mark(m))
             buf.delete_mark(m)

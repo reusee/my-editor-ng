@@ -7,7 +7,9 @@ class CoreFormat:
         it = buf.get_end_iter()
         if not it.backward_char(): return
         if it.get_char() != '\n':
+            buf.begin_user_action()
             buf.insert(buf.get_end_iter(), '\n', -1)
+            buf.end_user_action()
 
     def strip_trailing_whitespace(self, _, buf):
         for l in range(buf.get_line_count()):
@@ -21,4 +23,6 @@ class CoreFormat:
                 if not end.get_char().isspace():
                     end.forward_char()
                     break
+            buf.begin_user_action()
             buf.delete(end, eol)
+            buf.end_user_action()

@@ -30,7 +30,9 @@ class ModPython:
                 else: break
             print(start.get_offset(), it.get_offset())
             if start.compare(it) != 0: return
+            buf.begin_user_action()
             buf.delete(start, buf.get_iter_at_mark(buf.get_insert()))
             buf.insert(start, replace, -1)
+            buf.end_user_action()
             return True
         self.editor.add_pattern(buf, s, callback)

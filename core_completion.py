@@ -91,9 +91,11 @@ class Completion:
           buf.get_iter_at_mark(end), False)
 
         self.completion_replacing = True
+        buf.begin_user_action()
         buf.delete(buf.get_iter_at_mark(start), buf.get_iter_at_mark(end))
         replace = self.completion_candidates[0]
         buf.insert(buf.get_iter_at_mark(start), replace, -1)
+        buf.end_user_action()
         self.completion_replacing = False
 
         if len(self.completion_candidates) > 0:

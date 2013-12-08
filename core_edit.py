@@ -59,9 +59,11 @@ class Edit:
         while st.get_char() == ' ' and st.compare(line_end_iter) < 0:
             st.forward_char()
         indent_level = st.get_line_offset()
+        buf.begin_user_action()
         buf.insert(it, '\n')
         it.backward_line()
         buf.insert(it, ' ' * indent_level)
+        buf.end_user_action()
         buf.place_cursor(it)
         self.enter_edit_mode()
 
@@ -73,7 +75,9 @@ class Edit:
         st.set_line_offset(0)
         while st.get_char() == ' ' and st.compare(it) < 0:
             st.forward_char()
+        buf.begin_user_action()
         buf.insert(it, '\n' + ' ' * st.get_line_offset())
+        buf.end_user_action()
         buf.place_cursor(it)
         self.enter_edit_mode()
 
@@ -97,7 +101,9 @@ class Edit:
         buf.move_mark(buf.get_insert(), start)
         buf.move_mark(buf.get_selection_bound(), end)
         buf.copy_clipboard(self.clipboard)
+        buf.begin_user_action()
         buf.delete(start, end)
+        buf.end_user_action()
 
     def enter_edit_mode_at_first_char(self, view):
         buf = view.get_buffer()
@@ -116,7 +122,9 @@ class Edit:
             it.forward_char()
         line_end = it.copy()
         if not line_end.ends_line(): it.forward_to_line_end()
+        buf.begin_user_action()
         buf.delete(it, line_end)
+        buf.end_user_action()
         buf.place_cursor(it)
         self.enter_edit_mode()
 
@@ -127,7 +135,9 @@ class Edit:
         nonspace_deleted = False
         if it.backward_char():
             if it.get_char() != ' ': nonspace_deleted = True
+            buf.begin_user_action()
             buf.delete(it, end)
+            buf.end_user_action()
         if nonspace_deleted: return
         indent_width = self.default_indent_width
         if 'indent-width' in buf.attr:
@@ -135,7 +145,9 @@ class Edit:
         i = it.get_line_offset() % indent_width
         while i != 0:
             if it.backward_char() and it.get_char() == ' ':
+                buf.begin_user_action()
                 buf.delete(it, end)
+                buf.end_user_action()
                 i -= 1
             else:
                 break

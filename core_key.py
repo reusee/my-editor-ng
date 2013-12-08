@@ -98,7 +98,9 @@ class CoreKey:
 
     def insert_delay_chars(self, view):
         buf = view.get_buffer()
+        buf.begin_user_action()
         buf.insert(buf.get_iter_at_mark(buf.get_insert()), ''.join(self.delay_chars))
+        buf.end_user_action()
         self.key_handler = self.edit_key_handler
         self.delay_chars.clear()
         self.emit('key-done')
