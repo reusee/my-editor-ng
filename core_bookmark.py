@@ -8,6 +8,15 @@ class Bookmark:
     def setup_mark(self, buf):
         buf.attr['bookmarks'] = {}
 
+        buf.attr['mark-last-leave-edit'] = buf.create_mark(None,
+            buf.get_iter_at_mark(buf.get_insert()))
+        self.connect('entered-command-mode', lambda _:
+            buf.move_mark(buf.attr['mark-last-leave-edit'],
+                buf.get_iter_at_mark(buf.get_insert())))
+        self.bind_command_key('ge', lambda buf:
+            buf.place_cursor(buf.get_iter_at_mark(
+                buf.attr['mark-last-leave-edit'])))
+
     def create_mark(self, view):
         def wait_key(ev):
             _, val = ev.get_keyval()
