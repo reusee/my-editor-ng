@@ -22,6 +22,7 @@ class ModPython:
         self.add_line_start_abbre(buf, 'ww', 'while ')
         self.add_line_start_abbre(buf, 'ee', 'elif ')
         self.add_line_start_abbre(buf, 'll', 'else:')
+        self.add_line_start_abbre(buf, 'pp', 'print(')
 
     def add_line_start_abbre(self, buf, s, replace):
         def callback(buf):
