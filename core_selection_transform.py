@@ -128,10 +128,8 @@ class CoreSelectionTransform:
             (self.mark_jump_to_line_start, 1),
             (self.mark_jump_to_line_start,
                 n + 1 if n != 0 else 2), 'all').apply(buf))
-        self.command_key_handler['v']['d'], = (
-            self.command_key_handler['v']['j'],)
-        self.command_key_handler['v']['y'], = (
-            self.command_key_handler['v']['j'],)
+        self.alias_command_key('vd', 'vj')
+        self.alias_command_key('vy', 'vj')
         self.bind_command_key('vk', lambda buf, n: Transform(
             (self.mark_jump_to_line_start,
                 n if n != 0 else 1, True),
@@ -150,8 +148,7 @@ class CoreSelectionTransform:
                 (self.mark_jump_to_string,
                     n if n != 0 else 1, chr(ev.get_keyval()[1])),
                 'all').apply(buf))
-        self.command_key_handler['v']['t'], = (
-            self.command_key_handler['v']['f'],)
+        self.alias_command_key('vt', 'vf')
         self.bind_command_key('vmf', lambda buf, n: lambda ev:
             Transform(
                 (self.mark_jump_to_string,
@@ -198,7 +195,7 @@ class CoreSelectionTransform:
             (self.mark_jump_to_word_edge, 0, True),
             (self.mark_jump_to_word_edge, 0), 'all').apply(buf))
 
-        self.selection_extend_handler = self.command_key_handler['v']
+        self.selection_extend_handler = self.get_command_key('v')
 
         # numeric prefix in selection extend
         def make_prefix_handler(i):

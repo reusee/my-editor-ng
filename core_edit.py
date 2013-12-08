@@ -20,7 +20,7 @@ class Edit:
 
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 
-        self.edit_key_handler[Gdk.KEY_BackSpace] = self.backspace_with_dedent
+        self.bind_edit_key([Gdk.KEY_BackSpace], self.backspace_with_dedent)
 
     def paste(self, view):
         #TODO multiple clipboard

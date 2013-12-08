@@ -118,17 +118,45 @@ class CoreKey:
     def bind_edit_key(self, seq, handler):
         self.bind_key_handler(self.edit_key_handler, seq, handler)
 
-    def bind_key_handler(self, cur, seq, handler):
+    def bind_key_handler(self, keymap, seq, handler):
         seq = [c for c in seq]
-        for key in seq[:len(seq) - 1]:
-            if key not in cur:
-                cur[key] = {}
-            if not isinstance(cur[key], dict): # conflict
+        for key in seq[:-1]:
+            if key not in keymap:
+                keymap[key] = {}
+            if not isinstance(keymap[key], dict): # conflict
                 raise Exception('command conflict %s %s' % (seq, handler))
-            cur = cur[key]
-        if seq[-1] in cur: # conflict
+            keymap = keymap[key]
+        if seq[-1] in keymap: # conflict
             raise Exception('command conflict %s %s' % (seq, handler))
-        cur[seq[-1]] = handler
+        keymap[seq[-1]] = handler
+
+    def alias_command_key(self, dst_seq, src_seq):
+        self.alias_key_handler(dst_seq, src_seq, self.command_key_handler)
+
+    def alias_key_handler(self, dst_seq, src_seq, keymap):
+        cur = keymap
+        src_seq = [c for c in src_seq]
+        for key in src_seq[:-1]:
+            if (key not in cur) or (not isinstance(cur[key], dict)):
+                raise Exception('invalid alias source')
+            cur = cur[key]
+        if src_seq[-1] not in cur:
+            raise Exception('invalid alias source')
+        src = cur[src_seq[-1]]
+        self.bind_key_handler(keymap, dst_seq, src)
+
+    def get_command_key(self, seq):
+        return self.get_key_handler(seq, self.command_key_handler)
+
+    def get_key_handler(self, seq, keymap):
+        seq = [c for c in seq]
+        for key in seq[:-1]:
+            if (key not in keymap) or (not isinstance(keymap[key], dict)):
+                raise Exception('invalid alias source')
+            keymap = keymap[key]
+        if seq[-1] not in keymap:
+            raise Exception('invalid alias source')
+        return keymap[seq[-1]]
 
     def make_number_prefix_handler(self, i):
         def f():
