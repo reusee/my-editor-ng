@@ -9,10 +9,7 @@ class CorePatternMatch:
     def setup_pattern_matcher(self, _, buf):
         buf.attr['patterns'] = {}
         buf.attr['pattern-matcher-states'] = []
-
-        self.add_pattern(buf, 'foobar', lambda buf: buf.insert(
-            buf.get_iter_at_mark(buf.get_insert()), 'foobar', -1)
-            or True)
+        self.add_pattern(buf, 'foobar', lambda buf: print('foobar'))
 
     def update_pattern_matcher_state(self, _, view, ev):
         if self.operation_mode != self.EDIT: return
@@ -20,25 +17,18 @@ class CorePatternMatch:
         c = chr(ev.get_keyval()[1])
         new_states = []
         states = buf.attr['pattern-matcher-states']
-        for state, start_mark in states:
+        for state in states:
             if c in state:
                 state = state[c]
                 if callable(state):
-                    buf.begin_user_action()
-                    buf.delete(buf.get_iter_at_mark(start_mark),
-                        buf.get_iter_at_mark(buf.get_insert()))
-                    buf.end_user_action()
-                    buf.delete_mark(start_mark)
                     self.key_pressed_return_value = state(buf)
                     buf.attr['pattern-matcher-states'].clear()
                     return
                 else:
-                    new_states.append((state, start_mark))
+                    new_states.append(state)
         patterns = buf.attr['patterns']
         if c in patterns:
-            new_states.append((patterns[c],
-                buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()),
-                    True)))
+            new_states.append(patterns[c])
         buf.attr['pattern-matcher-states'] = new_states
 
     def clear_pattern_matcher_state(self, _):

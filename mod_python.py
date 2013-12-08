@@ -22,6 +22,7 @@ class ModPython:
     def add_line_start_abbre(self, buf, s, replace):
         def callback(buf):
             it = buf.get_iter_at_mark(buf.get_insert())
+            for _ in range(len(s) - 1): it.backward_char()
             start = it.copy()
             start.set_line_offset(0)
             while start.compare(it) < 0 and not start.ends_line():
