@@ -103,12 +103,12 @@ class Completion:
 
 class CompletionView(Gtk.Window):
     def __init__(self, parent):
-        Gtk.Window.__init__(self, Gtk.WindowType.POPUP)
+        Gtk.Window.__init__(self, type = Gtk.WindowType.POPUP)
         self.set_attached_to(parent)
         self.set_name('completion_view')
 
         self.store = Gtk.ListStore(str)
-        self.view = Gtk.TreeView(self.store)
+        self.view = Gtk.TreeView(model = self.store)
         self.add(self.view)
         self.view.set_headers_visible(False)
         renderer = Gtk.CellRendererText()

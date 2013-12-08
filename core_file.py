@@ -90,7 +90,7 @@ class FileChooser(Gtk.Grid):
         store = Gtk.ListStore(str)
         self.store = store
 
-        view = Gtk.TreeView(store)
+        view = Gtk.TreeView(model = store)
         view.set_headers_visible(False)
         self.view = view
         self.add(view)

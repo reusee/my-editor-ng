@@ -1,4 +1,4 @@
-from gi.repository import GObject, Gtk, Gdk
+from gi.repository import GObject, Gtk, Gdk, GLib
 import inspect
 
 class CoreKey:
@@ -51,7 +51,8 @@ class CoreKey:
         if callable(handler): # trigger a command or call handler function
             if is_edit_mode: # not a char to insert
                 if self.delay_chars_timer:
-                    GObject.source_remove(self.delay_chars_timer)
+                    GLib.source_remove(self.delay_chars_timer)
+                    self.delay_chars_timer = None
                 self.key_handler = self.edit_key_handler
                 self.delay_chars.clear()
             else:
@@ -74,13 +75,14 @@ class CoreKey:
             self.key_handler = handler
             if is_edit_mode:
                 self.delay_chars.append(chr(val))
-                self.delay_chars_timer = GObject.timeout_add(200,
+                self.delay_chars_timer = GLib.timeout_add(200,
                     lambda: self.insert_delay_chars(view))
             self.emit('key-prefix', chr(val))
         else: # no handler
             if is_edit_mode:
                 if self.delay_chars_timer:
-                    GObject.source_remove(self.delay_chars_timer)
+                    GLib.source_remove(self.delay_chars_timer)
+                    self.delay_chars_timer = None
                 self.insert_delay_chars(view)
                 self.key_handler = self.edit_key_handler
                 return False

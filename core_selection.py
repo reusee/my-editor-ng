@@ -45,6 +45,7 @@ class CoreSelection:
     def on_buffer_delete_range(self, buf, start, end):
         if self.operation_mode != self.EDIT: return
         if buf.attr['skip-insert-delete-signals']: return
+        buf.begin_user_action()
         start_mark = buf.create_mark(None, start)
         end_mark = buf.create_mark(None, end)
         it = buf.get_iter_at_mark(buf.get_insert())
@@ -62,10 +63,12 @@ class CoreSelection:
         end.assign(buf.get_iter_at_mark(end_mark))
         buf.delete_mark(start_mark)
         buf.delete_mark(end_mark)
+        buf.end_user_action()
 
     def on_buffer_insert_text(self, buf, location, text, length):
         if self.operation_mode != self.EDIT: return
         if buf.attr['skip-insert-delete-signals']: return
+        buf.begin_user_action()
         cursor_offset = buf.get_iter_at_mark(buf.get_insert()).get_offset()
         if cursor_offset == location.get_offset():
             m = buf.create_mark(None, location)
@@ -76,6 +79,7 @@ class CoreSelection:
             buf.attr['skip-insert-delete-signals'] = False
             location.assign(buf.get_iter_at_mark(m))
             buf.delete_mark(m)
+        buf.end_user_action()
 
     def view_get_cursor(self, view):
         return view.get_buffer().attr['cursor']
