@@ -21,11 +21,11 @@ from core_selection_transform import CoreSelectionTransform
 from core_selection_operation import CoreSelectionOperation
 from core_macro import CoreMacro
 from core_pattern_match import CorePatternMatch
+from core_terminal import CoreTerminal
 
 from mod_minimap import Minimap
 from mod_python import ModPython
 from mod_jedi import Jedi
-from mod_vte import VteModule
 from mod_statistics import ModStatistics
 
 class Editor(Gtk.Grid,
@@ -49,6 +49,7 @@ class Editor(Gtk.Grid,
     CoreSelectionOperation,
     CoreMacro,
     CorePatternMatch,
+    CoreTerminal
     ):
 
     __gsignals__ = {}
@@ -75,6 +76,7 @@ class Editor(Gtk.Grid,
         CoreSelectionOperation.__init__(self)
         CoreMacro.__init__(self)
         CorePatternMatch.__init__(self)
+        CoreTerminal.__init__(self)
 
         # views
         self.views_grid = Gtk.Grid()
@@ -105,7 +107,6 @@ class Editor(Gtk.Grid,
         #self.minimap = Minimap(self)
         self.mod_python = ModPython(self)
         #self.jedi = Jedi(self)
-        self.vte_module = VteModule(self)
         self.mod_stat = ModStatistics(self)
 
         # first view

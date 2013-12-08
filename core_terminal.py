@@ -1,17 +1,24 @@
 from gi.repository import Vte, Gdk, GLib, Pango
 import os
 
-class VteModule:
-    def __init__(self, editor):
-        self.terminal = Terminal(editor)
-        editor.south_area.add(self.terminal)
-        editor.connect('realize', lambda _: self.terminal.hide())
-        editor.bind_command_key(',e', self.terminal.open)
+class CoreTerminal:
+    def __init__(self):
+        self.new_south_terminal(',e', '/usr/bin/env', 'fish')
+        self.new_south_terminal('.e', '/usr/bin/env', 'fish')
+        self.new_south_terminal('me', '/usr/bin/env', 'fish')
+        self.new_south_terminal('.p', '/usr/bin/env', 'python')
+
+    def new_south_terminal(self, key, *argv):
+        terminal = Terminal(self, *argv)
+        self.connect('realize', lambda _: self.south_area.add(terminal))
+        self.connect('realize', lambda _: terminal.hide())
+        self.bind_command_key(key, terminal.open)
 
 class Terminal(Vte.Terminal):
-    def __init__(self, editor):
+    def __init__(self, editor, *argv):
         Vte.Terminal.__init__(self)
         self.editor = editor
+        self.argv = argv
         self.connect('key-press-event', self.handle_key)
         self.view = None
         self.set_size(80, 25)
@@ -25,7 +32,7 @@ class Terminal(Vte.Terminal):
         _, pid = self.fork_command_full(
           Vte.PtyFlags.DEFAULT,
           os.environ['HOME'],
-          ['/usr/bin/fish'],
+          self.argv,
           [],
           0,
           None,
