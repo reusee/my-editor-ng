@@ -32,4 +32,5 @@ class ModPython:
             if start.compare(it) != 0: return
             buf.delete(start, buf.get_iter_at_mark(buf.get_insert()))
             buf.insert(start, replace, -1)
+            return True
         self.editor.add_pattern(buf, s, callback)

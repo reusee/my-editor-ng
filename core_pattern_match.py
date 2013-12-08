@@ -21,9 +21,8 @@ class CorePatternMatch:
             if c in state:
                 state = state[c]
                 if callable(state):
-                    state(buf)
+                    self.key_pressed_return_value = state(buf)
                     buf.attr['pattern-matcher-states'].clear()
-                    self.key_pressed_return_value = True
                     return
                 else:
                     new_states.append(state)
