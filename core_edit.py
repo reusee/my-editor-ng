@@ -22,10 +22,11 @@ class Edit:
 
         self.bind_edit_key([Gdk.KEY_BackSpace], self.backspace_with_dedent)
 
-    def paste(self, view):
+    def paste(self, view, n):
         #TODO multiple clipboard
         buf = view.get_buffer()
-        buf.paste_clipboard(self.clipboard, None, True)
+        for _ in range(n):
+            buf.paste_clipboard(self.clipboard, None, True)
 
     def paste_at_next_line(self, view):
         buf = view.get_buffer()
