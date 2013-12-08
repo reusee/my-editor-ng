@@ -132,4 +132,4 @@ class SearchEntry(Gtk.Entry):
                 self.update(None, None)
                 self.emit('done')
             self.hide()
-            self.view.grab_focus()
+            self.editor.switch_to_view(self.view)

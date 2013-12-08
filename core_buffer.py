@@ -86,7 +86,9 @@ class Buffer:
         return None
 
     def switch_to_buffer(self, view, buf):
+        self.save_current_buffer_cursor_position(view)
         view.set_buffer(buf)
+        self.restore_current_buffer_cursor_position(view)
         if 'indent-width' in buf.attr:
             view.set_indent_width(buf.attr['indent-width'])
         else:

@@ -60,13 +60,32 @@ class View:
         return view, scroll
 
     def switch_to_view(self, view):
-        # save cursor position of current buffer
+        # save cursor position if current focused is view
         for v in self.views:
             if v.is_focus():
-                self.save_buffer_position(v)
+                self.save_current_buffer_cursor_position(v)
 
+        buf = view.get_buffer()
+        # focus on view
+        view.scroll_mark_onscreen(buf.get_insert())
         view.grab_focus()
+        # restore saved buffer cursor position
+        self.restore_current_buffer_cursor_position(view)
+        view.scroll_mark_onscreen(buf.get_insert())
         self.emit('should-redraw')
+
+    def save_current_buffer_cursor_position(self, view):
+        buf = view.get_buffer()
+        mark = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
+        view.attr['buffer-cursor-position'][buf] = mark
+
+    def restore_current_buffer_cursor_position(self, view):
+        buf = view.get_buffer()
+        if buf in view.attr['buffer-cursor-position']:
+            mark = view.attr['buffer-cursor-position'][buf]
+            buf.place_cursor(buf.get_iter_at_mark(mark))
+            buf.delete_mark(mark)
+            del view.attr['buffer-cursor-position'][buf]
 
     def close_view(self, view):
         if len(self.views) == 1: return
@@ -101,21 +120,7 @@ class View:
                 return
 
     def setup_buffer_switching(self, _, view):
-        view.attr['buffer-position'] = {}
-        view.connect('focus-in-event', self.restore_buffer_position)
-
-    def save_buffer_position(self, view):
-        buf = view.get_buffer()
-        mark = buf.create_mark(None, buf.get_iter_at_mark(buf.get_insert()))
-        view.attr['buffer-position'][buf] = mark
-
-    def restore_buffer_position(self, view, ev):
-        buf = view.get_buffer()
-        if buf in view.attr['buffer-position']:
-            mark = view.attr['buffer-position'][buf]
-            buf.place_cursor(buf.get_iter_at_mark(mark))
-            buf.delete_mark(mark)
-            del view.attr['buffer-position'][buf]
+        view.attr['buffer-cursor-position'] = {}
 
     def switch_next_buffer(self, view):
         index = self.buffers.index(view.get_buffer())

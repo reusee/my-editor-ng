@@ -6,7 +6,7 @@ class File:
     def __init__(self):
 
         self.bind_command_key(',b', self.open_file_chooser)
-        self.file_chooser = FileChooser()
+        self.file_chooser = FileChooser(self)
         self.connect('realize', lambda _: self.north_area.add(self.file_chooser))
         self.file_chooser.connect('done', self.open_file)
 
@@ -73,8 +73,9 @@ class FileChooser(Gtk.Grid):
       'done': (GObject.SIGNAL_RUN_FIRST, None, ()),
       }
 
-    def __init__(self):
+    def __init__(self, editor):
         Gtk.Grid.__init__(self, orientation = Gtk.Orientation.VERTICAL)
+        self.editor = editor
         self.set_vexpand(True)
         self.set_hexpand(True)
         self.connect('key-press-event', self.handle_key_press)
@@ -127,7 +128,7 @@ class FileChooser(Gtk.Grid):
 
     def done(self):
         self.hide()
-        self.last_view.grab_focus()
+        self.editor.switch_to_view(self.last_view)
         self.emit('done')
 
     def update_list(self, entry, _):

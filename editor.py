@@ -111,7 +111,7 @@ class Editor(Gtk.Grid,
         # first view
         view, scroll = self.create_view()
         self.views_grid.add(scroll)
-        self.connect('realize', lambda _: self.views[0].grab_focus())
+        self.connect('realize', lambda _: self.switch_to_view(self.views[0]))
 
     def new_signal(self, name, arg_types):
         GObject.signal_new(name, Editor, GObject.SIGNAL_RUN_FIRST, None, arg_types)

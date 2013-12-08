@@ -3,14 +3,15 @@ import os
 
 class VteModule:
     def __init__(self, editor):
-        self.terminal = Terminal()
+        self.terminal = Terminal(editor)
         editor.south_area.add(self.terminal)
         editor.connect('realize', lambda _: self.terminal.hide())
         editor.bind_command_key(',e', self.terminal.open)
 
 class Terminal(Vte.Terminal):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, editor):
+        Vte.Terminal.__init__(self)
+        self.editor = editor
         self.connect('key-press-event', self.handle_key)
         self.view = None
         self.set_size(80, 25)
@@ -34,7 +35,7 @@ class Terminal(Vte.Terminal):
         _, val = ev.get_keyval()
         if val == Gdk.KEY_Escape:
             self.hide()
-            self.view.grab_focus()
+            self.editor.switch_to_view(self.view)
             self.view = None
 
     def open(self, view):

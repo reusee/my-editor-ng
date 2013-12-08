@@ -33,6 +33,7 @@ class Layout:
         new_grid.add(new_scroll)
         new_grid.show_all()
         grid.attach(new_grid, left, top, 1, 1)
+        view.grab_focus() # restore focus
 
         self.switch_to_view(new_view)
 
