@@ -15,9 +15,9 @@ class Selection:
 
 class CoreSelection:
     def __init__(self):
-        self.connect_after('buffer-created', lambda _, buf:
+        self.connect('buffer-created', lambda _, buf:
             self.setup_multiple_cursor(buf))
-        self.connect_after('view-created', lambda _, view:
+        self.connect('view-created', lambda _, view:
             view.connect('draw', self.draw_selections))
 
         self.bind_command_key('t',
@@ -33,8 +33,10 @@ class CoreSelection:
             self.toggle_selections_vertically)
 
     def setup_multiple_cursor(self, buf):
-        buf.connect('delete-range', self.on_buffer_delete_range)
-        buf.connect('insert-text', self.on_buffer_insert_text)
+        buf.connect('delete-range', self.on_delete_range)
+        buf.connect_after('delete-range', self.after_delete_range)
+        buf.connect_after('insert-text', self.after_insert_text)
+
         buf.attr['selections'] = []
         buf.attr['skip-insert-delete-signals'] = False
         buf.attr['cursor'] = Selection(buf.get_selection_bound(), buf.get_insert())
@@ -42,21 +44,32 @@ class CoreSelection:
         buf.attr['current-transform'] = None
         buf.attr['last-transform'] = None
 
-    #TODO wrong undo action
-    def on_buffer_delete_range(self, buf, start, end):
+        buf.attr['delete-range-start-offset'] = 0
+        buf.attr['delete-range-end-offset'] = 0
+
+    # get offset range of deletion
+    def on_delete_range(self, buf, start, end):
         if self.operation_mode != self.EDIT: return
         if buf.attr['skip-insert-delete-signals']: return
-        start_mark = buf.create_mark(None, start, True)
-        end_mark = buf.create_mark(None, end, True)
         it = buf.get_iter_at_mark(buf.get_insert())
-        start_offset_offset = start.get_offset() - it.get_offset()
-        end_offset_offset = end.get_offset() - it.get_offset()
+        start_offset = start.get_offset() - it.get_offset()
+        end_offset = end.get_offset() - it.get_offset()
+        buf.attr['delete-range-start-offset'] = start_offset
+        buf.attr['delete-range-end-offset'] = end_offset
+
+    def after_delete_range(self, buf, start, end):
+        if self.operation_mode != self.EDIT: return
+        if buf.attr['skip-insert-delete-signals']: return
+        start_mark = buf.create_mark(None, start)
+        end_mark = buf.create_mark(None, end)
         buf.attr['skip-insert-delete-signals'] = True
         for selection in buf.attr['selections']:
             sel_start = buf.get_iter_at_mark(selection.start)
             sel_end = buf.get_iter_at_mark(selection.end)
-            sel_start.set_offset(sel_start.get_offset() + start_offset_offset)
-            sel_end.set_offset(sel_end.get_offset() + end_offset_offset)
+            sel_start.set_offset(sel_start.get_offset()
+                + buf.attr['delete-range-start-offset'])
+            sel_end.set_offset(sel_end.get_offset()
+                + buf.attr['delete-range-end-offset'])
             buf.delete(sel_start, sel_end)
         buf.attr['skip-insert-delete-signals'] = False
         start.assign(buf.get_iter_at_mark(start_mark))
@@ -64,12 +77,11 @@ class CoreSelection:
         buf.delete_mark(start_mark)
         buf.delete_mark(end_mark)
 
-    #TODO
-    def on_buffer_insert_text(self, buf, location, text, length):
+    def after_insert_text(self, buf, location, text, length):
         if self.operation_mode != self.EDIT: return
         if buf.attr['skip-insert-delete-signals']: return
         cursor_offset = buf.get_iter_at_mark(buf.get_insert()).get_offset()
-        if cursor_offset == location.get_offset():
+        if cursor_offset == location.get_offset(): # input by user
             m = buf.create_mark(None, location, True)
             buf.attr['skip-insert-delete-signals'] = True
             for selection in buf.attr['selections']:
