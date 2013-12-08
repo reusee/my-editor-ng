@@ -68,9 +68,9 @@ class Completion:
     def get_completion_candidates(self, word):
         for w in self.vocabulary:
             if w == word: continue
-            if w[0].lower() != word[0].lower(): continue
-            i = 1 # for w
-            j = 1 # for word
+            #if w[0].lower() != word[0].lower(): continue
+            i = 0 # for w
+            j = 0 # for word
             while i < len(w) and j < len(word):
                 if w[i] == word[j]:
                     i += 1
