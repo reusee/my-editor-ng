@@ -2,37 +2,38 @@ class CorePatternMatch:
     def __init__(self):
         self.connect('buffer-created', self.setup_pattern_matcher)
 
+        self.connect('key-pressed', self.update_pattern_matcher_state)
+        self.connect('entered-command-mode',
+            self.clear_pattern_matcher_state)
+
     def setup_pattern_matcher(self, _, buf):
         buf.attr['patterns'] = {}
         buf.attr['pattern-matcher-states'] = []
-        buf.connect_after('insert-text', self.update_matcher_state_on_insert)
-        buf.connect_after('delete-range', self.update_matcher_state_on_delete)
-
         self.add_pattern(buf, 'foobar', lambda buf: print('foobar'))
 
-    def update_matcher_state_on_insert(self, buf, it, text, length):
+    def update_pattern_matcher_state(self, _, view, ev):
+        if self.operation_mode != self.EDIT: return
+        buf = view.get_buffer()
+        c = chr(ev.get_keyval()[1])
         new_states = []
         states = buf.attr['pattern-matcher-states']
         for state in states:
-            if text in state:
-                state = state[text]
+            if c in state:
+                state = state[c]
                 if callable(state):
-                    m = buf.create_mark(None, it, True)
                     state(buf)
                     buf.attr['pattern-matcher-states'].clear()
-                    it.assign(buf.get_iter_at_mark(m))
-                    buf.delete_mark(m)
+                    self.key_pressed_return_value = True
                     return
                 else:
                     new_states.append(state)
-
         patterns = buf.attr['patterns']
-        if text in patterns:
-            new_states.append(patterns[text])
-
+        if c in patterns:
+            new_states.append(patterns[c])
         buf.attr['pattern-matcher-states'] = new_states
 
-    def update_matcher_state_on_delete(self, buf, start, end):
+    def clear_pattern_matcher_state(self, _):
+        buf = self.get_current_buffer()
         buf.attr['pattern-matcher-states'].clear()
 
     def add_pattern(self, buf, pattern, callback):
