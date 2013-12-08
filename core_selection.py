@@ -163,8 +163,10 @@ class CoreSelection:
 
     def toggle_selections_vertically(self, buf, n):
         if n == 0: n = 1
+        offset = buf.get_iter_at_mark(buf.get_insert()).get_line_offset()
         for _ in range(n):
-            self.toggle_selection_mark(buf)
+            if buf.get_iter_at_mark(buf.get_insert()).get_line_offset() == offset:
+                self.toggle_selection_mark(buf)
             Transform(
                 (self.mark_jump_relative_line_with_preferred_offset, 1),
                 ('iter',), 'cursor').apply(buf)
