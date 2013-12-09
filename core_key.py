@@ -35,7 +35,6 @@ class CoreKey:
         self.bind_command_key('i', self.enter_edit_mode, 'enter edit mode')
         self.bind_edit_key('kd', self.enter_command_mode)
 
-        self.connect('realize', lambda _: self.dump_command_keys())
         self.bind_command_key('.h', self.dump_command_keys,
             'show this message')
 
