@@ -7,6 +7,14 @@ class ModPython:
             self.setup(buf) if 'language' in buf.attr
             and buf.attr['language'] == 'Python' else None)
 
+        # function macros
+        editor.bind_command_key('.fv', lambda view:
+            editor.run_keys(view, 'vmwvt(v%vl'),
+            'select current function call')
+        editor.bind_command_key('.fi', lambda view:
+            editor.run_keys(view, 'f(%i'),
+            'insert argument to current function')
+
     def setup_python(self, buf):
         buf.attr['indent-width'] = 4
         buf.attr['language'] = 'Python'
