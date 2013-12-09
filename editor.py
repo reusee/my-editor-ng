@@ -1,86 +1,59 @@
 from gi.repository import Gtk, Pango, GtkSource, GObject, Gdk
 import os
 
-from core_key import CoreKey
-from core_buffer import Buffer
-from core_view import View
-from core_defs import Defs
-from core_edit import Edit
-from core_status import Status
-from core_layout import Layout
-from core_file import File
-from core_message import Message
-from core_format import CoreFormat
-from core_search import Search
-from core_word_collector import WordCollector
-from core_bookmark import Bookmark
-from core_completion import Completion
-from core_mark import CoreMark
-from core_selection import CoreSelection
-from core_selection_transform import CoreSelectionTransform
-from core_selection_operation import CoreSelectionOperation
-from core_macro import CoreMacro
-from core_pattern_match import CorePatternMatch
-from core_terminal import CoreTerminal
-from core_folding import CoreFolding
+core_modules = [
+    'key',
+    'buffer',
+    'view',
+    'defs',
+    'edit',
+    'status',
+    'layout',
+    'file',
+    'message',
+    'format',
+    'search',
+    'word_collector',
+    'bookmark',
+    'completion',
+    'mark',
+    'selection',
+    'selection_transform',
+    'selection_operation',
+    'macro',
+    'pattern_match',
+    'terminal',
+    'folding',
+    ]
 
-from mod_minimap import Minimap
-from mod_python import ModPython
-from mod_jedi import Jedi
-from mod_statistics import ModStatistics
-from mod_profiling import ModProfiling
+classes = [
+    getattr(__import__('core_' + module_name),
+        'Core' + ''.join(e.capitalize()
+            for e in module_name.split('_')))
+    for module_name in core_modules]
 
-class Editor(Gtk.Grid,
-    CoreKey,
-    Buffer,
-    View,
-    Defs,
-    Edit,
-    Status,
-    Layout,
-    File,
-    Message,
-    CoreFormat,
-    Search,
-    WordCollector,
-    Bookmark,
-    Completion,
-    CoreMark,
-    CoreSelection,
-    CoreSelectionTransform,
-    CoreSelectionOperation,
-    CoreMacro,
-    CorePatternMatch,
-    CoreTerminal,
-    CoreFolding,
-    ):
+extra_modules = [
+    #'minimap',
+    'python',
+    #'jedi',
+    'statistics',
+    'profiling',
+    ]
+
+extra_classes = [
+    getattr(__import__('mod_' + module_name),
+        'Mod' + ''.join(e.capitalize()
+            for e in module_name.split('_')))
+    for module_name in extra_modules]
+
+class Editor(Gtk.Grid, *classes):
 
     __gsignals__ = {}
 
     def __init__(self):
         super().__init__()
-        CoreKey.__init__(self)
-        Buffer.__init__(self)
-        View.__init__(self)
-        Defs.__init__(self)
-        Edit.__init__(self)
-        Status.__init__(self)
-        Layout.__init__(self)
-        File.__init__(self)
-        Message.__init__(self)
-        CoreFormat.__init__(self)
-        Search.__init__(self)
-        WordCollector.__init__(self)
-        Bookmark.__init__(self)
-        Completion.__init__(self)
-        CoreMark.__init__(self)
-        CoreSelection.__init__(self)
-        CoreSelectionTransform.__init__(self)
-        CoreSelectionOperation.__init__(self)
-        CoreMacro.__init__(self)
-        CorePatternMatch.__init__(self)
-        CoreTerminal.__init__(self)
-        CoreFolding.__init__(self)
+        for cls in classes:
+            cls.__init__(self)
 
         # views
         self.views_grid = Gtk.Grid()
@@ -107,12 +80,8 @@ class Editor(Gtk.Grid,
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
 
-        # extra modules
-        #self.minimap = Minimap(self)
-        self.mod_python = ModPython(self)
-        #self.jedi = Jedi(self)
-        self.mod_stat = ModStatistics(self)
-        self.mod_profiling = ModProfiling(self)
+        for cls in extra_classes:
+            cls(self)
 
         # first view
         view, scroll = self.create_view()
@@ -127,7 +96,3 @@ class Editor(Gtk.Grid,
             print([e for e in dir(obj) if pattern in e.lower()])
         else:
             print(dir(obj))
-
-    def chain(self, *funcs):
-        for func in funcs:
-            func()

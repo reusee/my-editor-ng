@@ -1,7 +1,7 @@
 from gi.repository import Gtk, Gdk
 from core_selection_transform import Transform
 
-class Edit:
+class CoreEdit:
     def __init__(self):
 
         self.bind_command_key('p', self.paste, 'paste')

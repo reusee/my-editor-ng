@@ -1,4 +1,4 @@
-class Defs:
+class CoreDefs:
     def __init__(self):
         self.BRACKETS = {
             '(': ')',

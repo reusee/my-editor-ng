@@ -1,4 +1,4 @@
-class Bookmark:
+class CoreBookmark:
     def __init__(self):
         self.bind_command_key('b', self.create_mark, 'create bookmark')
         self.bind_command_key("'", self.jump_to_mark, 'jump to bookmark')

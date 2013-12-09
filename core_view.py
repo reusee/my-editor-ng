@@ -1,7 +1,7 @@
 from gi.repository import GtkSource, Gtk, GObject
 import time
 
-class View:
+class CoreView:
     def __init__(self):
         self.views = []
 

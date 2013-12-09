@@ -2,7 +2,7 @@ from gi.repository import Gtk, Gdk, GObject, GtkSource
 import regex
 from core_selection_transform import Transform
 
-class Search:
+class CoreSearch:
     def __init__(self):
         self.search_entry = SearchEntry(self)
         self.connect('realize', lambda _:

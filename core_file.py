@@ -2,7 +2,7 @@ from gi.repository import Gtk, Gdk, GObject, GtkSource
 import os
 import time
 
-class File:
+class CoreFile:
     def __init__(self):
 
         self.bind_command_key(',b', self.open_file_chooser, 'open file')

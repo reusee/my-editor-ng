@@ -1,7 +1,7 @@
 from gi.repository import GtkSource, Gtk
 import os
 
-class Buffer:
+class CoreBuffer:
     def __init__(self):
         self.buffers = []
 

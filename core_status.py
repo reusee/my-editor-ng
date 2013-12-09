@@ -1,6 +1,6 @@
 from gi.repository import Gtk, GtkSource
 
-class Status:
+class CoreStatus:
     def __init__(self):
         # redraw
         self.connect('view-created', lambda _, view:

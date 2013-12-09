@@ -1,6 +1,6 @@
 from gi.repository import Gtk, Gdk, GtkSource
 
-class Completion:
+class CoreCompletion:
     def __init__(self):
         self.vocabulary = set()
         self.connect('found-word', lambda _, word: self.vocabulary.add(word))

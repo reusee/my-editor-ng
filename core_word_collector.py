@@ -1,6 +1,6 @@
 import re
 
-class WordCollector:
+class CoreWordCollector:
     def __init__(self):
         self.connect('buffer-created', self.buffer_setup_completion)
         self.connect('entered-edit-mode', self.update_word_bound_entering_edit)

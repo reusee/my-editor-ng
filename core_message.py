@@ -1,7 +1,7 @@
 from gi.repository import Gtk, GObject
 import time
 
-class Message:
+class CoreMessage:
     def __init__(self):
         self.message_board = Gtk.Grid(orientation = Gtk.Orientation.VERTICAL)
         self.message_history = []

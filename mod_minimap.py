@@ -1,6 +1,6 @@
 from gi.repository import GtkSource, Pango, Gdk, Gtk
 
-class Minimap(GtkSource.View):
+class ModMinimap(GtkSource.View):
     def __init__(self, editor):
         GtkSource.View.__init__(self)
 

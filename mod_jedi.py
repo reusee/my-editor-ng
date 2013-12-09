@@ -1,6 +1,6 @@
 jedi = None
 
-class Jedi:
+class ModJedi:
     def __init__(self, editor):
         editor.connect('language-detected', lambda _, buf, lang:
           self.setup(buf) if lang == 'Python' else None)

@@ -1,4 +1,5 @@
 import cProfile, pstats, io
+
 class ModProfiling:
     def __init__(self, editor):
         self.profiler = None

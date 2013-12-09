@@ -1,6 +1,6 @@
 from gi.repository import Gtk, GObject, cairo, Gdk
 
-class Layout:
+class CoreLayout:
     def __init__(self):
         self.bind_command_key(',v', lambda view: self.split_view(view, Gtk.Orientation.VERTICAL),
             'vertical split current view')
