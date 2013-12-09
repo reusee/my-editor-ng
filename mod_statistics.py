@@ -20,7 +20,6 @@ class ModStatistics:
     def key_reseted(self, _):
         keys = ''.join(self.current_keys)
         if not keys: return
-        print('COMMAND', keys)
         self.current_keys.clear()
         self.log_file.write(keys + '\n')
         self.log_file.flush()
