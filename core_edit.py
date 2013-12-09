@@ -25,10 +25,10 @@ class Edit:
 
         # macros
         self.bind_command_key('.j', lambda view, n:
-            self.run_keys(view, 'b1' + str(n) + "ggdd'1,p"),
+            self.feed_keys(view, 'b1' + str(n) + "ggdd'1,p"),
             'move line n to next line')
         self.bind_command_key('.k', lambda view, n:
-            self.run_keys(view, 'b1dd' + str(n) + "ggp'1"),
+            self.feed_keys(view, 'b1dd' + str(n) + "ggp'1"),
             'move current line to line n')
 
     def paste(self, view, n):

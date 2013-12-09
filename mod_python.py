@@ -9,10 +9,10 @@ class ModPython:
 
         # function macros
         editor.bind_command_key('.fv', lambda view:
-            editor.run_keys(view, 'vmwvt(v%vl'),
+            editor.feed_keys(view, 'vmwvt(v%vl'),
             'select current function call')
         editor.bind_command_key('.fi', lambda view, buf: [
-            editor.run_keys(view, 'f(%i'),
+            editor.feed_keys(view, 'f(%i'),
             buf.begin_user_action(),
             buf.insert(buf.get_iter_at_mark(buf.get_insert()),
                 ', ', -1),

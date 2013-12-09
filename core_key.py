@@ -207,6 +207,6 @@ class CoreKey:
         print('COMMAND MODE BINDINGS')
         self.dump_keymap(self.command_key_handler)
 
-    def run_keys(self, view, seq):
+    def feed_keys(self, view, seq):
         for c in seq:
             self.handle_key(view, ord(c))
