@@ -142,6 +142,15 @@ class CoreSelectionTransform:
                 n if n != 0 else 1),
             ('func',), 'all').apply(buf),
             'relative forward char jump of all selections')
+        self.bind_command_key(',r', lambda buf, n: Transform(
+            (self.mark_jump_to_line_end, 0),
+            ('func',), 'all').apply(buf),
+            'all selection cursors jump to line end')
+        self.bind_command_key(',mr', lambda buf, n: Transform(
+            (self.mark_jump_to_line_start_or_nonspace_char,
+                n if n != 0 else 1),
+            ('func',), 'all').apply(buf),
+            'all selection cursors jump to line start of first non-space char')
 
         # extends
         self.bind_command_key('vj', lambda buf, n: Transform(
