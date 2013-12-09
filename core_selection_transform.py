@@ -194,6 +194,10 @@ class CoreSelectionTransform:
         self.bind_command_key('viw', lambda buf, n: Transform(
             (self.mark_jump_to_word_edge, 0, True),
             (self.mark_jump_to_word_edge, 0), 'all').apply(buf))
+        self.bind_command_key('vb', lambda buf, n: Transform(
+            (self.mark_jump_to_indent_block_edge, 0, True),
+            (self.mark_jump_to_indent_block_edge, 0),
+            'all').apply(buf))
 
         self.selection_extend_handler = self.get_command_key('v')
 

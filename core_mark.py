@@ -169,3 +169,33 @@ class CoreMark:
         if backward and not at_begin: it.forward_char()
         buf.move_mark(mark, it)
         return it
+
+    def mark_jump_to_indent_block_edge(self, mark, buf, n, backward = False):
+        it = buf.get_iter_at_mark(mark)
+        indent_level = self.iter_get_indent_level(it)
+        if backward:
+            it.set_line_offset(0)
+            buf.move_mark(mark, it)
+            it.backward_line()
+            i = self.iter_get_indent_level(it)
+            while (it.get_bytes_in_line() == 1) or i >= indent_level:
+                buf.move_mark(mark, it)
+                if not it.backward_line(): break
+                i = self.iter_get_indent_level(it)
+        else: # forward
+            end_of_buffer = buf.get_end_iter()
+            it.forward_line()
+            buf.move_mark(mark, it)
+            i = self.iter_get_indent_level(it)
+            while it.ends_line() or i >= indent_level:
+                res = it.forward_line()
+                buf.move_mark(mark, it)
+                if not res: break
+                i = self.iter_get_indent_level(it)
+
+    def iter_get_indent_level(self, i):
+        it = i.copy()
+        it.set_line_offset(0)
+        while not it.ends_line() and it.get_char().isspace():
+            it.forward_char()
+        return it.get_line_offset()

@@ -112,7 +112,7 @@ class View:
             if v.is_focus(): return func(v)
 
     def redraw_current_view(self):
-        if int(time.time() * 1000) - self.redraw_time < 30:
+        if int(time.time() * 1000) - self.redraw_time < 20:
             return
         for v in self.views:
             if v.is_focus():
