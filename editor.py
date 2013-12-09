@@ -28,6 +28,7 @@ from mod_minimap import Minimap
 from mod_python import ModPython
 from mod_jedi import Jedi
 from mod_statistics import ModStatistics
+from mod_profiling import ModProfiling
 
 class Editor(Gtk.Grid,
     CoreKey,
@@ -111,6 +112,7 @@ class Editor(Gtk.Grid,
         self.mod_python = ModPython(self)
         #self.jedi = Jedi(self)
         self.mod_stat = ModStatistics(self)
+        self.mod_profiling = ModProfiling(self)
 
         # first view
         view, scroll = self.create_view()
