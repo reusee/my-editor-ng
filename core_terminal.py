@@ -12,7 +12,7 @@ class CoreTerminal:
         terminal = Terminal(self, *argv)
         self.connect('realize', lambda _: self.south_area.add(terminal))
         self.connect('realize', lambda _: terminal.hide())
-        self.bind_command_key(key, terminal.open)
+        self.bind_command_key(key, terminal.open, 'open terminal of ' + ' '.join(argv))
 
 class Terminal(Vte.Terminal):
     def __init__(self, editor, *argv):

@@ -21,16 +21,17 @@ class CoreSelection:
             view.connect('draw', self.draw_selections))
 
         self.bind_command_key('t',
-            lambda buf: self.toggle_selection_mark(buf))
-        self.bind_command_key(',t', self.place_selection_to_search_results)
+            lambda buf: self.toggle_selection_mark(buf), 'toggle selection cursor')
+        self.bind_command_key(',t', self.place_selection_to_search_results,
+            'toggle selection cursors at all search results')
         self.bind_command_key(',c', lambda view:
-            self.clear_selections(view.get_buffer()))
+            self.clear_selections(view.get_buffer()), 'clear all selections')
         self.bind_command_key('{', lambda view:
-            self.jump_selection_mark(view, backward = True))
+            self.jump_selection_mark(view, backward = True), 'jump to previous selection')
         self.bind_command_key('}', lambda view:
-            self.jump_selection_mark(view, backward = False))
+            self.jump_selection_mark(view, backward = False), 'jump to next selection')
         self.bind_command_key('mt',
-            self.toggle_selections_vertically)
+            self.toggle_selections_vertically, 'toggle selection cursors vertically')
 
     def setup_multiple_cursor(self, buf):
         buf.connect('delete-range', self.on_delete_range)

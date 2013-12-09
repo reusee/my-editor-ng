@@ -10,7 +10,7 @@ class View:
             view.connect('key-press-event', self.handle_key_press))
         self.connect('destroy', lambda _: [v.freeze_notify() for v in self.views])
 
-        self.bind_command_key(',z', self.close_view)
+        self.bind_command_key(',z', self.close_view, 'close current view')
 
         self.new_signal('should-redraw', ())
         self.connect('should-redraw', lambda _: self.redraw_current_view())
@@ -20,15 +20,15 @@ class View:
 
         self.connect('view-created', self.setup_buffer_switching)
 
-        self.bind_command_key('>', self.switch_next_buffer)
-        self.bind_command_key('<', self.switch_prev_buffer)
+        self.bind_command_key('>', self.switch_next_buffer, 'switch to next buffer')
+        self.bind_command_key('<', self.switch_prev_buffer, 'switch to previous buffer')
 
         # scroll
-        self.bind_command_key('M', self.page_down)
-        self.bind_command_key('U', self.page_up)
-        self.bind_command_key('gt', lambda view: self.scroll_cursor(view, 1, 0))
-        self.bind_command_key('gb', lambda view: self.scroll_cursor(view, 1, 1))
-        self.bind_command_key('gm', lambda view: self.scroll_cursor(view, 1, 0.5))
+        self.bind_command_key('M', self.page_down, 'scroll page down')
+        self.bind_command_key('U', self.page_up, 'scroll page up')
+        self.bind_command_key('gt', lambda view: self.scroll_cursor(view, 1, 0), 'scroll cursor to screen top')
+        self.bind_command_key('gb', lambda view: self.scroll_cursor(view, 1, 1), 'scroll cursor to screen bottom')
+        self.bind_command_key('gm', lambda view: self.scroll_cursor(view, 1, 0.5), 'scroll cursor to middle of screen')
 
     def create_view(self, buf = None):
         if buf:

@@ -29,10 +29,16 @@ class CoreKey:
         self.delay_chars_timer = None
 
         for i in range(0, 10):
-            self.bind_command_key(str(i), self.make_number_prefix_handler(i))
+            self.bind_command_key(str(i), self.make_number_prefix_handler(i),
+                'numeric prefix')
 
-        self.bind_command_key('i', self.enter_edit_mode)
+        self.bind_command_key('i', self.enter_edit_mode, 'enter edit mode')
         self.bind_edit_key('kd', self.enter_command_mode)
+
+        self.connect('realize', lambda _: [
+            print('COMMANDS:'),
+            self.dump_keymap(self.command_key_handler),
+            ])
 
     def handle_key_press(self, view, ev):
         self.emit('key-pressed', view, ev.copy())
@@ -121,7 +127,8 @@ class CoreKey:
         self.emit('key-handler-execute', f, args)
         return f(*args)
 
-    def bind_command_key(self, seq, handler):
+    def bind_command_key(self, seq, handler, desc):
+        handler.__dict__['_description_'] = desc
         self.bind_key_handler(self.command_key_handler, seq, handler)
 
     def bind_edit_key(self, seq, handler):
@@ -184,3 +191,13 @@ class CoreKey:
         self.operation_mode = self.EDIT
         self.key_handler = self.edit_key_handler
         self.emit('entered-edit-mode')
+
+    def dump_keymap(self, keymap, path = None):
+        if path is None: path = []
+        if isinstance(keymap, dict):
+            for key in sorted(keymap.keys()):
+                self.dump_keymap(keymap[key], path + [key])
+        else:
+            if '_description_' not in keymap.__dict__:
+                print('ADD DESCRIPTION TO', ''.join(path))
+            print(''.join(path).rjust(8, ' '), keymap.__dict__['_description_'])

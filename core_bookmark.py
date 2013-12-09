@@ -1,13 +1,13 @@
 class Bookmark:
     def __init__(self):
-        self.bind_command_key('b', self.create_mark)
-        self.bind_command_key("'", self.jump_to_mark)
+        self.bind_command_key('b', self.create_mark, 'create bookmark')
+        self.bind_command_key("'", self.jump_to_mark, 'jump to bookmark')
         self.connect('buffer-created', lambda _, buf:
           self.setup_mark(buf))
 
         self.bind_command_key('ge', lambda buf:
             buf.place_cursor(buf.get_iter_at_mark(
-                buf.attr['mark-last-leave-edit'])))
+                buf.attr['mark-last-leave-edit'])), 'jump to last edit place')
 
     def setup_mark(self, buf):
         buf.attr['bookmarks'] = {}

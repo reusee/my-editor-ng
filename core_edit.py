@@ -4,19 +4,19 @@ from core_selection_transform import Transform
 class Edit:
     def __init__(self):
 
-        self.bind_command_key('p', self.paste)
-        self.bind_command_key(',p', self.paste_at_next_line)
+        self.bind_command_key('p', self.paste, 'paste')
+        self.bind_command_key(',p', self.paste_at_next_line, 'paste as next line')
 
-        self.bind_command_key('u', self.undo)
-        self.bind_command_key('Y', self.redo)
+        self.bind_command_key('u', self.undo, 'undo')
+        self.bind_command_key('Y', self.redo, 'redo')
 
-        self.bind_command_key('o', self.newline_below)
-        self.bind_command_key('O', self.newline_above)
-        self.bind_command_key('a', self.append_current_pos)
-        self.bind_command_key('A', self.append_current_line)
-        self.bind_command_key('x', self.delete_current_char)
-        self.bind_command_key('I', self.enter_edit_mode_at_first_char)
-        self.bind_command_key('C', self.change_from_first_char)
+        self.bind_command_key('o', self.newline_below, 'insert newline below')
+        self.bind_command_key('O', self.newline_above, 'insert newline above')
+        self.bind_command_key('a', self.append_current_pos, 'append')
+        self.bind_command_key('A', self.append_current_line, 'append at line start')
+        self.bind_command_key('x', self.delete_current_char, 'delete current char')
+        self.bind_command_key('I', self.enter_edit_mode_at_first_char, 'insert at first non-space char')
+        self.bind_command_key('C', self.change_from_first_char, 'change from first non-space char')
 
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 

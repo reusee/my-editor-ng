@@ -1,8 +1,8 @@
 class CoreFolding:
     def __init__(self):
         self.connect('buffer-created', self.setup_folding)
-        self.bind_command_key('z', self.cmd_fold_selection)
-        self.bind_command_key('mz', self.unfold_all)
+        self.bind_command_key('z', self.cmd_fold_selection, 'fold selections')
+        self.bind_command_key('mz', self.unfold_all, 'unfold all')
 
     def setup_folding(self, _, buf):
         tag = buf.create_tag('folded',

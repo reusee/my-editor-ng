@@ -1,10 +1,10 @@
 class CoreSelectionOperation:
     def __init__(self):
-        self.bind_command_key('d', self.cmd_delete_selection)
-        self.bind_command_key('c', self.cmd_change_selection)
-        self.bind_command_key('y', self.cmd_copy_selection)
-        self.bind_command_key(',>', self.cmd_indent_selection)
-        self.bind_command_key(',<', self.cmd_dedent_selection)
+        self.bind_command_key('d', self.cmd_delete_selection, 'delete selections')
+        self.bind_command_key('c', self.cmd_change_selection, 'change selections')
+        self.bind_command_key('y', self.cmd_copy_selection, 'copy selections')
+        self.bind_command_key(',>', self.cmd_indent_selection, 'indent selections')
+        self.bind_command_key(',<', self.cmd_dedent_selection, 'dedent selections')
 
     def delete_selection(self, buf):
         deleted = False
