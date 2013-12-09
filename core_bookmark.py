@@ -37,5 +37,3 @@ class Bookmark:
                     buf.place_cursor(buf.get_iter_at_mark(mark))
                 view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
         return wait_key
-
-    #TODO auto bookmarks

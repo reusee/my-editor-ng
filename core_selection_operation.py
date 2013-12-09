@@ -19,11 +19,23 @@ class CoreSelectionOperation:
         return deleted
 
     def copy_selection(self, buf):
-        #TODO multiple clipboard
+        has_selection = False
         if buf.get_has_selection():
             buf.copy_clipboard(self.clipboard)
-            return True
-        return False
+            has_selection = True
+        number = 0
+        for sel in buf.attr['selections']:
+            start_iter = buf.get_iter_at_mark(sel.start)
+            end_iter = buf.get_iter_at_mark(sel.end)
+            if start_iter.compare(end_iter) == 0: continue
+            has_selection = True
+            if number >= len(self.extra_clipboard):
+                self.extra_clipboard.append('')
+            self.extra_clipboard[number] = buf.get_text(
+                start_iter, end_iter, False)
+            number += 1
+
+        return has_selection
 
     def cmd_delete_selection(self, view):
         buf = view.get_buffer()

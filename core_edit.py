@@ -19,15 +19,24 @@ class Edit:
         self.bind_command_key('C', self.change_from_first_char, 'change from first non-space char')
 
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        self.extra_clipboard = []
 
         self.bind_edit_key([Gdk.KEY_BackSpace], self.backspace_with_dedent)
 
     def paste(self, view, n):
-        #TODO multiple clipboard
         buf = view.get_buffer()
         if n == 0: n = 1
         for _ in range(n):
             buf.paste_clipboard(self.clipboard, None, True)
+        for i, sel in enumerate(buf.attr['selections'][:len(self.extra_clipboard)]):
+            start_iter = buf.get_iter_at_mark(sel.start)
+            end_iter = buf.get_iter_at_mark(sel.end)
+            buf.begin_user_action()
+            buf.delete(start_iter, end_iter)
+            for _ in range(n):
+                buf.insert(start_iter, self.extra_clipboard[i], -1)
+            buf.end_user_action()
+        self.clear_selections(buf)
 
     def paste_at_next_line(self, view):
         buf = view.get_buffer()
