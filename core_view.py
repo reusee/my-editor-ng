@@ -7,7 +7,7 @@ class View:
 
         self.new_signal('view-created', (GtkSource.View,))
         self.connect('view-created', lambda editor, view:
-            view.connect('key-press-event', self.handle_key_press))
+            view.connect('key-press-event', self.handle_key))
         self.connect('destroy', lambda _: [v.freeze_notify() for v in self.views])
 
         self.bind_command_key(',z', self.close_view, 'close current view')

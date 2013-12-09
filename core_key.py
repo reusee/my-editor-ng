@@ -38,12 +38,15 @@ class CoreKey:
         self.bind_command_key('.h', self.dump_command_keys,
             'show this message')
 
-    def handle_key_press(self, view, ev):
-        self.emit('key-pressed', view, ev.copy())
-        if self.key_pressed_return_value:
-            self.key_pressed_return_value = False
-            return True
-        _, val = ev.get_keyval()
+    def handle_key(self, view, ev_or_keyval):
+        if isinstance(ev_or_keyval, Gdk.EventKey):
+            self.emit('key-pressed', view, ev_or_keyval.copy())
+            if self.key_pressed_return_value:
+                self.key_pressed_return_value = False
+                return True
+            _, val = ev_or_keyval.get_keyval()
+        else:
+            val = ev_or_keyval
         if val == Gdk.KEY_Shift_L or val == Gdk.KEY_Shift_R:
             return False
         if val == Gdk.KEY_Escape: # cancel command
@@ -65,7 +68,7 @@ class CoreKey:
                 self.delay_chars.clear()
             else:
                 self.key_handler = self.command_key_handler
-            ret = self.execute_key_handler(handler, view, ev)
+            ret = self.execute_key_handler(handler, view, val)
             if callable(ret): # another function handler
                 self.key_handler = ret
                 self.emit('key-prefix', chr(val))
@@ -110,14 +113,13 @@ class CoreKey:
         self.emit('key-done')
         self.delay_chars_timer = None
 
-    def execute_key_handler(self, f, view, ev):
+    def execute_key_handler(self, f, view, keyval):
         if '_param_names' not in f.__dict__:
             params = inspect.getargspec(f).args
             f.__dict__['_param_names'] = params
         args = []
         for param in f.__dict__['_param_names']:
-            if param.startswith('ev'): args.append(ev.copy())
-            elif param.startswith('keyval'): args.append(ev.get_keyval()[1])
+            if param.startswith('keyval'): args.append(keyval)
             elif param == 'n': args.append(self.n)
             elif param == 'view': args.append(view)
             elif param == 'buf': args.append(view.get_buffer())
@@ -204,3 +206,7 @@ class CoreKey:
     def dump_command_keys(self):
         print('COMMAND MODE BINDINGS')
         self.dump_keymap(self.command_key_handler)
+
+    def run_keys(self, view, seq):
+        for c in seq:
+            self.handle_key(view, ord(c))
