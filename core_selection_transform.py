@@ -244,6 +244,11 @@ class CoreSelectionTransform:
             (self.mark_jump_to_indent_block_edge, 0),
             'all').apply(buf),
             'extend inside indentation block')
+        self.bind_command_key('v%', lambda buf, n: Transform(
+            (None,),
+            (self.mark_jump_to_matching_bracket, 0),
+            'all').apply(buf),
+            'forward extend to matching bracket')
 
         self.selection_extend_handler = self.get_command_key('v')
 
