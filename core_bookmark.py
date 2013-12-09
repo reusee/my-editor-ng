@@ -24,6 +24,8 @@ class Bookmark:
                 buf = view.get_buffer()
                 mark = buf.create_mark(None,
                     buf.get_iter_at_mark(buf.get_insert()), True)
+                if keyval in buf.attr['bookmarks']:
+                    buf.delete_mark(buf.attr['bookmarks'][keyval])
                 buf.attr['bookmarks'][keyval] = mark
                 print('mark', chr(keyval))
         return wait_key
