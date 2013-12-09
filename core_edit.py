@@ -30,6 +30,9 @@ class Edit:
         self.bind_command_key('.k', lambda view, n:
             self.feed_keys(view, 'b1dd' + str(n) + "ggp'1"),
             'move current line to line n')
+        self.bind_command_key('.l', lambda view, n:
+            self.feed_keys(view, 'b1' + str(n) + "ggyy'1,p"),
+            'copy line n to next line')
 
     def paste(self, view, n):
         buf = view.get_buffer()
