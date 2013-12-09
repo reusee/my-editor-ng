@@ -11,9 +11,13 @@ class ModPython:
         editor.bind_command_key('.fv', lambda view:
             editor.run_keys(view, 'vmwvt(v%vl'),
             'select current function call')
-        editor.bind_command_key('.fi', lambda view:
+        editor.bind_command_key('.fi', lambda view, buf: [
             editor.run_keys(view, 'f(%i'),
-            'insert argument to current function')
+            buf.begin_user_action(),
+            buf.insert(buf.get_iter_at_mark(buf.get_insert()),
+                ', ', -1),
+            buf.end_user_action(),
+            ], 'insert argument to current function')
 
     def setup_python(self, buf):
         buf.attr['indent-width'] = 4
