@@ -23,9 +23,9 @@ class CoreMacro:
             self.recording_macro = True
             print('recoding macro')
         else: # stop
-            def f(ev):
+            def f(keyval):
                 self.recording_macro = False
-                key = chr(ev.get_keyval()[1])
+                key = chr(keyval)
                 self.macros[key] = self.recorded_key_events[:-1]
                 print('macro saved', key)
                 self.recorded_key_events = [[]]
@@ -33,12 +33,12 @@ class CoreMacro:
 
     def replay_macro(self, view, n):
         if n == 0: n = 1
-        def f(ev):
-            key = chr(ev.get_keyval()[1])
+        def f(keyval):
+            key = chr(keyval)
             macro = self.macros[key]
             print('replay macro', key)
             for _ in range(n):
                 for group in macro:
-                    for ev in group:
-                        view.emit('key-press-event', ev)
+                    for event in group:
+                        view.emit('key-press-event', event)
         return f

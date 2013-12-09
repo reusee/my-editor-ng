@@ -58,33 +58,33 @@ class CoreSelectionTransform:
                 n if n != 0 else 1, True),
             ('iter',), 'cursor').apply(buf),
             'relative backward char jump')
-        self.bind_command_key('f', lambda buf, n: lambda ev:
+        self.bind_command_key('f', lambda buf, n: lambda keyval:
             Transform(
                 (self.mark_jump_to_string,
-                    n if n != 0 else 1, chr(ev.get_keyval()[1])),
+                    n if n != 0 else 1, chr(keyval)),
                 ('iter',), 'cursor').apply(buf),
             'specified forward char jump')
-        self.bind_command_key('mf', lambda buf, n: lambda ev:
+        self.bind_command_key('mf', lambda buf, n: lambda keyval:
             Transform(
                 (self.mark_jump_to_string,
-                    n if n != 0 else 1, chr(ev.get_keyval()[1]),
+                    n if n != 0 else 1, chr(keyval),
                     True),
                 ('iter',), 'cursor').apply(buf),
             'specified backward char jump')
         self.bind_command_key('s', lambda buf, n:
-            lambda ev1: lambda ev2: Transform(
+            lambda keyval1: lambda keyval2: Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1,
-                    chr(ev1.get_keyval()[1]) +
-                    chr(ev2.get_keyval()[1])),
+                    chr(keyval1) +
+                    chr(keyval2)),
                 ('iter',), 'cursor').apply(buf),
             'specified forward two-chars jump')
         self.bind_command_key('ms', lambda buf, n:
-            lambda ev1: lambda ev2: Transform(
+            lambda keyval1: lambda keyval2: Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1,
-                    chr(ev1.get_keyval()[1]) +
-                    chr(ev2.get_keyval()[1]), True),
+                    chr(keyval1) +
+                    chr(keyval2), True),
                 ('iter',), 'cursor').apply(buf),
             'specified backward two-chars jump')
         self.bind_command_key('gg', lambda buf, n: Transform(
@@ -166,35 +166,35 @@ class CoreSelectionTransform:
             (self.mark_jump_relative_char,
                 n if n != 0 else 1), 'all').apply(buf),
             'relative forward char extend')
-        self.bind_command_key('vf', lambda buf, n: lambda ev:
+        self.bind_command_key('vf', lambda buf, n: lambda keyval:
             Transform(
                 (None,),
                 (self.mark_jump_to_string,
-                    n if n != 0 else 1, chr(ev.get_keyval()[1])),
+                    n if n != 0 else 1, chr(keyval)),
                 'all').apply(buf),
             'specified forward char extend')
         self.alias_command_key('vt', 'vf')
-        self.bind_command_key('vmf', lambda buf, n: lambda ev:
+        self.bind_command_key('vmf', lambda buf, n: lambda keyval:
             Transform(
                 (self.mark_jump_to_string,
-                    n if n != 0 else 1, chr(ev.get_keyval()[1]), True),
+                    n if n != 0 else 1, chr(keyval), True),
                 (None,), 'all').apply(buf),
             'specified backward char extend')
         self.bind_command_key('vs', lambda buf, n:
-            lambda ev1: lambda ev2: Transform(
+            lambda keyval1: lambda keyval2: Transform(
                 (None,),
                 (self.mark_jump_to_string,
                     n if n != 0 else 1,
-                    chr(ev1.get_keyval()[1])
-                    + chr(ev2.get_keyval()[1])),
+                    chr(keyval1)
+                    + chr(keyval2)),
                 'all').apply(buf),
             'specified forward two-chars extend')
         self.bind_command_key('vms', lambda buf, n:
-            lambda ev1: lambda ev2: Transform(
+            lambda keyval1: lambda keyval2: Transform(
                 (self.mark_jump_to_string,
                     n if n != 0 else 1,
-                    chr(ev1.get_keyval()[1])
-                    + chr(ev2.get_keyval()[1]),
+                    chr(keyval1)
+                    + chr(keyval2),
                     True),
                 (None,), 'all').apply(buf),
             'specified backward two-chars extend')

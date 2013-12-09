@@ -113,8 +113,8 @@ class FileChooser(Gtk.Grid):
         if it != None:
             self.filename = store[it][0]
 
-    def handle_key_press(self, _, ev):
-        _, val = ev.get_keyval()
+    def handle_key_press(self, _, event):
+        _, val = event.get_keyval()
         if val == Gdk.KEY_Escape:
             self.filename = None
             self.done()

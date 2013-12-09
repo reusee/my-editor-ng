@@ -12,7 +12,7 @@ class CoreKey:
         self.edit_key_handler = {}
 
         self.new_signal('key-pressed', (GtkSource.View, Gdk.Event,))
-        self.connect('key-pressed', lambda _, view, ev:
+        self.connect('key-pressed', lambda _, view, _event:
           self.emit('should-redraw'))
         self.key_pressed_return_value = False
 
@@ -117,6 +117,7 @@ class CoreKey:
         args = []
         for param in f.__dict__['_param_names']:
             if param.startswith('ev'): args.append(ev.copy())
+            elif param.startswith('keyval'): args.append(ev.get_keyval()[1])
             elif param == 'n': args.append(self.n)
             elif param == 'view': args.append(view)
             elif param == 'buf': args.append(view.get_buffer())

@@ -125,8 +125,8 @@ class SearchEntry(Gtk.Entry):
         self.show_all()
         self.grab_focus()
 
-    def on_key_press_event(self, _, ev):
-        _, val = ev.get_keyval()
+    def on_key_press_event(self, _, event):
+        _, val = event.get_keyval()
         if val == Gdk.KEY_Escape or val == Gdk.KEY_Return: # cancel
             if val == Gdk.KEY_Escape:
                 self.view.scroll_to_mark(self.view.get_buffer().get_insert(), 0, True, 1, 0.5)

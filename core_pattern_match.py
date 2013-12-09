@@ -11,10 +11,10 @@ class CorePatternMatch:
         buf.attr['pattern-matcher-states'] = []
         self.add_pattern(buf, 'foobar', lambda buf: print('foobar'))
 
-    def update_pattern_matcher_state(self, _, view, ev):
+    def update_pattern_matcher_state(self, _, view, keyval):
         if self.operation_mode != self.EDIT: return
         buf = view.get_buffer()
-        c = chr(ev.get_keyval()[1])
+        c = chr(keyval)
         new_states = []
         states = buf.attr['pattern-matcher-states']
         for state in states:

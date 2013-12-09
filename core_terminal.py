@@ -38,8 +38,8 @@ class Terminal(Vte.Terminal):
           None,
           None)
 
-    def handle_key(self, _, ev):
-        _, val = ev.get_keyval()
+    def handle_key(self, _, event):
+        _, val = event.get_keyval()
         if val == Gdk.KEY_Escape:
             self.hide()
             self.editor.switch_to_view(self.view)
