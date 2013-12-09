@@ -35,10 +35,9 @@ class CoreKey:
         self.bind_command_key('i', self.enter_edit_mode, 'enter edit mode')
         self.bind_edit_key('kd', self.enter_command_mode)
 
-        self.connect('realize', lambda _: [
-            print('COMMANDS:'),
-            self.dump_keymap(self.command_key_handler),
-            ])
+        self.connect('realize', lambda _: self.dump_command_keys())
+        self.bind_command_key('.h', self.dump_command_keys,
+            'show this message')
 
     def handle_key_press(self, view, ev):
         self.emit('key-pressed', view, ev.copy())
@@ -201,3 +200,7 @@ class CoreKey:
             if '_description_' not in keymap.__dict__:
                 print('ADD DESCRIPTION TO', ''.join(path))
             print(''.join(path).rjust(8, ' '), keymap.__dict__['_description_'])
+
+    def dump_command_keys(self):
+        print('COMMAND MODE BINDINGS')
+        self.dump_keymap(self.command_key_handler)
