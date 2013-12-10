@@ -1,4 +1,4 @@
-import re
+import regex
 
 class CoreWordCollector:
     def __init__(self):
@@ -77,7 +77,7 @@ class CoreWordCollector:
 
     def collect_file_words(self, _, buf):
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
-        words = re.findall('[a-zA-Z0-9-_]+', text)
+        words = regex.findall('[a-zA-Z0-9-_]+', text)
         words = {w for w in words if len(w) > 1}
         for word in words:
             self.emit('found-word', word)
