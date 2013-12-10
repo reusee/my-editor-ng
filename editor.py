@@ -24,6 +24,7 @@ core_modules = [
     'pattern_match',
     'terminal',
     'folding',
+    'snippet',
     ]
 
 classes = [
