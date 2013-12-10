@@ -33,9 +33,9 @@ class CoreKey:
                 'numeric prefix')
 
         self.bind_command_key('i', self.enter_edit_mode, 'enter edit mode')
-        self.bind_edit_key('kd', self.enter_command_mode)
+        self.bind_edit_key('kd', self.enter_command_mode, 'enter command mode')
 
-        self.bind_command_key('.h', self.dump_command_keys,
+        self.bind_command_key('.h', self.dump_keys,
             'show this message')
 
     def handle_key(self, view, ev_or_keyval):
@@ -132,7 +132,8 @@ class CoreKey:
         handler.__dict__['_description_'] = desc
         self.bind_key_handler(self.command_key_handler, seq, handler)
 
-    def bind_edit_key(self, seq, handler):
+    def bind_edit_key(self, seq, handler, desc):
+        handler.__dict__['_description_'] = desc
         self.bind_key_handler(self.edit_key_handler, seq, handler)
 
     def bind_key_handler(self, keymap, seq, handler):
@@ -203,9 +204,11 @@ class CoreKey:
                 print('ADD DESCRIPTION TO', ''.join(path))
             print(''.join(path).rjust(8, ' '), keymap.__dict__['_description_'])
 
-    def dump_command_keys(self):
+    def dump_keys(self):
         print('COMMAND MODE BINDINGS')
         self.dump_keymap(self.command_key_handler)
+        print('EDIT MODE BINDINGS')
+        self.dump_keymap(self.edit_key_handler)
 
     def feed_keys(self, view, seq):
         for c in seq:

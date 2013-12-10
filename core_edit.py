@@ -21,7 +21,7 @@ class CoreEdit:
         self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         self.extra_clipboard = []
 
-        self.bind_edit_key([Gdk.KEY_BackSpace], self.backspace_with_dedent)
+        self.bind_edit_key([Gdk.KEY_BackSpace], self.backspace_with_dedent, 'backspace')
 
         # macros
         self.bind_command_key('.j', lambda view, n:

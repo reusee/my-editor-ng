@@ -13,7 +13,7 @@ class CoreCompletion:
 
         self.completion_view = CompletionView(self)
 
-        self.bind_edit_key([Gdk.KEY_Tab], self.cycle_completion_candidates)
+        self.bind_edit_key([Gdk.KEY_Tab], self.cycle_completion_candidates, 'next completion')
 
         self.completion_replacing = False # changing text
         self.completion_candidates = []
