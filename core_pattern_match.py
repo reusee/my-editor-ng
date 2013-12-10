@@ -14,7 +14,7 @@ class CorePatternMatch:
     def update_pattern_matcher_state(self, _, view, event):
         if self.operation_mode != self.EDIT: return
         buf = view.get_buffer()
-        c = chr(event.get_keyval()[1])
+        c = event.get_keyval()[1]
         new_states = []
         states = buf.attr['pattern-matcher-states']
         for state in states:
@@ -36,7 +36,10 @@ class CorePatternMatch:
         buf.attr['pattern-matcher-states'].clear()
 
     def add_pattern(self, buf, pattern, callback):
-        path = [c for c in pattern]
+        if isinstance(pattern, str):
+            path = [ord(c) for c in pattern]
+        else:
+            path = pattern
         cur = buf.attr['patterns']
         for c in path[:-1]:
             if c not in cur: # create a path
