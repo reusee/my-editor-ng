@@ -126,3 +126,10 @@ class CoreSelectionOperation:
             buf.move_mark(buf.get_insert(), it)
         self.dedent_selection(buf, dedent_level)
         self.clear_selections(buf)
+
+    def insert_at_selections(self, buf, s):
+        buf.begin_user_action()
+        for sel in buf.attr['selections']:
+            buf.insert(buf.get_iter_at_mark(sel.end), s, -1)
+        buf.insert(buf.get_iter_at_mark(buf.get_insert()), s, -1)
+        buf.end_user_action()
