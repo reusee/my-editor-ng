@@ -7,7 +7,7 @@ class ModPython:
             self.setup(buf) if 'language' in buf.attr
             and buf.attr['language'] == 'Python' else None)
 
-        # function macros
+        # macros
         editor.bind_command_key('.fv', lambda view:
             editor.feed_keys(view, 'vmwvt(v%vl'),
             'select current function call')
@@ -18,6 +18,9 @@ class ModPython:
                 ', ', -1),
             buf.end_user_action(),
             ], 'insert argument to current function')
+
+        editor.bind_command_key('.c', self.comment_lines,
+            'comment lines')
 
     def setup_python(self, buf):
         buf.attr['indent-width'] = 4
@@ -47,3 +50,15 @@ class ModPython:
             buf.end_user_action()
             return True
         self.editor.add_pattern(buf, s, callback)
+
+    def comment_lines(self, buf, n):
+        it = buf.get_iter_at_mark(buf.get_insert())
+        m = buf.create_mark(None, it, True)
+        buf.begin_user_action()
+        n += 1
+        for _ in range(n):
+            buf.insert(it, '#', -1)
+            it.forward_line()
+        buf.end_user_action()
+        buf.place_cursor(buf.get_iter_at_mark(m))
+        buf.delete_mark(m)
