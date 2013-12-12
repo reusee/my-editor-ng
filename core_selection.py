@@ -41,6 +41,7 @@ class CoreSelection:
         view.attr['number-of-selections-indicator'] = indicator
         view.connect('notify::buffer', lambda view, _:
             self.update_number_of_selections_indicator(view.get_buffer()))
+        self.connect('realize', lambda _: indicator.hide())
 
     def selection_buffer_setup(self, buf):
         buf.connect('delete-range', self.on_delete_range)
