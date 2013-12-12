@@ -47,7 +47,11 @@ class CoreKey:
             _, val = ev_or_keyval.get_keyval()
         else:
             val = ev_or_keyval
-        if val == Gdk.KEY_Shift_L or val == Gdk.KEY_Shift_R:
+        if val in (
+            Gdk.KEY_Shift_L, Gdk.KEY_Shift_R,
+            Gdk.KEY_Alt_L, Gdk.KEY_Alt_R,
+            Gdk.KEY_Control_L, Gdk.KEY_Control_R,
+            ):
             return False
         if val == Gdk.KEY_Escape: # cancel command
             self.enter_command_mode()
