@@ -1,4 +1,5 @@
 from gi.repository import Gtk, GtkSource
+import os
 
 class CoreStatus:
     def __init__(self):
@@ -15,25 +16,31 @@ class CoreStatus:
         self.connect('key-done', lambda w: self.command_prefix.clear())
         self.connect('key-prefix', lambda w, c: self.command_prefix.append(c))
 
-        # status line
-        self.status_line = Gtk.Grid()
-        self.status_line.set_hexpand(True)
-        self.connect('realize', lambda _: self.south_area.add(self.status_line))
-        self.current_buffer_filename = Gtk.Entry()
-        self.current_buffer_filename.set_alignment(0.5)
-        self.current_buffer_filename.set_hexpand(True)
-        self.status_line.add(self.current_buffer_filename)
-        self.status_line.show_all()
+        # buffer list
+        self.buffer_list = Gtk.Label()
+        self.connect('realize', lambda _: self.south_area.add(self.buffer_list))
+        self.buffer_list.set_hexpand(True)
+        self.buffer_list.show_all()
 
         # current buffer filename
         self.connect('view-created', lambda _, view:
           view.connect('notify::buffer', lambda view, _:
-            self.current_buffer_filename.set_text(
-              view.get_buffer().attr['filename'])))
+            self.update_buffer_list(view.get_buffer())))
         self.connect('view-created', lambda _, view:
           view.connect('grab-focus', lambda view:
-            self.current_buffer_filename.set_text(
-              view.get_buffer().attr['filename'])))
+            self.update_buffer_list(view.get_buffer())))
+        self.connect('buffer-closed', lambda _, _buf:
+            self.update_buffer_list(self.get_current_buffer()))
+
+    def update_buffer_list(self, current_buffer):
+        markup = []
+        index = self.buffers.index(current_buffer)
+        for buf in self.buffers[index:] + self.buffers[:index]:
+            if buf == current_buffer:
+                markup.append('<span foreground="lightgreen">' + os.path.basename(buf.attr['filename']) + '</span>')
+            else:
+                markup.append('<span>' + os.path.basename(buf.attr['filename']) + '</span>')
+        self.buffer_list.set_markup(' '.join(markup))
 
     def draw_status(self, view, cr):
         if not view.is_focus(): return

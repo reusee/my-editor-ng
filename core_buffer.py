@@ -22,6 +22,7 @@ class CoreBuffer:
 
         self.new_signal('file-loaded', (GtkSource.Buffer,))
         self.new_signal('language-detected', (GtkSource.Buffer, str))
+        self.new_signal('buffer-closed', (GtkSource.Buffer,))
 
     def create_buffer(self, filename = ''):
         if filename: filename = os.path.abspath(filename)
@@ -79,6 +80,7 @@ class CoreBuffer:
                 self.switch_to_buffer(view, self.buffers[index])
         self.buffers.remove(buf)
         self.show_message('close buffer of ' + buf.attr['filename'])
+        self.emit('buffer-closed', buf)
 
     def get_current_buffer(self):
         for v in self.views:
