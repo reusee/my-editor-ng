@@ -94,6 +94,7 @@ class FileChooser(Gtk.Grid):
         view.set_headers_visible(False)
         self.view = view
         self.add(view)
+        self.view.connect('row-activated', self.handle_row_activated)
 
         renderer = Gtk.CellRendererText()
         renderer.set_alignment(0, 0.5)
@@ -125,6 +126,15 @@ class FileChooser(Gtk.Grid):
                 self.entry.set_position(-1)
             else:
                 self.done()
+
+    def handle_row_activated(self, _, path, column):
+        if os.path.isdir(self.filename): # enter subdirectory
+            path = self.filename + os.path.sep
+            self.entry.set_text(path)
+            self.entry.grab_focus()
+            self.entry.set_position(-1)
+        else:
+            self.done()
 
     def done(self):
         self.hide()
