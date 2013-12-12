@@ -73,8 +73,11 @@ class CoreSearch:
         if func(tag):
             if it.ends_tag(tag):
                 if func(tag): buf.place_cursor(it)
+                else: self.show_message('no more search result')
             else:
                 buf.place_cursor(it)
+        else:
+            self.show_message('no more search result')
         view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
 
     def search_current_word(self, buf):
@@ -130,7 +133,7 @@ class SearchEntry(Gtk.Entry):
         if val == Gdk.KEY_Escape or val == Gdk.KEY_Return: # cancel
             if val == Gdk.KEY_Escape:
                 self.view.scroll_to_mark(self.view.get_buffer().get_insert(), 0, True, 1, 0.5)
-            else:
+            else: # Enter
                 self.update(None, None)
                 self.emit('done')
             self.hide()
