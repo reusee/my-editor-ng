@@ -1,9 +1,10 @@
 from gi.repository import Gtk, Gdk, GtkSource
+from collections import OrderedDict
 
 class CoreCompletion:
     def __init__(self):
-        self.vocabulary = set()
-        self.connect('found-word', lambda _, word: self.vocabulary.add(word))
+        self.vocabulary = OrderedDict()
+        self.connect('found-word', lambda _, word: self.vocabulary.setdefault(word, True))
         self.connect('buffer-created', lambda _, buf:
           buf.connect('changed', lambda buf: self.hint_completion(buf)))
         self.connect('entered-command-mode', lambda _:
@@ -32,7 +33,7 @@ class CoreCompletion:
         word_end_iter = buf.get_iter_at_mark(buf.attr['word-end'])
         word = buf.get_text(word_start_iter, word_end_iter, False)
         if word:
-            words = list(self.get_completion_candidates(word))
+            words = self.get_completion_candidates(word)
             candidates.update(words)
         # extra providers
         self.emit('provide-completions', buf, word, candidates)
@@ -66,7 +67,9 @@ class CoreCompletion:
         self.completion_view.show_all()
 
     def get_completion_candidates(self, word):
-        for w in self.vocabulary:
+        res = []
+        n = 0
+        for w in reversed(self.vocabulary):
             if w == word: continue
             #if w[0].lower() != word[0].lower(): continue
             i = 0 # for w
@@ -78,7 +81,11 @@ class CoreCompletion:
                 else:
                     i += 1
             if j == len(word): # match
-                yield w
+                res.append(w)
+                n += 1
+                if n == 30:
+                    return res
+        return res
 
     def cycle_completion_candidates(self, view):
         if len(self.completion_candidates) == 0: return 'propagate'
