@@ -31,10 +31,9 @@ class CoreView:
         self.bind_command_key('gm', lambda view: self.scroll_cursor(view, 1, 0.5), 'scroll cursor to middle of screen')
 
     def create_view(self, buf = None):
+        view = GtkSource.View()
         if buf:
-            view = GtkSource.View.new_with_buffer(buf)
-        else:
-            view = GtkSource.View()
+            view.set_buffer(buf)
         self.views.append(view)
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
@@ -43,6 +42,7 @@ class CoreView:
         scroll.add(view)
 
         setattr(view, 'attr', {})
+        view.attr['wrapper'] = scroll
 
         view.modify_font(self.default_font)
         view.set_auto_indent(True)
@@ -62,7 +62,7 @@ class CoreView:
 
         self.emit('view-created', view)
 
-        return view, scroll
+        return view
 
     def switch_to_view(self, view):
         # save cursor position if current focused is view
@@ -95,16 +95,14 @@ class CoreView:
 
     def close_view(self, view):
         if len(self.views) == 1: return
-        scroll = view.get_parent()
+        wrapper = view.attr['wrapper']
         index = self.views.index(view)
         self.views.remove(view)
         index -= 1
         if index < 0: index = 0
         next_view = self.views[index]
         view.freeze_notify()
-        #TODO destroy gracefully
-        #scroll.destroy()
-        scroll.get_parent().remove(scroll)
+        wrapper.get_parent().remove(wrapper)
         self.switch_to_view(next_view)
 
     def get_current_view(self):

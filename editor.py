@@ -85,8 +85,8 @@ class Editor(Gtk.Overlay, *classes):
             cls(self)
 
         # first view
-        view, scroll = self.create_view()
-        self.views_grid.add(scroll)
+        view = self.create_view()
+        self.views_grid.add(view.attr['wrapper'])
         self.connect('realize', lambda _: self.switch_to_view(self.views[0]))
 
     def new_signal(self, name, arg_types):

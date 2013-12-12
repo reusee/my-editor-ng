@@ -14,25 +14,25 @@ class CoreLayout:
         self.bind_command_key('L', self.east_view, 'switch to view on the east')
 
     def split_view(self, view, orientation):
-        scroll = view.get_parent()
-        grid = scroll.get_parent()
-        new_view, new_scroll = self.create_view()
+        wrapper = view.attr['wrapper']
+        grid = wrapper.get_parent()
+        new_view = self.create_view()
         self.switch_to_buffer(new_view, view.get_buffer())
 
         left = GObject.Value()
         left.init(GObject.TYPE_INT)
-        grid.child_get_property(scroll, 'left-attach', left)
+        grid.child_get_property(wrapper, 'left-attach', left)
         left = left.get_int()
         top = GObject.Value()
         top.init(GObject.TYPE_INT)
-        grid.child_get_property(scroll, 'top-attach', top)
+        grid.child_get_property(wrapper, 'top-attach', top)
         top = top.get_int()
 
-        grid.remove(scroll)
+        grid.remove(wrapper)
         new_grid = Gtk.Grid()
         new_grid.set_property('orientation', orientation)
-        new_grid.add(scroll)
-        new_grid.add(new_scroll)
+        new_grid.add(wrapper)
+        new_grid.add(new_view.attr['wrapper'])
         new_grid.show_all()
         grid.attach(new_grid, left, top, 1, 1)
         view.grab_focus() # restore focus
@@ -40,11 +40,12 @@ class CoreLayout:
         self.switch_to_view(new_view)
 
     def sibling_view(self, view):
-        grid = view.get_parent().get_parent()
-        new_view, new_scroll = self.create_view()
+        grid = view.attr['wrapper'].get_parent()
+        new_view = self.create_view()
         self.switch_to_buffer(new_view, view.get_buffer())
-        new_scroll.show_all()
-        grid.add(new_scroll)
+        wrapper = new_view.attr['wrapper']
+        wrapper.show_all()
+        grid.add(wrapper)
         self.switch_to_view(new_view)
 
     def switch_to_view_at_pos(self, x, y):
