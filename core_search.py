@@ -108,6 +108,8 @@ class SearchEntry(Gtk.Entry):
 
         self.is_backward = False
         self.view = None
+        self.history = []
+        self.history_index = 0
 
     def update(self, _self, _):
         self.view.get_buffer().attr['search-pattern'] = self.get_text()
@@ -125,6 +127,7 @@ class SearchEntry(Gtk.Entry):
             buf.move_mark(buf.attr['search-range-end'], buf.get_end_iter())
         self.view = view
         self.is_backward = is_backward
+        self.history_index = 0
         self.show_all()
         self.grab_focus()
 
@@ -135,6 +138,15 @@ class SearchEntry(Gtk.Entry):
                 self.view.scroll_to_mark(self.view.get_buffer().get_insert(), 0, True, 1, 0.5)
             else: # Enter
                 self.update(None, None)
+                text = self.get_text()
+                if text: self.history.insert(0, text)
                 self.emit('done')
             self.hide()
             self.editor.switch_to_view(self.view)
+        elif val == Gdk.KEY_Tab: # cycle history
+            if len(self.history) == 0: return
+            self.set_text(self.history[self.history_index])
+            self.history_index += 1
+            if self.history_index == len(self.history):
+                self.history_index = 0
+            return True
