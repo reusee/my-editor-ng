@@ -35,14 +35,20 @@ class CoreView:
         if buf:
             view.set_buffer(buf)
         self.views.append(view)
+
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         scroll.set_placement(Gtk.CornerType.TOP_RIGHT)
         scroll.set_property('expand', True)
         scroll.add(view)
 
+        overlay = Gtk.Overlay()
+        overlay.set_property('expand', True)
+        overlay.add(scroll)
+
         setattr(view, 'attr', {})
-        view.attr['wrapper'] = scroll
+        view.attr['wrapper'] = overlay
+        view.attr['overlay'] = overlay
 
         view.modify_font(self.default_font)
         view.set_auto_indent(True)
