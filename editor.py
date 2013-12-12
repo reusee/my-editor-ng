@@ -1,4 +1,4 @@
-from gi.repository import Gtk, Pango, GtkSource, GObject, Gdk
+from gi.repository import Gtk, GtkSource, GObject, Gdk
 import os
 
 core_modules = [
@@ -75,7 +75,6 @@ class Editor(Gtk.Overlay, *classes):
         self.root_grid.attach(self.south_area, 0, 1, 2, 1)
 
         # font and style
-        self.default_font = Pango.FontDescription.from_string('Terminus 13')
         self.style_scheme_manager = GtkSource.StyleSchemeManager.get_default()
         self.style_scheme_manager.append_search_path(os.path.dirname(__file__))
         self.style_scheme = self.style_scheme_manager.get_scheme('solarizeddark')

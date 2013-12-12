@@ -1,3 +1,5 @@
+from gi.repository import Pango
+
 class CoreDefs:
     def __init__(self):
         self.BRACKETS = {
@@ -13,6 +15,10 @@ class CoreDefs:
             '-': '-',
             '_': '_',
             }
+
+        self.default_indent_width = 2
+        self.default_font = Pango.FontDescription.from_string('Terminus 13')
+
     def is_word_char(self, c):
         if len(c) == 0: return False
         o = ord(c.lower())
