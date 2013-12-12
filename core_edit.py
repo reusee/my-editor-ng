@@ -87,7 +87,7 @@ class CoreEdit:
         buf.insert(it, ' ' * indent_level)
         buf.end_user_action()
         buf.place_cursor(it)
-        self.enter_edit_mode()
+        self.enter_edit_mode(buf)
 
     def newline_below(self, view):
         buf = view.get_buffer()
@@ -101,19 +101,19 @@ class CoreEdit:
         buf.insert(it, '\n' + ' ' * st.get_line_offset())
         buf.end_user_action()
         buf.place_cursor(it)
-        self.enter_edit_mode()
+        self.enter_edit_mode(buf)
 
     def append_current_line(self, buf):
         Transform(
             (self.mark_jump_to_line_end, 0),
             ('iter',), 'cursor').apply(buf)
-        self.enter_edit_mode()
+        self.enter_edit_mode(buf)
 
     def append_current_pos(self, buf):
         Transform(
             (self.mark_jump_relative_char, 1),
             ('iter',), 'cursor').apply(buf)
-        self.enter_edit_mode()
+        self.enter_edit_mode(buf)
 
     def delete_current_char(self, view):
         buf = view.get_buffer()
@@ -134,7 +134,7 @@ class CoreEdit:
         while it.get_char().isspace() and not it.ends_line():
             it.forward_char()
         buf.place_cursor(it)
-        self.enter_edit_mode()
+        self.enter_edit_mode(buf)
 
     def change_from_first_char(self, view):
         buf = view.get_buffer()
@@ -148,7 +148,7 @@ class CoreEdit:
         buf.delete(it, line_end)
         buf.end_user_action()
         buf.place_cursor(it)
-        self.enter_edit_mode()
+        self.enter_edit_mode(buf)
 
     def backspace_with_dedent(self, view):
         buf = view.get_buffer()

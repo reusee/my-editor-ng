@@ -24,7 +24,6 @@ class CoreKey:
         self.new_signal('entered-edit-mode', ())
         self.new_signal('entered-command-mode', ())
 
-        self.key_handler = self.command_key_handler
         self.n = 0
         self.delay_chars = []
         self.delay_chars_timer = None
@@ -33,8 +32,10 @@ class CoreKey:
             self.bind_command_key(str(i), self.make_number_prefix_handler(i),
                 'numeric prefix')
 
-        self.bind_command_key('i', self.enter_edit_mode, 'enter edit mode')
-        self.bind_edit_key('kd', self.enter_command_mode, 'enter command mode')
+        self.bind_command_key('i', lambda buf:
+            self.enter_edit_mode(buf), 'enter edit mode')
+        self.bind_edit_key('kd', lambda buf:
+            self.enter_command_mode(buf), 'enter command mode')
 
         self.bind_command_key('.h', self.dump_keys,
             'show this message')
@@ -74,31 +75,39 @@ class CoreKey:
             Gdk.KEY_Control_L, Gdk.KEY_Control_R,
             ):
             return False
+        buf = view.get_buffer()
         if val == Gdk.KEY_Escape: # cancel command
-            self.enter_command_mode()
+            self.enter_command_mode(buf)
             return True
         is_edit_mode = self.operation_mode == self.EDIT
+        # find handler
         handler = None
-        if isinstance(self.key_handler, dict): # dict handler
+        if isinstance(buf.key_handler, dict): # dict handler
             key = chr(val) if val >= 0x20 and val <= 0x7e else val
-            handler = self.key_handler.get(key, None)
-        elif callable(self.key_handler): # function handler
-            handler = self.key_handler
+            handler = buf.key_handler.get(key, None)
+        elif callable(buf.key_handler): # function handler
+            handler = buf.key_handler
+        elif isinstance(buf.key_handler, list):
+            key = chr(val) if val >= 0x20 and val <= 0x7e else val
+            for keymap in buf.key_handler: # list of dict
+                handler = keymap.get(key, None)
+                if handler != None: break # match
+        # handle it
         if callable(handler): # trigger a command or call handler function
             if is_edit_mode: # not a char to insert
                 if self.delay_chars_timer:
                     GLib.source_remove(self.delay_chars_timer)
                     self.delay_chars_timer = None
-                self.key_handler = self.edit_key_handler
+                buf.key_handler = buf.edit_key_handler
                 self.delay_chars.clear()
             else:
-                self.key_handler = self.command_key_handler
+                buf.key_handler = buf.command_key_handler
             ret = self.execute_key_handler(handler, view, val)
             if callable(ret): # another function handler
-                self.key_handler = ret
+                buf.key_handler = ret
                 self.emit('key-prefix', chr(val))
             elif isinstance(ret, dict): # another dict handler
-                self.key_handler = ret
+                buf.key_handler = ret
                 self.emit('key-prefix', chr(val))
             elif ret == 'is_number_prefix': # a number prefix
                 self.emit('numeric-prefix', int(chr(val)))
@@ -108,7 +117,7 @@ class CoreKey:
                 self.n = 0
                 self.emit('key-done')
         elif isinstance(handler, dict): # sub dict handler
-            self.key_handler = handler
+            buf.key_handler = handler
             if is_edit_mode:
                 self.delay_chars.append(chr(val))
                 self.delay_chars_timer = GLib.timeout_add(200,
@@ -120,11 +129,11 @@ class CoreKey:
                     GLib.source_remove(self.delay_chars_timer)
                     self.delay_chars_timer = None
                 self.insert_delay_chars(view)
-                self.key_handler = self.edit_key_handler
+                buf.key_handler = buf.edit_key_handler
                 return False
             else:
                 self.show_message('no handler')
-                self.key_handler = self.command_key_handler
+                buf.key_handler = buf.command_key_handler
             self.emit('key-done')
         return True
 
@@ -133,7 +142,7 @@ class CoreKey:
         buf.begin_user_action()
         buf.insert(buf.get_iter_at_mark(buf.get_insert()), ''.join(self.delay_chars))
         buf.end_user_action()
-        self.key_handler = self.edit_key_handler
+        buf.key_handler = buf.edit_key_handler
         self.delay_chars.clear()
         self.emit('key-done')
         self.delay_chars_timer = None
@@ -207,16 +216,16 @@ class CoreKey:
             return 'is_number_prefix'
         return f
 
-    def enter_command_mode(self):
+    def enter_command_mode(self, buf):
         self.operation_mode = self.COMMAND
-        self.key_handler = self.command_key_handler
+        buf.key_handler = buf.command_key_handler
         self.n = 0
         self.emit('key-done')
         self.emit('entered-command-mode')
 
-    def enter_edit_mode(self):
+    def enter_edit_mode(self, buf):
         self.operation_mode = self.EDIT
-        self.key_handler = self.edit_key_handler
+        buf.key_handler = buf.edit_key_handler
         self.emit('entered-edit-mode')
 
     def dump_keymap(self, keymap, path = None):

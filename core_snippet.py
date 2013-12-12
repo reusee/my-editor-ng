@@ -39,7 +39,7 @@ class CoreSnippet:
     def snippet_next_insert_points(self, buf):
         insert_points_set = buf.attr['snippet-insert-points']
         if len(insert_points_set) == 0:
-            self.enter_command_mode()
+            self.enter_command_mode(buf)
             return
         key = list(insert_points_set.keys())[0]
         self.clear_selections(buf)
@@ -50,4 +50,4 @@ class CoreSnippet:
                 buf.get_iter_at_mark(mark))
             buf.delete_mark(mark)
         del insert_points_set[key]
-        self.enter_edit_mode()
+        self.enter_edit_mode(buf)

@@ -21,6 +21,10 @@ class Buffer(GtkSource.Buffer):
         self.set_max_undo_levels(-1)
         self.get_insert().set_visible(False)
 
+        self.key_handler = None
+        self.command_key_handler = []
+        self.edit_key_handler = []
+
 class CoreBuffer:
     def __init__(self):
         self.buffers = []
@@ -68,6 +72,9 @@ class CoreBuffer:
         if buf.attr['lang']:
             self.emit('language-detected', buf, buf.attr['lang'].get_name())
         buf.set_style_scheme(self.style_scheme)
+        buf.command_key_handler.append(self.command_key_handler)
+        buf.edit_key_handler.append(self.edit_key_handler)
+        buf.key_handler = buf.command_key_handler
         self.emit('buffer-created', buf)
         return buf
 

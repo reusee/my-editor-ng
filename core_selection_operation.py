@@ -55,7 +55,7 @@ class CoreSelectionOperation:
             if not self.copy_selection(buf): # nothing is selected
                 return False
             self.delete_selection(buf)
-            self.enter_edit_mode()
+            self.enter_edit_mode(buf)
             return True
         if not func():
             buf.attr['delayed-selection-operation'] = func
