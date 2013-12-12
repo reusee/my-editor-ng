@@ -74,8 +74,8 @@ class CoreBuffer:
         buf.set_style_scheme(self.style_scheme)
         buf.command_key_handler.append(self.command_key_handler)
         buf.edit_key_handler.append(self.edit_key_handler)
-        buf.key_handler = buf.command_key_handler
         self.emit('buffer-created', buf)
+        buf.key_handler = buf.command_key_handler
         return buf
 
     def load_file(self, buf, filename):
