@@ -36,10 +36,10 @@ class CoreSearch:
             buf.get_end_iter(), True)
 
     def update_search_result(self, buf):
-        buf.remove_tag_by_name('search-result',
-          buf.get_start_iter(), buf.get_end_iter())
         pattern = buf.attr['search-pattern']
         if not pattern: return
+        buf.remove_tag_by_name('search-result',
+          buf.get_start_iter(), buf.get_end_iter())
         content = buf.get_slice(buf.get_start_iter(), buf.get_end_iter(), False)
         try:
             pattern = regex.compile(pattern)
