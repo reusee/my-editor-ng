@@ -18,7 +18,7 @@ class CoreBuffer:
                     buf.get_insert(), 0, False, 1, 0.5)
                     if v.get_buffer() == buf else None)))
 
-        self.bind_command_key(',q', self.close_buffer, 'close current buffer')
+        self.connect('realize', self.core_buffer_setup)
 
         self.new_signal('file-loaded', (GtkSource.Buffer,))
         self.new_signal('language-detected', (GtkSource.Buffer, str))
@@ -29,6 +29,9 @@ class CoreBuffer:
         self.buffer_list.set_hexpand(True)
         self.buffer_list.set_line_wrap(True)
         self.buffer_list.show_all()
+
+    def core_buffer_setup(self, _):
+        self.bind_command_key(',q', self.close_buffer, 'close current buffer')
 
     def update_buffer_list(self, current_buffer):
         markup = []

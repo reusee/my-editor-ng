@@ -2,9 +2,9 @@ from gi.repository import Gtk, GtkSource, GObject, Gdk
 import os
 
 core_modules = [
-    'key',
     'buffer',
     'view',
+    'key',
     'defs',
     'edit',
     'status',

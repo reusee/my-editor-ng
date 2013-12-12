@@ -60,15 +60,15 @@ class CoreKey:
             halign = Gtk.Align.END, valign = Gtk.Align.END)
 
     def handle_key(self, view, ev_or_keyval):
-        if isinstance(ev_or_keyval, Gdk.EventKey):
+        if isinstance(ev_or_keyval, Gdk.EventKey): # gdk key event
             self.emit('key-pressed', view, ev_or_keyval.copy())
             if self.key_pressed_return_value:
                 self.key_pressed_return_value = False
                 return True
             _, val = ev_or_keyval.get_keyval()
-        else:
+        else: # by feed_keys
             val = ev_or_keyval
-        if val in (
+        if val in ( # ignore these keys
             Gdk.KEY_Shift_L, Gdk.KEY_Shift_R,
             Gdk.KEY_Alt_L, Gdk.KEY_Alt_R,
             Gdk.KEY_Control_L, Gdk.KEY_Control_R,

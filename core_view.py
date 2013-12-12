@@ -39,13 +39,16 @@ class CoreView:
             view.connect('key-press-event', self.handle_key))
         self.connect('destroy', lambda _: [v.freeze_notify() for v in self.views])
 
-        self.bind_command_key(',z', self.close_view, 'close current view')
+        self.connect('realize', self.core_view_setup)
 
         self.new_signal('should-redraw', ())
         self.connect('should-redraw', lambda _: self.redraw_current_view())
         self.redraw_time = int(time.time() * 1000)
 
         self.connect('view-created', self.setup_buffer_switching)
+
+    def core_view_setup(self, _):
+        self.bind_command_key(',z', self.close_view, 'close current view')
 
         self.bind_command_key('>', self.switch_next_buffer, 'switch to next buffer')
         self.bind_command_key('<', self.switch_prev_buffer, 'switch to previous buffer')
