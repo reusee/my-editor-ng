@@ -47,7 +47,7 @@ extra_classes = [
             for e in module_name.split('_')))
     for module_name in extra_modules]
 
-class Editor(Gtk.Grid, *classes):
+class Editor(Gtk.Overlay, *classes):
 
     __gsignals__ = {}
 
@@ -56,19 +56,23 @@ class Editor(Gtk.Grid, *classes):
         for cls in classes:
             cls.__init__(self)
 
+        # root grid
+        self.root_grid = Gtk.Grid()
+        self.add(self.root_grid)
+
         # views
         self.views_grid = Gtk.Grid()
         self.views_grid.set_row_homogeneous(True)
         self.views_grid.set_column_homogeneous(True)
-        self.attach(self.views_grid, 0, 0, 1, 1)
+        self.root_grid.attach(self.views_grid, 0, 0, 1, 1)
 
         # areas
         self.east_area = Gtk.Grid()
-        self.attach(self.east_area, 1, 0, 1, 1)
+        self.root_grid.attach(self.east_area, 1, 0, 1, 1)
         self.north_area = Gtk.Grid()
-        self.attach(self.north_area, 0, -1, 2, 1)
+        self.root_grid.attach(self.north_area, 0, -1, 2, 1)
         self.south_area = Gtk.Grid(orientation = Gtk.Orientation.VERTICAL)
-        self.attach(self.south_area, 0, 1, 2, 1)
+        self.root_grid.attach(self.south_area, 0, 1, 2, 1)
 
         # font and style
         self.default_font = Pango.FontDescription.from_string('Terminus 13')

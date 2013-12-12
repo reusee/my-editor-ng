@@ -1,12 +1,16 @@
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GLib
 import time
 
 class CoreMessage:
     def __init__(self):
-        self.message_board = Gtk.Grid(orientation = Gtk.Orientation.VERTICAL)
+        self.message_board = Gtk.Grid(
+            orientation = Gtk.Orientation.VERTICAL,
+            valign = Gtk.Align.START,
+            halign = Gtk.Align.CENTER,
+            )
         self.message_history = []
 
-        self.connect('realize', lambda _: self.south_area.add(self.message_board))
+        self.connect('realize', lambda _: self.add_overlay(self.message_board))
 
         self.bind_command_key(',,,',
           lambda: self.show_message('yes, sir ' + str(time.time())),
@@ -24,10 +28,10 @@ class CoreMessage:
         self._show_message(text, **kwargs)
 
     def _show_message(self, text, timeout = 3000):
-        label = Gtk.Label(text)
+        label = Gtk.Label(label = text)
         label.set_hexpand(True)
         self.message_board.add(label)
-        GObject.timeout_add(timeout, lambda: label.destroy())
+        GLib.timeout_add(timeout, lambda: label.destroy())
         self.message_board.show_all()
 
     def show_message_history(self):
