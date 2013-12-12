@@ -12,7 +12,9 @@ class CoreCompletion:
         self.connect('entered-edit-mode', lambda _:
           self.hint_completion(self.get_current_buffer()))
 
-        self.completion_view = CompletionView(self)
+        self.completion_view = CompletionView()
+        self.completion_view.show_all()
+        self.add_overlay(self.completion_view)
 
         self.bind_edit_key([Gdk.KEY_Tab], self.cycle_completion_candidates, 'next completion')
 
@@ -43,28 +45,25 @@ class CoreCompletion:
             self.show_candidates()
 
     def show_candidates(self):
-        max_length = 0
         self.completion_view.store.clear()
         for w in self.completion_candidates:
             self.completion_view.store.append([w])
-            if len(w) > max_length: max_length = len(w)
+        self.completion_view.show_all()
+        self.completion_view.view.columns_autosize()
+        # set position
         view = self.get_current_view()
-        win = view.get_window(Gtk.TextWindowType.WIDGET)
-        _, x, y = win.get_origin()
         buf = view.get_buffer()
         iter_rect = view.get_iter_location(buf.get_iter_at_mark(buf.get_insert()))
-        win_x, win_y = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET,
-          iter_rect.x, iter_rect.y)
-        x += win_x
-        y += win_y
-        if self.screen_width - x < 100:
-            x -= 100
-        height = len(self.completion_candidates) * 26
-        if self.screen_height - (y + height) < 100:
-            y -= height + 20
-        self.completion_view.move(x, y + 20)
-        self.completion_view.resize(1, height)
-        self.completion_view.show_all()
+        x, y = view.buffer_to_window_coords(Gtk.TextWindowType.WIDGET, iter_rect.x, iter_rect.y)
+        y += iter_rect.height + 1
+        x += 8
+        win_rect = self.get_allocation()
+        if y + 100 > win_rect.height:
+            y -= 100
+        if x + 100 > win_rect.width:
+            x -= 200
+        self.completion_view.set_margin_left(x)
+        self.completion_view.set_margin_top(y)
 
     def get_completion_candidates(self, word):
         res = []
@@ -110,12 +109,12 @@ class CoreCompletion:
         self.completion_candidates.append(text)
         self.show_candidates()
 
-class CompletionView(Gtk.Window):
-    def __init__(self, parent):
-        Gtk.Window.__init__(self, type = Gtk.WindowType.POPUP)
-        self.set_attached_to(parent)
-        self.set_name('completion_view')
-
+class CompletionView(Gtk.Grid):
+    def __init__(self):
+        Gtk.Grid.__init__(self,
+            halign = Gtk.Align.START,
+            valign = Gtk.Align.START,
+        )
         self.store = Gtk.ListStore(str)
         self.view = Gtk.TreeView(model = self.store)
         self.add(self.view)
