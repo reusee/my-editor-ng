@@ -58,6 +58,10 @@ class CoreCompletion:
         y += iter_rect.height + 1
         x += 8
         win_rect = self.get_allocation()
+        _, editor_x, editor_y = self.get_window().get_origin()
+        _, view_x, view_y = view.get_window(Gtk.TextWindowType.WIDGET).get_origin()
+        x += view_x - editor_x
+        y += view_y - editor_y
         if y + 100 > win_rect.height:
             y -= 100
         if x + 100 > win_rect.width:
