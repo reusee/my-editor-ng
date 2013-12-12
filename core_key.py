@@ -18,6 +18,7 @@ class CoreKey:
 
         self.new_signal('key-done', ())
         self.new_signal('key-prefix', (str,))
+        self.new_signal('numeric-prefix', (int,))
         self.new_signal('key-handler-execute', (object, object))
 
         self.new_signal('entered-edit-mode', ())
@@ -41,11 +42,26 @@ class CoreKey:
         # mode indicator
         self.edit_mode_indicator = Gtk.Label(
             halign = Gtk.Align.END, valign = Gtk.Align.CENTER)
-        self.edit_mode_indicator.set_markup('<span font="24" foreground="yellow">EDITING</span>')
+        self.edit_mode_indicator.set_markup('<span font="24" foreground="lightgreen">EDITING</span>')
         self.add_overlay(self.edit_mode_indicator)
         self.connect('realize', lambda _: self.edit_mode_indicator.hide())
         self.connect('entered-edit-mode', lambda _: self.edit_mode_indicator.show())
         self.connect('entered-command-mode', lambda _: self.edit_mode_indicator.hide())
+
+        # command prefix indicator
+        self.command_prefix = []
+        self.connect('key-done', lambda w: [
+            self.command_prefix.clear(),
+            self.update_command_prefix_indicator()])
+        self.connect('key-prefix', lambda w, c: [
+            self.command_prefix.append(c),
+            self.update_command_prefix_indicator()])
+        self.connect('numeric-prefix', lambda _, _n:
+            self.update_command_prefix_indicator())
+        self.command_prefix_indicator = Gtk.Label(
+            halign = Gtk.Align.END, valign = Gtk.Align.END)
+        self.add_overlay(self.command_prefix_indicator)
+        self.connect('realize', lambda _: self.command_prefix_indicator.hide())
 
     def handle_key(self, view, ev_or_keyval):
         if isinstance(ev_or_keyval, Gdk.EventKey):
@@ -89,12 +105,12 @@ class CoreKey:
                 self.key_handler = ret
                 self.emit('key-prefix', chr(val))
             elif ret == 'is_number_prefix': # a number prefix
-                pass
+                self.emit('numeric-prefix', int(chr(val)))
             elif ret == 'propagate': # pass to system handler
                 return False
             else: # handler executed
-                self.emit('key-done')
                 self.n = 0
+                self.emit('key-done')
         elif isinstance(handler, dict): # sub dict handler
             self.key_handler = handler
             if is_edit_mode:
@@ -226,3 +242,13 @@ class CoreKey:
     def feed_keys(self, view, seq):
         for c in seq:
             self.handle_key(view, ord(c))
+
+    def update_command_prefix_indicator(self):
+        if not self.command_prefix and self.n == 0:
+            self.command_prefix_indicator.hide()
+            return
+        t = ''.join(self.command_prefix)
+        if self.n != 0: t = str(self.n) + t
+        self.command_prefix_indicator.set_markup(
+            '<span font="24" foreground="lightgreen">' + t + '</span>')
+        self.command_prefix_indicator.show()

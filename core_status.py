@@ -11,11 +11,6 @@ class CoreStatus:
         self.connect('view-created', lambda _, view:
             self.setup_relative_line_number(view))
 
-        # command
-        self.command_prefix = []
-        self.connect('key-done', lambda w: self.command_prefix.clear())
-        self.connect('key-prefix', lambda w, c: self.command_prefix.append(c))
-
     def draw_status(self, view, cr):
         if not view.is_focus(): return
         rect = view.get_allocation()
@@ -23,13 +18,6 @@ class CoreStatus:
         cr.set_font_size(256)
         cr.set_source_rgb(0.2, 0.2, 0.2)
         cr.move_to(rect.width / 3, rect.height / 2)
-
-        # command
-        cr.set_font_size(128)
-        t = ''.join(self.command_prefix)
-        if t == ' ': t = '_'
-        if self.n != 0: t = str(self.n) + t
-        cr.show_text(t)
 
         # number of selections
         cr.move_to(rect.width * 0.8, 100)
