@@ -1,3 +1,5 @@
+from gi.repository import Gtk
+
 class CoreMacro:
     def __init__(self):
         self.macros = {}
@@ -10,6 +12,11 @@ class CoreMacro:
         self.bind_command_key('.w', self.toggle_macro_recording, 'toggle macro recording')
         self.bind_command_key('mw', self.replay_macro, 'replay macro')
 
+        self.macro_recording_state = Gtk.Label(valign = Gtk.Align.START, halign = Gtk.Align.END, margin_right = 100)
+        self.macro_recording_state.set_markup('<span foreground="yellow">RECORDING</span>')
+        self.add_overlay(self.macro_recording_state)
+        self.connect('realize', lambda _: self.macro_recording_state.hide())
+
     def record_key_events(self, _, view, ev):
         if not self.recording_macro: return
         self.recorded_key_events[-1].append(ev.copy())
@@ -21,13 +28,14 @@ class CoreMacro:
     def toggle_macro_recording(self):
         if not self.recording_macro: # start
             self.recording_macro = True
-            print('recoding macro')
+            self.macro_recording_state.show()
         else: # stop
             def f(keyval):
                 self.recording_macro = False
                 key = chr(keyval)
                 self.macros[key] = self.recorded_key_events[:-1]
-                print('macro saved', key)
+                self.macro_recording_state.hide()
+                self.show_message('macro saved ' + key)
                 self.recorded_key_events = [[]]
             return f
 
@@ -36,7 +44,7 @@ class CoreMacro:
         def f(keyval):
             key = chr(keyval)
             macro = self.macros[key]
-            print('replay macro', key)
+            self.show_message('replay macro ' + key)
             for _ in range(n):
                 for group in macro:
                     for event in group:
