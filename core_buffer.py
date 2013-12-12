@@ -1,6 +1,26 @@
 from gi.repository import GtkSource, Gtk
 import os
 
+class Buffer(GtkSource.Buffer):
+    def __init__(self, filename = ''):
+        GtkSource.Buffer.__init__(self)
+        if filename: filename = os.path.abspath(filename)
+
+        self.attr = {
+            'filename': filename,
+            'preferred-line-offset': 0,
+            }
+
+        language_manager = GtkSource.LanguageManager.get_default()
+        lang = language_manager.guess_language(filename, 'plain/text')
+        self.set_language(lang)
+        self.attr['lang'] = lang
+
+        self.set_highlight_syntax(True)
+        self.set_highlight_matching_brackets(True)
+        self.set_max_undo_levels(-1)
+        self.get_insert().set_visible(False)
+
 class CoreBuffer:
     def __init__(self):
         self.buffers = []
@@ -43,32 +63,12 @@ class CoreBuffer:
         self.buffer_list.set_markup('    '.join(markup))
 
     def create_buffer(self, filename = ''):
-        if filename: filename = os.path.abspath(filename)
-
-        language_manager = GtkSource.LanguageManager.get_default()
-        lang = language_manager.guess_language(filename, 'plain/text')
-        if lang:
-            buf = GtkSource.Buffer.new_with_language(lang)
-        else:
-            buf = GtkSource.Buffer()
+        buf = Buffer(filename)
         self.buffers.append(buf)
-
-        setattr(buf, 'attr', {
-          'filename': filename,
-          'preferred-line-offset': 0,
-          })
-
-        if lang:
-            self.emit('language-detected', buf, lang.get_name())
-
-        buf.set_highlight_syntax(True)
-        buf.set_highlight_matching_brackets(True)
-        buf.set_max_undo_levels(-1)
+        if buf.attr['lang']:
+            self.emit('language-detected', buf, buf.attr['lang'].get_name())
         buf.set_style_scheme(self.style_scheme)
-        buf.get_insert().set_visible(False)
-
         self.emit('buffer-created', buf)
-
         return buf
 
     def load_file(self, buf, filename):
