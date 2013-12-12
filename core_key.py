@@ -38,6 +38,15 @@ class CoreKey:
         self.bind_command_key('.h', self.dump_keys,
             'show this message')
 
+        # mode indicator
+        self.edit_mode_indicator = Gtk.Label(
+            halign = Gtk.Align.END, valign = Gtk.Align.CENTER)
+        self.edit_mode_indicator.set_markup('<span foreground="yellow">EDITING</span>')
+        self.add_overlay(self.edit_mode_indicator)
+        self.connect('realize', lambda _: self.edit_mode_indicator.hide())
+        self.connect('entered-edit-mode', lambda _: self.edit_mode_indicator.show())
+        self.connect('entered-command-mode', lambda _: self.edit_mode_indicator.hide())
+
     def handle_key(self, view, ev_or_keyval):
         if isinstance(ev_or_keyval, Gdk.EventKey):
             self.emit('key-pressed', view, ev_or_keyval.copy())
