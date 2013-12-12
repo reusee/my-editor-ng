@@ -40,11 +40,9 @@ class CoreKey:
             'show this message')
 
         # mode indicator
-        self.edit_mode_indicator = Gtk.Label(
+        self.edit_mode_indicator = self.create_overlay_label(
             halign = Gtk.Align.END, valign = Gtk.Align.CENTER)
         self.edit_mode_indicator.set_markup('<span font="24" foreground="lightgreen">EDITING</span>')
-        self.add_overlay(self.edit_mode_indicator)
-        self.connect('realize', lambda _: self.edit_mode_indicator.hide())
         self.connect('entered-edit-mode', lambda _: self.edit_mode_indicator.show())
         self.connect('entered-command-mode', lambda _: self.edit_mode_indicator.hide())
 
@@ -58,10 +56,8 @@ class CoreKey:
             self.update_command_prefix_indicator()])
         self.connect('numeric-prefix', lambda _, _n:
             self.update_command_prefix_indicator())
-        self.command_prefix_indicator = Gtk.Label(
+        self.command_prefix_indicator = self.create_overlay_label(
             halign = Gtk.Align.END, valign = Gtk.Align.END)
-        self.add_overlay(self.command_prefix_indicator)
-        self.connect('realize', lambda _: self.command_prefix_indicator.hide())
 
     def handle_key(self, view, ev_or_keyval):
         if isinstance(ev_or_keyval, Gdk.EventKey):

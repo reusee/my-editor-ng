@@ -96,3 +96,9 @@ class Editor(Gtk.Overlay, *classes):
             print([e for e in dir(obj) if pattern in e.lower()])
         else:
             print(dir(obj))
+
+    def create_overlay_label(self, **kwargs):
+        label = Gtk.Label(**kwargs)
+        self.add_overlay(label)
+        self.connect('realize', lambda _: label.hide())
+        return label

@@ -35,13 +35,11 @@ class CoreSelection:
 
     def selection_view_setup(self, view):
         view.connect('draw', self.draw_selections)
-        indicator = Gtk.Label(
+        indicator = self.create_overlay_label(
             valign = Gtk.Align.START, halign = Gtk.Align.END)
-        view.attr['overlay'].add_overlay(indicator)
         view.attr['number-of-selections-indicator'] = indicator
         view.connect('notify::buffer', lambda view, _:
             self.update_number_of_selections_indicator(view.get_buffer()))
-        self.connect('realize', lambda _: indicator.hide())
 
     def selection_buffer_setup(self, buf):
         buf.connect('delete-range', self.on_delete_range)

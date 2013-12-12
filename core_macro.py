@@ -12,10 +12,9 @@ class CoreMacro:
         self.bind_command_key('.w', self.toggle_macro_recording, 'toggle macro recording')
         self.bind_command_key('mw', self.replay_macro, 'replay macro')
 
-        self.macro_recording_state = Gtk.Label(valign = Gtk.Align.START, halign = Gtk.Align.END, margin_right = 100)
+        self.macro_recording_state = self.create_overlay_label(
+            valign = Gtk.Align.START, halign = Gtk.Align.END, margin_right = 150)
         self.macro_recording_state.set_markup('<span foreground="yellow">RECORDING</span>')
-        self.add_overlay(self.macro_recording_state)
-        self.connect('realize', lambda _: self.macro_recording_state.hide())
 
     def record_key_events(self, _, view, ev):
         if not self.recording_macro: return
