@@ -81,7 +81,7 @@ class FileChooser(Gtk.Grid):
         self.connect('key-press-event', self.handle_key_press)
 
         self.entry = Gtk.Entry()
-        self.entry.set_alignment(0.5)
+        self.entry.set_alignment(0)
         self.entry.set_hexpand(True)
         self.add(self.entry)
         self.entry.connect('notify::text', self.update_list)
@@ -96,7 +96,7 @@ class FileChooser(Gtk.Grid):
         self.add(view)
 
         renderer = Gtk.CellRendererText()
-        renderer.set_alignment(0.5, 0.5)
+        renderer.set_alignment(0, 0.5)
         column = Gtk.TreeViewColumn('path', renderer, text = 0)
         view.append_column(column)
 
@@ -138,9 +138,12 @@ class FileChooser(Gtk.Grid):
         self.store.clear()
         candidates = []
         try:
+            n = 0
             for f in os.listdir(head):
                 if self.fuzzy_match(tail, f):
                     candidates.append(os.path.join(head, f))
+                    n += 1
+                    if n > 30: break
         except FileNotFoundError:
             return
         candidates = sorted(candidates, key = lambda e: len(e))
