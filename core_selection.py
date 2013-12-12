@@ -16,9 +16,9 @@ class Selection:
 class CoreSelection:
     def __init__(self):
         self.connect('buffer-created', lambda _, buf:
-            self.setup_multiple_cursor(buf))
+            self.selection_buffer_setup(buf))
         self.connect('view-created', lambda _, view:
-            view.connect('draw', self.draw_selections))
+            self.selection_view_setup(view))
 
         self.bind_command_key('t',
             lambda buf: self.toggle_selection_mark(buf), 'toggle selection cursor')
@@ -33,7 +33,16 @@ class CoreSelection:
         self.bind_command_key('mt',
             self.toggle_selections_vertically, 'toggle selection cursors vertically')
 
-    def setup_multiple_cursor(self, buf):
+    def selection_view_setup(self, view):
+        view.connect('draw', self.draw_selections)
+        indicator = Gtk.Label(
+            valign = Gtk.Align.START, halign = Gtk.Align.END)
+        view.attr['overlay'].add_overlay(indicator)
+        view.attr['number-of-selections-indicator'] = indicator
+        view.connect('notify::buffer', lambda view, _:
+            self.update_number_of_selections_indicator(view.get_buffer()))
+
+    def selection_buffer_setup(self, buf):
         buf.connect('delete-range', self.on_delete_range)
         buf.connect_after('delete-range', self.after_delete_range)
         buf.connect_after('insert-text', self.after_insert_text)
@@ -107,6 +116,8 @@ class CoreSelection:
                 buf.delete_mark(selection.start)
                 buf.delete_mark(selection.end)
                 buf.attr['selections'].remove(selection)
+                # update indicators
+                self.update_number_of_selections_indicator(buf)
                 return
         start = buf.create_mark(None, it)
         end = buf.create_mark(None, it)
@@ -131,9 +142,12 @@ class CoreSelection:
     def clear_selections(self, buf):
         buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
         buf.attr['selections'].clear()
+        # update indicators
+        self.update_number_of_selections_indicator(buf)
 
     def buffer_add_selection(self, buf, start, end):
         buf.attr['selections'].append(Selection(start, end))
+        self.update_number_of_selections_indicator(buf)
 
     def draw_selections(self, view, cr):
         if not view.is_focus(): return
@@ -183,3 +197,15 @@ class CoreSelection:
         while it.forward_to_tag_toggle(tag):
             if it.ends_tag(tag): continue
             self.toggle_selection_mark(buf, it)
+
+    def update_number_of_selections_indicator(self, buf):
+        n = len(buf.attr['selections'])
+        for view in self.views:
+            if view.get_buffer() != buf: continue
+            indicator = view.attr['number-of-selections-indicator']
+            if n == 0:
+                indicator.hide()
+                continue
+            indicator.set_markup('<span foreground="yellow">'
+                + str(n) + ' Selections</span>')
+            indicator.show()
