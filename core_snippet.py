@@ -14,7 +14,10 @@ class CoreSnippet:
     def setup_snippet(self, _, buf):
         buf.attr['snippet-insert-points'] = OrderedDict()
         self.add_pattern(buf, [Gdk.KEY_Shift_L, Gdk.KEY_Shift_L],
-            lambda buf: self.snippet_next_insert_points(buf))
+            lambda buf: self.snippet_next_insert_points(buf)
+                if len(buf.attr['snippet-insert-points']) > 0
+                else None
+            )
 
     def insert_snippet(self, buf, s):
         var_pattern = regex.compile('(\$[0-9]+)')
