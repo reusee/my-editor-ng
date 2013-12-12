@@ -32,6 +32,15 @@ class CoreStatus:
         self.connect('buffer-closed', lambda _, _buf:
             self.update_buffer_list(self.get_current_buffer()))
 
+        # operation mode
+        self.edit_mode_indicator = Gtk.Label(
+            halign = Gtk.Align.END, valign = Gtk.Align.CENTER)
+        self.edit_mode_indicator.set_markup('<span foreground="yellow">EDITING</span>')
+        self.add_overlay(self.edit_mode_indicator)
+        self.connect('realize', lambda _: self.edit_mode_indicator.hide())
+        self.connect('entered-edit-mode', lambda _: self.edit_mode_indicator.show())
+        self.connect('entered-command-mode', lambda _: self.edit_mode_indicator.hide())
+
     def update_buffer_list(self, current_buffer):
         markup = []
         index = self.buffers.index(current_buffer)
@@ -49,10 +58,6 @@ class CoreStatus:
         cr.set_font_size(256)
         cr.set_source_rgb(0.2, 0.2, 0.2)
         cr.move_to(rect.width / 3, rect.height / 2)
-
-        # operation_mode
-        if self.operation_mode == self.COMMAND:
-            cr.show_text('C')
 
         # command
         cr.set_font_size(128)
