@@ -2,6 +2,7 @@ import cProfile, pstats, io
 
 class ModProfiling:
     def __init__(self, editor):
+        self.editor = editor
         self.profiler = None
         self.enabled = False
         editor.bind_command_key('..p', self.toggle, 'toggle profiler')
@@ -11,7 +12,7 @@ class ModProfiling:
             self.profiler = cProfile.Profile()
             self.profiler.enable()
             self.enabled = True
-            print('start profiling')
+            self.editor.show_message('start profiling')
         else:
             self.profiler.disable()
             s = io.StringIO()
@@ -20,4 +21,4 @@ class ModProfiling:
             ps.print_stats()
             print(s.getvalue())
             self.enabled = False
-            print('stop profiling')
+            self.editor.show_message('stop profiling')

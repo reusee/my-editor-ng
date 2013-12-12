@@ -10,7 +10,7 @@ class ModJedi:
         global jedi
         if not jedi is None: return
         jedi = __import__('jedi')
-        print('jedi loaded')
+        self.show_message('jedi loaded')
         settings = jedi.settings
         settings.add_dot_after_module = True
         settings.add_bracket_after_function = True

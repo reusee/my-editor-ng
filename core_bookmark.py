@@ -27,7 +27,7 @@ class CoreBookmark:
                 if keyval in buf.attr['bookmarks']:
                     buf.delete_mark(buf.attr['bookmarks'][keyval])
                 buf.attr['bookmarks'][keyval] = mark
-                print('mark', chr(keyval))
+                self.show_message('mark ' + chr(keyval))
         return wait_key
 
     def jump_to_mark(self, view):

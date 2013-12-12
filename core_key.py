@@ -98,7 +98,7 @@ class CoreKey:
                 self.key_handler = self.edit_key_handler
                 return False
             else:
-                print('no handler')
+                self.show_message('no handler')
                 self.key_handler = self.command_key_handler
             self.emit('key-done')
         return True

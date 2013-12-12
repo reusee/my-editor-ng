@@ -78,7 +78,7 @@ class CoreBuffer:
             if view.get_buffer() == buf:
                 self.switch_to_buffer(view, self.buffers[index])
         self.buffers.remove(buf)
-        print('closed buffer of', buf.attr['filename'])
+        self.show_message('close buffer of ' + buf.attr['filename'])
 
     def get_current_buffer(self):
         for v in self.views:

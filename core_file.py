@@ -49,7 +49,7 @@ class CoreFile:
         if not buf.get_modified(): return
         filename = buf.attr['filename']
         if not filename: return
-        print('saving', buf.attr['filename'])
+        self.show_message('saving ' + buf.attr['filename'])
         tmp_filename = filename + '.' + str(time.time())
         backup_filename = self.quote_filename(filename) + '.' + str(time.time())
         backup_filename = os.path.join(self.file_backup_dir, backup_filename)

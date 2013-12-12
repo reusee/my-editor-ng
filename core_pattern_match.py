@@ -9,7 +9,7 @@ class CorePatternMatch:
     def setup_pattern_matcher(self, _, buf):
         buf.attr['patterns'] = {}
         buf.attr['pattern-matcher-states'] = []
-        self.add_pattern(buf, 'foobar', lambda buf: print('foobar'))
+        self.add_pattern(buf, 'foobar', lambda buf: self.show_message('foobar'))
 
     def update_pattern_matcher_state(self, _, view, event):
         if self.operation_mode != self.EDIT: return
