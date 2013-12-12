@@ -37,7 +37,7 @@ class CoreBuffer:
                 markup.append('<span foreground="lightgreen">' + os.path.basename(buf.attr['filename']) + '</span>')
             else:
                 markup.append('<span>' + os.path.basename(buf.attr['filename']) + '</span>')
-        self.buffer_list.set_markup(' '.join(markup))
+        self.buffer_list.set_markup('    '.join(markup))
 
     def create_buffer(self, filename = ''):
         if filename: filename = os.path.abspath(filename)
