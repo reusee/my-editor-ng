@@ -16,32 +16,6 @@ class CoreStatus:
         self.connect('key-done', lambda w: self.command_prefix.clear())
         self.connect('key-prefix', lambda w, c: self.command_prefix.append(c))
 
-        # buffer list
-        self.buffer_list = Gtk.Label()
-        self.connect('realize', lambda _: self.south_area.add(self.buffer_list))
-        self.buffer_list.set_hexpand(True)
-        self.buffer_list.show_all()
-
-        # current buffer filename
-        self.connect('view-created', lambda _, view:
-          view.connect('notify::buffer', lambda view, _:
-            self.update_buffer_list(view.get_buffer())))
-        self.connect('view-created', lambda _, view:
-          view.connect('grab-focus', lambda view:
-            self.update_buffer_list(view.get_buffer())))
-        self.connect('buffer-closed', lambda _, _buf:
-            self.update_buffer_list(self.get_current_buffer()))
-
-    def update_buffer_list(self, current_buffer):
-        markup = []
-        index = self.buffers.index(current_buffer)
-        for buf in self.buffers[index:] + self.buffers[:index]:
-            if buf == current_buffer:
-                markup.append('<span foreground="lightgreen">' + os.path.basename(buf.attr['filename']) + '</span>')
-            else:
-                markup.append('<span>' + os.path.basename(buf.attr['filename']) + '</span>')
-        self.buffer_list.set_markup(' '.join(markup))
-
     def draw_status(self, view, cr):
         if not view.is_focus(): return
         rect = view.get_allocation()

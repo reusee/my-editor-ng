@@ -55,6 +55,11 @@ class CoreView:
         view.set_tab_width(2)
         view.set_wrap_mode(Gtk.WrapMode.NONE)
 
+        view.connect('notify::buffer', lambda view, _:
+            self.update_buffer_list(view.get_buffer()))
+        view.connect('grab-focus', lambda view:
+            self.update_buffer_list(view.get_buffer()))
+
         self.emit('view-created', view)
 
         return view, scroll

@@ -22,7 +22,22 @@ class CoreBuffer:
 
         self.new_signal('file-loaded', (GtkSource.Buffer,))
         self.new_signal('language-detected', (GtkSource.Buffer, str))
-        self.new_signal('buffer-closed', (GtkSource.Buffer,))
+
+        # buffer list
+        self.buffer_list = Gtk.Label()
+        self.connect('realize', lambda _: self.south_area.add(self.buffer_list))
+        self.buffer_list.set_hexpand(True)
+        self.buffer_list.show_all()
+
+    def update_buffer_list(self, current_buffer):
+        markup = []
+        index = self.buffers.index(current_buffer)
+        for buf in self.buffers[index:] + self.buffers[:index]:
+            if buf == current_buffer:
+                markup.append('<span foreground="lightgreen">' + os.path.basename(buf.attr['filename']) + '</span>')
+            else:
+                markup.append('<span>' + os.path.basename(buf.attr['filename']) + '</span>')
+        self.buffer_list.set_markup(' '.join(markup))
 
     def create_buffer(self, filename = ''):
         if filename: filename = os.path.abspath(filename)
@@ -80,7 +95,7 @@ class CoreBuffer:
                 self.switch_to_buffer(view, self.buffers[index])
         self.buffers.remove(buf)
         self.show_message('close buffer of ' + buf.attr['filename'])
-        self.emit('buffer-closed', buf)
+        self.update_buffer_list(self.get_current_buffer())
 
     def get_current_buffer(self):
         for v in self.views:
