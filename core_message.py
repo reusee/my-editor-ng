@@ -28,7 +28,8 @@ class CoreMessage:
         self._show_message(text, **kwargs)
 
     def _show_message(self, text, timeout = 3000):
-        label = Gtk.Label(label = text)
+        label = Gtk.Label()
+        label.set_markup('<span foreground="lightgreen">' + text + '</span>')
         label.set_hexpand(True)
         self.message_board.add(label)
         GLib.timeout_add(timeout, lambda: label.destroy())
