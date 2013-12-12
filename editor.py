@@ -80,11 +80,7 @@ class Editor(Gtk.Overlay, *classes):
         self.style_scheme_manager.append_search_path(os.path.dirname(__file__))
         self.style_scheme = self.style_scheme_manager.get_scheme('solarizeddark')
 
-        # screen
-        screen = Gdk.Screen.get_default()
-        self.screen_width = screen.get_width()
-        self.screen_height = screen.get_height()
-
+        # extra classes
         for cls in extra_classes:
             cls(self)
 
