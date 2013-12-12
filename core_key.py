@@ -163,14 +163,14 @@ class CoreKey:
         return f(*args)
 
     def bind_command_key(self, seq, handler, desc):
-        handler.__dict__['_description_'] = desc
-        self.bind_key_handler(self.command_key_handler, seq, handler)
+        self.bind_key_handler(self.command_key_handler, seq, handler, desc)
 
     def bind_edit_key(self, seq, handler, desc):
-        handler.__dict__['_description_'] = desc
-        self.bind_key_handler(self.edit_key_handler, seq, handler)
+        self.bind_key_handler(self.edit_key_handler, seq, handler, desc)
 
-    def bind_key_handler(self, keymap, seq, handler):
+    def bind_key_handler(self, keymap, seq, handler, desc = None):
+        if desc:
+            handler.__dict__['_description_'] = desc
         seq = [c for c in seq]
         for key in seq[:-1]:
             if key not in keymap:
