@@ -27,12 +27,12 @@ class CoreBuffer:
         self.buffer_list = Gtk.Label()
         self.connect('realize', lambda _: self.south_area.add(self.buffer_list))
         self.buffer_list.set_hexpand(True)
+        self.buffer_list.set_line_wrap(True)
         self.buffer_list.show_all()
 
     def update_buffer_list(self, current_buffer):
         markup = []
-        index = self.buffers.index(current_buffer)
-        for buf in self.buffers[index:] + self.buffers[:index]:
+        for buf in self.buffers:
             if buf == current_buffer:
                 markup.append('<span foreground="lightgreen">' + os.path.basename(buf.attr['filename']) + '</span>')
             else:
