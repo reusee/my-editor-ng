@@ -41,7 +41,7 @@ class CoreKey:
         # mode indicator
         self.edit_mode_indicator = Gtk.Label(
             halign = Gtk.Align.END, valign = Gtk.Align.CENTER)
-        self.edit_mode_indicator.set_markup('<span foreground="yellow">EDITING</span>')
+        self.edit_mode_indicator.set_markup('<span font="24" foreground="yellow">EDITING</span>')
         self.add_overlay(self.edit_mode_indicator)
         self.connect('realize', lambda _: self.edit_mode_indicator.hide())
         self.connect('entered-edit-mode', lambda _: self.edit_mode_indicator.show())
