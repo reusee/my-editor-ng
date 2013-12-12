@@ -8,10 +8,11 @@ class ModPython:
             and buf.attr['language'] == 'Python' else None)
 
         # macros
-        editor.bind_command_key('.fv', lambda view:
+        self.command_keymap = {}
+        editor.bind_key_handler(self.command_keymap, '.fv', lambda view:
             editor.feed_keys(view, 'vmwvt(v%vl'),
             'select current function call')
-        editor.bind_command_key('.fi', lambda view, buf: [
+        editor.bind_key_handler(self.command_keymap, '.fi', lambda view, buf: [
             editor.feed_keys(view, 'f(%i'),
             buf.begin_user_action(),
             buf.insert(buf.get_iter_at_mark(buf.get_insert()),
@@ -19,12 +20,13 @@ class ModPython:
             buf.end_user_action(),
             ], 'insert argument to current function')
 
-        editor.bind_command_key('.c', self.comment_lines,
+        editor.bind_key_handler(self.command_keymap, '.c', self.comment_lines,
             'comment lines')
 
     def setup_python(self, buf):
         buf.attr['indent-width'] = 4
         buf.attr['language'] = 'Python'
+        buf.command_key_handler.insert(0, self.command_keymap)
 
     def setup(self, buf):
         self.add_line_start_abbre(buf, 'ii', 'import ')
