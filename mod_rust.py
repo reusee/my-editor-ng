@@ -1,3 +1,5 @@
+import regex
+
 class ModRust:
     def __init__(self, editor):
         self.editor = editor
@@ -7,8 +9,17 @@ class ModRust:
 
     def setup_rust(self, buf):
         buf.attr['language'] = 'Rust'
+        buf.attr['is-word-char-func'] = self.is_word_char
+        buf.attr['word-regex'] = regex.compile('[a-zA-Z0-9-_!]+')
 
         self.editor.add_pattern(buf, '{{', self.insert_braces)
+
+    def is_word_char(self, c):
+        o = ord(c.lower())
+        if o >= ord('a') and o <= ord('z'): return True
+        if c.isdigit(): return True
+        if c in {'-', '_', '!'}: return True
+        return False
 
     def insert_braces(self, buf):
         it = buf.get_iter_at_mark(buf.get_insert())

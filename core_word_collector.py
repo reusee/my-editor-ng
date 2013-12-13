@@ -1,5 +1,3 @@
-import regex
-
 class CoreWordCollector:
     def __init__(self):
         self.connect('buffer-created', self.buffer_setup_completion)
@@ -77,7 +75,10 @@ class CoreWordCollector:
 
     def collect_file_words(self, _, buf):
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False)
-        words = regex.findall('[a-zA-Z0-9-_]+', text)
+        regexp = self.word_regex
+        if 'word-regex' in buf.attr:
+            regexp = buf.attr['word-regex']
+        words = regexp.findall(text)
         words = {w for w in words if len(w) > 1}
         for word in words:
             self.emit('found-word', word)
