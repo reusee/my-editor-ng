@@ -11,7 +11,8 @@ class ModRust:
         buf.attr['is-word-char-func'] = self.is_word_char
         buf.attr['word-regex'] = regex.compile('[a-zA-Z0-9-_!]+')
 
-        self.editor.add_pattern(buf, '{{', self.insert_braces)
+        self.editor.add_pattern(buf, '{{', self.insert_braces,
+            drop_key_event = True, clear_matched_text = True)
 
     def is_word_char(self, c):
         o = ord(c.lower())
@@ -23,9 +24,7 @@ class ModRust:
     def insert_braces(self, buf):
         it = buf.get_iter_at_mark(buf.get_insert())
         start = it.copy()
-        start.backward_char()
         buf.begin_user_action()
-        buf.delete(start, it)
         # count indent
         it.set_line_offset(0)
         while not it.ends_line() and it.get_char().isspace():
@@ -37,4 +36,3 @@ class ModRust:
         start.set_line_offset(len(indent_str))
         buf.place_cursor(start)
         buf.end_user_action()
-        return True

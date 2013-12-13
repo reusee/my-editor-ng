@@ -31,19 +31,17 @@ class ModPython:
     def add_line_start_abbre(self, buf, s, replace):
         def callback(buf):
             it = buf.get_iter_at_mark(buf.get_insert())
-            for _ in range(len(s) - 1): it.backward_char()
             start = it.copy()
             start.set_line_offset(0)
             while start.compare(it) < 0 and not start.ends_line():
                 if start.get_char().isspace(): start.forward_char()
                 else: break
-            if start.compare(it) != 0: return
+            if start.compare(it) != 0: return # not at line start
             buf.begin_user_action()
-            buf.delete(start, buf.get_iter_at_mark(buf.get_insert()))
             buf.insert(start, replace, -1)
             buf.end_user_action()
-            return True
-        self.editor.add_pattern(buf, s, callback)
+        self.editor.add_pattern(buf, s, callback,
+            drop_key_event = True, clear_matched_text = True)
 
     def comment_lines(self, buf, n):
         it = buf.get_iter_at_mark(buf.get_insert())

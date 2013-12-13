@@ -12,9 +12,10 @@ class CoreKey:
         self.edit_key_handler = {}
 
         self.new_signal('key-pressed', (GtkSource.View, Gdk.Event,))
+        self.key_pressed_return_value = False # use this to store return value of key-pressed signal handlers
+
         self.connect('key-pressed', lambda _, view, _event:
           self.emit('should-redraw'))
-        self.key_pressed_return_value = False
 
         self.new_signal('key-done', ())
         self.new_signal('key-prefix', (str,))
