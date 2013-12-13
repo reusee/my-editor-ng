@@ -39,6 +39,7 @@ extra_modules = [
     #'jedi',
     'statistics',
     'profiling',
+    'rust',
     ]
 
 extra_classes = [
