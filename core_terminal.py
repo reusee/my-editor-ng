@@ -6,7 +6,7 @@ class CoreTerminal:
         self.connect('realize', lambda _: self.add_overlay(
             self.new_terminal(',e', '/usr/bin/env', 'fish')))
         self.connect('realize', lambda _: self.add_overlay(
-            self.new_terminal('.p', '/usr/bin/env', 'python')))
+            self.new_terminal('.p', '/usr/bin/env', 'ipython')))
 
     def new_terminal(self, key, *argv):
         terminal = Terminal(self, *argv)
