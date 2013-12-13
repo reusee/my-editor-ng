@@ -1,11 +1,11 @@
 jedi = None
+import time
 
 class ModJedi:
     def __init__(self, editor):
         self.editor = editor
         editor.connect('language-detected', lambda _, buf, lang:
           self.setup(buf) if lang == 'Python' else None)
-        editor.connect('provide-completions', self.provide)
 
     def setup(self, buf):
         global jedi
@@ -15,8 +15,11 @@ class ModJedi:
         settings = jedi.settings
         settings.add_dot_after_module = True
         settings.add_bracket_after_function = True
+        buf.attr.setdefault('completion-providers', [])
+        buf.attr['completion-providers'].append(self.provide)
 
-    def provide(self, _, buf, word, candidates):
+    def provide(self, buf, word, candidates):
+        t0 = time.time()
         if not word:
             it = buf.get_iter_at_mark(buf.get_insert())
             if it.backward_char():
@@ -36,3 +39,4 @@ class ModJedi:
         for c in script.completions():
             if c.name.startswith('__'): continue
             candidates.add(c.name)
+        self.editor.show_message('jedi provide in ' + str(int((time.time() - t0) * 1000)) + 'ms', timeout = 5000)

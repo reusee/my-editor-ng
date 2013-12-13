@@ -21,8 +21,6 @@ class CoreCompletion:
         self.completion_replacing = False # changing text
         self.completion_candidates = []
 
-        self.new_signal('provide-completions', (GtkSource.Buffer, str, object))
-
     def hint_completion(self, buf):
         if self.completion_replacing: return
         self.completion_view.hide()
@@ -38,7 +36,9 @@ class CoreCompletion:
             words = self.get_completion_candidates(word)
             candidates.update(words)
         # extra providers
-        self.emit('provide-completions', buf, word, candidates)
+        if 'completion-providers' in buf.attr:
+            for provider in buf.attr['completion-providers']:
+                provider(buf, word, candidates)
 
         self.completion_candidates = sorted(candidates, key = lambda w: len(w))
         if len(self.completion_candidates) > 0:
