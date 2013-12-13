@@ -6,6 +6,7 @@ class ModPython:
 
     def setup_python(self, buf):
         buf.attr['indent-width'] = 4
+
         self.add_line_start_abbre(buf, 'ii', 'import ')
         self.add_line_start_abbre(buf, 'dd', 'def ')
         self.add_line_start_abbre(buf, 'cc', 'class ')
@@ -29,19 +30,10 @@ class ModPython:
             'comment lines')
 
     def add_line_start_abbre(self, buf, s, replace):
-        def callback(buf):
-            it = buf.get_iter_at_mark(buf.get_insert())
-            start = it.copy()
-            start.set_line_offset(0)
-            while start.compare(it) < 0 and not start.ends_line():
-                if start.get_char().isspace(): start.forward_char()
-                else: break
-            if start.compare(it) != 0: return # not at line start
-            buf.begin_user_action()
-            buf.insert(start, replace, -1)
-            buf.end_user_action()
-        self.editor.add_pattern(buf, s, callback,
-            drop_key_event = True, clear_matched_text = True)
+        self.editor.add_pattern(buf, s, lambda buf:
+            self.editor.insert_snippet(buf, [replace + '$1']),
+            drop_key_event = True, clear_matched_text = True,
+            predict = self.editor.pattern_predict_at_line_start)
 
     def comment_lines(self, buf, n):
         it = buf.get_iter_at_mark(buf.get_insert())
