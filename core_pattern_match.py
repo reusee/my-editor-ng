@@ -1,6 +1,7 @@
 class PatternHandler:
-    def __init__(self, pattern, callback, drop_key_event, clear_matched_text):
+    def __init__(self, pattern, predict, callback, drop_key_event, clear_matched_text):
         self.pattern = pattern
+        self.predict = predict
         self.callback = callback
         self.drop_key_event = drop_key_event
         self.clear_matched_text = clear_matched_text
@@ -18,7 +19,8 @@ class CorePatternMatch:
         buf.attr['pattern-matcher-states'] = []
         self.add_pattern(buf, 'foobar',
             lambda buf: self.show_message('foobar'),
-            drop_key_event = False, clear_matched_text = False)
+            drop_key_event = False, clear_matched_text = False,
+            predict = self.pattern_predict_at_line_start)
 
     def update_pattern_matcher_state(self, _, view, event):
         if self.operation_mode != self.EDIT: return
@@ -30,6 +32,9 @@ class CorePatternMatch:
             if c in state:
                 state = state[c]
                 if isinstance(state, PatternHandler): # matched
+                    if state.predict and not state.predict(buf, state): # predict fail
+                        buf.attr['pattern-matcher-states'].clear()
+                        return
                     if state.clear_matched_text:
                         it = buf.get_iter_at_mark(buf.get_insert())
                         end = it.copy()
@@ -38,7 +43,7 @@ class CorePatternMatch:
                         buf.begin_not_undoable_action()
                         buf.delete(it, end)
                         buf.end_not_undoable_action()
-                    state.callback(buf)
+                    state.callback(buf) # call
                     if state.drop_key_event:
                         self.key_pressed_return_value = True
                     buf.attr['pattern-matcher-states'].clear()
@@ -54,7 +59,7 @@ class CorePatternMatch:
         buf = self.get_current_buffer()
         buf.attr['pattern-matcher-states'].clear()
 
-    def add_pattern(self, buf, pattern, callback, drop_key_event, clear_matched_text):
+    def add_pattern(self, buf, pattern, callback, drop_key_event, clear_matched_text, predict = None):
         if isinstance(pattern, str):
             path = [ord(c) for c in pattern]
         else:
@@ -71,4 +76,14 @@ class CorePatternMatch:
         key = path[-1]
         if key in cur: # conflict
             raise Exception('pattern conflict', pattern)
-        cur[key] = PatternHandler(pattern, callback, drop_key_event, clear_matched_text)
+        cur[key] = PatternHandler(pattern, predict, callback, drop_key_event, clear_matched_text)
+
+    def pattern_predict_at_line_start(self, buf, handler):
+        it = buf.get_iter_at_mark(buf.get_insert())
+        for _ in range(len(handler.pattern) - 1):
+            it.backward_char()
+        start = it.copy()
+        start.set_line_offset(0)
+        while not start.ends_line() and start.get_char().isspace():
+            start.forward_char()
+        return start.compare(it) == 0
