@@ -231,8 +231,8 @@ class CoreKey:
     def dump_keymap(self, keymap, path = None):
         if path is None: path = []
         if isinstance(keymap, dict):
-            for key in sorted(keymap.keys()):
-                self.dump_keymap(keymap[key], path + [key])
+            for key in sorted(keymap.keys(), key = lambda e: str(e)):
+                self.dump_keymap(keymap[key], path + [str(key)])
         else:
             if '_description_' not in keymap.__dict__:
                 print('ADD DESCRIPTION TO', ''.join(path))
