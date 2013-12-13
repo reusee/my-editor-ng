@@ -3,9 +3,6 @@ class ModPython:
         self.editor = editor
         editor.connect('language-detected', lambda _, buf, lang:
             self.setup_python(buf) if lang == 'Python' else None)
-        editor.connect('buffer-created', lambda _, buf:
-            self.setup(buf) if 'language' in buf.attr
-            and buf.attr['language'] == 'Python' else None)
 
         # macros
         self.command_keymap = {}
@@ -25,10 +22,7 @@ class ModPython:
 
     def setup_python(self, buf):
         buf.attr['indent-width'] = 4
-        buf.attr['language'] = 'Python'
         buf.command_key_handler.insert(0, self.command_keymap)
-
-    def setup(self, buf):
         self.add_line_start_abbre(buf, 'ii', 'import ')
         self.add_line_start_abbre(buf, 'dd', 'def ')
         self.add_line_start_abbre(buf, 'cc', 'class ')

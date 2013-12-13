@@ -8,7 +8,6 @@ class ModRust:
             self.setup_rust(buf) if lang == 'Rust' else None)
 
     def setup_rust(self, buf):
-        buf.attr['language'] = 'Rust'
         buf.attr['is-word-char-func'] = self.is_word_char
         buf.attr['word-regex'] = regex.compile('[a-zA-Z0-9-_!]+')
 
