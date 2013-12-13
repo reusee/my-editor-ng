@@ -2,6 +2,7 @@ jedi = None
 
 class ModJedi:
     def __init__(self, editor):
+        self.editor = editor
         editor.connect('language-detected', lambda _, buf, lang:
           self.setup(buf) if lang == 'Python' else None)
         editor.connect('provide-completions', self.provide)
@@ -10,7 +11,7 @@ class ModJedi:
         global jedi
         if not jedi is None: return
         jedi = __import__('jedi')
-        self.show_message('jedi loaded')
+        self.editor.show_message('jedi loaded')
         settings = jedi.settings
         settings.add_dot_after_module = True
         settings.add_bracket_after_function = True
