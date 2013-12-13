@@ -12,7 +12,11 @@ class ModRust:
         buf.attr['word-regex'] = regex.compile('[a-zA-Z0-9-_!]+')
 
         self.editor.add_pattern(buf, '{{', lambda buf:
-            self.editor.insert_snippet(buf, '{\n$1\n}'),
+            self.editor.insert_snippet(buf, [
+                '{$>',
+                '$1$<',
+                '}$2',
+            ]),
             drop_key_event = True, clear_matched_text = True)
 
     def is_word_char(self, c):
