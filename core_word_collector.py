@@ -17,19 +17,19 @@ class CoreWordCollector:
           buf.get_start_iter(), left_gravity = True)
         buf.connect('changed', self.update_word_bound)
 
-    def word_start_iter_extend(self, start_iter):
+    def word_start_iter_extend(self, start_iter, buf):
         it = start_iter.copy()
         while it.backward_char():
-            if self.is_word_char(it.get_char()):
+            if self.is_word_char(it.get_char(), buf):
                 start_iter.backward_char()
             else:
                 break
         return start_iter
 
-    def word_end_iter_extend(self, end_iter, limit_iter):
+    def word_end_iter_extend(self, end_iter, limit_iter, buf):
         word_ended = False
         while end_iter.compare(limit_iter) < 0:
-            if self.is_word_char(end_iter.get_char()):
+            if self.is_word_char(end_iter.get_char(), buf):
                 end_iter.forward_char()
             else:
                 word_ended = True
@@ -41,7 +41,7 @@ class CoreWordCollector:
         start_iter = buf.get_iter_at_mark(buf.get_insert())
         end_iter = start_iter.copy()
 
-        start_iter = self.word_start_iter_extend(start_iter)
+        start_iter = self.word_start_iter_extend(start_iter, buf)
 
         buf.move_mark(buf.attr['word-end'], end_iter)
         buf.move_mark(buf.attr['word-start'], start_iter)
@@ -51,7 +51,7 @@ class CoreWordCollector:
         start_iter = buf.get_iter_at_mark(buf.attr['word-start'])
         end_iter = buf.get_iter_at_mark(buf.attr['word-end'])
 
-        end_iter, _ = self.word_end_iter_extend(end_iter, buf.get_end_iter())
+        end_iter, _ = self.word_end_iter_extend(end_iter, buf.get_end_iter(), buf)
 
         if start_iter.compare(end_iter) < 0:
             self.emit('found-word', buf.get_text(start_iter, end_iter, False))
@@ -62,9 +62,9 @@ class CoreWordCollector:
         end_iter = buf.get_iter_at_mark(buf.attr['word-end'])
         cursor_iter = buf.get_iter_at_mark(buf.get_insert())
 
-        start_iter = self.word_start_iter_extend(start_iter)
+        start_iter = self.word_start_iter_extend(start_iter, buf)
 
-        end_iter, word_ended = self.word_end_iter_extend(end_iter, cursor_iter)
+        end_iter, word_ended = self.word_end_iter_extend(end_iter, cursor_iter, buf)
 
         if word_ended or start_iter.compare(end_iter) == 0: # reset start and end
             if start_iter.compare(end_iter) < 0:

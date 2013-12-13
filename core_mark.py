@@ -159,7 +159,7 @@ class CoreMark:
         it = buf.get_iter_at_mark(mark)
         if backward: it.backward_char()
         at_begin = False
-        while self.is_word_char(it.get_char()):
+        while self.is_word_char(it.get_char(), buf):
             if backward:
                 if not it.backward_char():
                     at_begin = True
