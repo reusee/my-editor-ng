@@ -21,4 +21,4 @@ class ModMinimap(GtkSource.View):
         buf.connect('notify::cursor-position', self.scroll)
 
     def scroll(self, buf, _):
-        self.scroll_mark_onscreen(buf.get_insert())
+        self.scroll_to_mark(buf.get_insert(), 0, False, 0, 0)
