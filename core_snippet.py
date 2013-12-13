@@ -34,7 +34,8 @@ class CoreSnippet:
                 self.insert_at_selections(buf, section)
         buf.place_cursor(buf.get_iter_at_mark(orig_mark))
         buf.delete_mark(orig_mark)
-        self.snippet_next_insert_points(buf)
+        if len(insert_points) > 0:
+            self.snippet_next_insert_points(buf)
 
     def snippet_next_insert_points(self, buf):
         insert_points_set = buf.attr['snippet-insert-points']
