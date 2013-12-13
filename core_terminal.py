@@ -3,13 +3,17 @@ import os
 
 class CoreTerminal:
     def __init__(self):
-        self.connect('realize', lambda _: self.west_area.add(
+        self.connect('realize', lambda _: self.add_overlay(
             self.new_terminal(',e', '/usr/bin/env', 'fish')))
-        self.connect('realize', lambda _: self.west_area.add(
+        self.connect('realize', lambda _: self.add_overlay(
             self.new_terminal('.p', '/usr/bin/env', 'python')))
 
     def new_terminal(self, key, *argv):
         terminal = Terminal(self, *argv)
+        terminal.set_margin_top(10)
+        terminal.set_margin_bottom(10)
+        terminal.set_margin_left(10)
+        terminal.set_margin_right(10)
         self.connect('realize', lambda _: terminal.hide())
         self.bind_command_key(key, terminal.open, 'open terminal of ' + ' '.join(argv))
         return terminal
