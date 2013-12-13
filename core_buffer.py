@@ -22,8 +22,8 @@ class Buffer(GtkSource.Buffer):
         self.get_insert().set_visible(False)
 
         self.key_handler = None
-        self.command_key_handler = []
-        self.edit_key_handler = []
+        self.command_key_handler = None
+        self.edit_key_handler = None
 
 class CoreBuffer:
     def __init__(self):
@@ -66,12 +66,21 @@ class CoreBuffer:
                 markup.append('<span>' + os.path.basename(buf.attr['filename']) + '</span>')
         self.buffer_list.set_markup('    '.join(markup))
 
+    def copy_keymap(self, keymap):
+        copy = {}
+        for key, value in keymap.items():
+            if isinstance(value, dict):
+                copy[key] = self.copy_keymap(value)
+            else:
+                copy[key] = value
+        return copy
+
     def create_buffer(self, filename = ''):
         buf = Buffer(filename)
         self.buffers.append(buf)
         buf.set_style_scheme(self.style_scheme)
-        buf.command_key_handler.append(self.command_key_handler)
-        buf.edit_key_handler.append(self.edit_key_handler)
+        buf.command_key_handler = self.copy_keymap(self.command_key_handler)
+        buf.edit_key_handler = self.copy_keymap(self.edit_key_handler)
         self.emit('buffer-created', buf)
         if buf.attr['lang']:
             self.emit('language-detected', buf, buf.attr['lang'].get_name())

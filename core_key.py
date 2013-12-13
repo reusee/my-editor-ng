@@ -87,11 +87,6 @@ class CoreKey:
             handler = buf.key_handler.get(key, None)
         elif callable(buf.key_handler): # function handler
             handler = buf.key_handler
-        elif isinstance(buf.key_handler, list):
-            key = chr(val) if val >= 0x20 and val <= 0x7e else val
-            for keymap in buf.key_handler: # list of dict
-                handler = keymap.get(key, None)
-                if handler != None: break # match
         # handle it
         if callable(handler): # trigger a command or call handler function
             if is_edit_mode: # not a char to insert
@@ -164,9 +159,13 @@ class CoreKey:
 
     def bind_command_key(self, seq, handler, desc):
         self.bind_key_handler(self.command_key_handler, seq, handler, desc)
+        for buf in self.buffers: # set to all buffers
+            self.bind_key_handler(buf.command_key_handler, seq, handler, desc)
 
     def bind_edit_key(self, seq, handler, desc):
         self.bind_key_handler(self.edit_key_handler, seq, handler, desc)
+        for buf in self.buffers:
+            self.bind_key_handler(buf.edit_key_handler, seq, handler, desc)
 
     def bind_key_handler(self, keymap, seq, handler, desc = None):
         if desc:
@@ -184,6 +183,13 @@ class CoreKey:
 
     def alias_command_key(self, dst_seq, src_seq):
         self.alias_key_handler(dst_seq, src_seq, self.command_key_handler)
+        for buf in self.buffers:
+            self.alias_key_handler(dst_seq, src_seq, buf.command_key_handler)
+
+    def alias_edit_key(self, dst_seq, src_seq):
+        self.alias_key_handler(dst_seq, src_seq, self.edit_key_handler)
+        for buf in self.buffers:
+            self.alias_key_handler(dst_seq, src_seq, buf.edit_key_handler)
 
     def alias_key_handler(self, dst_seq, src_seq, keymap):
         cur = keymap
