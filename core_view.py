@@ -82,7 +82,6 @@ class CoreView:
 
         buf = view.get_buffer()
         # focus on view
-        view.scroll_to_mark(buf.get_insert(), 0, False, 0, 0)
         view.grab_focus()
         # restore saved buffer cursor position
         self.restore_current_buffer_cursor_position(view)

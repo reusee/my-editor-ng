@@ -78,7 +78,7 @@ class CoreSearch:
                 buf.place_cursor(it)
         else:
             self.show_message('no more search result')
-        view.scroll_to_mark(buf.get_insert(), 0, True, 1, 0.5)
+        view.scroll_to_mark(buf.get_insert(), 0, False, 0, 0)
 
     def search_current_word(self, buf):
         Transform(
