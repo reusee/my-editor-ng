@@ -16,9 +16,15 @@ class ModRust:
         start.backward_char()
         buf.begin_user_action()
         buf.delete(start, it)
-        buf.insert(start, '{\n\n}\n', -1)
+        # count indent
+        it.set_line_offset(0)
+        while not it.ends_line() and it.get_char().isspace():
+            it.forward_char()
+        indent_str = ' ' * it.get_line_offset()
+        # insert
+        buf.insert(start, '{\n%s\n%s}' % (indent_str, indent_str), -1)
         start.backward_line()
-        start.backward_line()
+        start.set_line_offset(len(indent_str))
         buf.place_cursor(start)
         buf.end_user_action()
         return True
