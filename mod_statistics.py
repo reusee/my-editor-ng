@@ -31,6 +31,6 @@ class ModStatistics:
         self.command_log_file.flush()
 
     def collect_handler(self, _, f, args):
-        self.handler_log_file.write(f.__dict__['_description_'])
+        self.handler_log_file.write(f.__dict__.get('_description_', 'no descripton'))
         self.handler_log_file.write('\t' + str(args) + '\n')
         self.handler_log_file.flush()
