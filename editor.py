@@ -36,7 +36,7 @@ classes = [
 extra_modules = [
     #'minimap',
     'python',
-    'jedi',
+    #'jedi',
     'statistics',
     'profiling',
     'rust',
