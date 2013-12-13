@@ -3,16 +3,16 @@ import os
 
 class CoreTerminal:
     def __init__(self):
-        self.new_south_terminal(',e', '/usr/bin/env', 'fish')
-        self.new_south_terminal('.e', '/usr/bin/env', 'fish')
-        self.new_south_terminal('me', '/usr/bin/env', 'fish')
-        self.new_south_terminal('.p', '/usr/bin/env', 'python')
+        self.connect('realize', lambda _: self.west_area.add(
+            self.new_terminal(',e', '/usr/bin/env', 'fish')))
+        self.connect('realize', lambda _: self.west_area.add(
+            self.new_terminal('.p', '/usr/bin/env', 'python')))
 
-    def new_south_terminal(self, key, *argv):
+    def new_terminal(self, key, *argv):
         terminal = Terminal(self, *argv)
-        self.connect('realize', lambda _: self.south_area.add(terminal))
         self.connect('realize', lambda _: terminal.hide())
         self.bind_command_key(key, terminal.open, 'open terminal of ' + ' '.join(argv))
+        return terminal
 
 class Terminal(Vte.Terminal):
     def __init__(self, editor, *argv):

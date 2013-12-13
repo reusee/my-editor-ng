@@ -70,6 +70,8 @@ class Editor(Gtk.Overlay, *classes):
         # areas
         self.east_area = Gtk.Grid()
         self.root_grid.attach(self.east_area, 1, 0, 1, 1)
+        self.west_area = Gtk.Grid()
+        self.root_grid.attach(self.west_area, -1, 0, 1, 1)
         self.north_area = Gtk.Grid()
         self.root_grid.attach(self.north_area, 0, -1, 2, 1)
         self.south_area = Gtk.Grid(orientation = Gtk.Orientation.VERTICAL)
