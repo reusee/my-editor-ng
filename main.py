@@ -3,6 +3,7 @@
 from gi.repository import Gtk, Gdk
 import sys
 import os
+import traceback
 
 from editor import Editor
 
@@ -21,13 +22,13 @@ class Main(Gtk.Window):
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
                 )
 
-        # top grid
-        self.grid = Gtk.Grid()
-        self.add(self.grid)
+        # top container
+        self.root_container = Gtk.Overlay()
+        self.add(self.root_container)
 
         # editor
         self.editor = Editor()
-        self.grid.attach(self.editor, 0, 0, 1, 1)
+        self.root_container.add(self.editor)
 
         # buffers
         for filename in sys.argv[1:]:
@@ -40,6 +41,30 @@ class Main(Gtk.Window):
         self.editor.switch_to_buffer(
             self.editor.views[0],
             self.editor.buffers[0])
+
+        # exception board
+        self.exception_board = ExceptionBoard()
+        self.root_container.add_overlay(self.exception_board)
+        self.connect('realize', lambda _: self.exception_board.hide())
+
+        sys.excepthook = self.excepthook
+
+    def excepthook(self, type, value, tback):
+        self.exception_board.label.set_text('\n'.join(traceback.format_exception(type, value, tback)))
+        self.exception_board.show()
+        sys.__excepthook__(type, value, tback)
+
+class ExceptionBoard(Gtk.Overlay):
+    def __init__(self):
+        Gtk.Overlay.__init__(self)
+        self.label = Gtk.Label()
+        self.add(self.label)
+        self.button = Gtk.Button(
+            valign = Gtk.Align.END,
+            halign = Gtk.Align.END,
+            label = "X")
+        self.add_overlay(self.button)
+        self.button.connect('clicked', lambda _: self.hide())
 
 def main():
     win = Main()
