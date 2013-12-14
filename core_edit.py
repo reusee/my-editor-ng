@@ -71,34 +71,36 @@ class CoreEdit:
             buf.place_cursor(buf.get_iter_at_mark(buf.get_insert()))
             view.scroll_to_mark(buf.get_insert(), 0, False, 0, 0)
 
-    def newline_above(self, view):
-        buf = view.get_buffer()
+    def _get_current_line_indent_str(self, buf):
         it = buf.get_iter_at_mark(buf.get_insert())
         it.set_line_offset(0)
-        line_end_iter = it.copy()
-        if not line_end_iter.ends_line(): line_end_iter.forward_to_line_end()
-        st = it.copy()
-        while st.get_char() == ' ' and st.compare(line_end_iter) < 0:
-            st.forward_char()
-        indent_level = st.get_line_offset()
+        start = it.copy()
+        while not it.ends_line() and it.get_char().isspace():
+            it.forward_char()
+        indent_str = buf.get_text(start, it, False)
+        return indent_str
+
+    def newline_above(self, view):
+        buf = view.get_buffer()
+        indent_str = self._get_current_line_indent_str(buf)
+        it = buf.get_iter_at_mark(buf.get_insert())
+        it.set_line_offset(0)
         buf.begin_user_action()
         buf.insert(it, '\n')
         it.backward_line()
-        buf.insert(it, ' ' * indent_level)
+        buf.insert(it, indent_str)
         buf.end_user_action()
         buf.place_cursor(it)
         self.enter_edit_mode(buf)
 
     def newline_below(self, view):
         buf = view.get_buffer()
+        indent_str = self._get_current_line_indent_str(buf)
         it = buf.get_iter_at_mark(buf.get_insert())
-        if not it.ends_line(): it.forward_to_line_end()
-        st = it.copy()
-        st.set_line_offset(0)
-        while st.get_char() == ' ' and st.compare(it) < 0:
-            st.forward_char()
+        if not it.ends_line():
+            it.forward_to_line_end()
         buf.begin_user_action()
-        buf.insert(it, '\n' + ' ' * st.get_line_offset())
+        buf.insert(it, '\n' + indent_str)
         buf.end_user_action()
         buf.place_cursor(it)
         self.enter_edit_mode(buf)
