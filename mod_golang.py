@@ -86,7 +86,15 @@ class ModGolang:
         data, err = p.communicate(buf.get_text(buf.get_start_iter(),
             buf.get_end_iter(), False).encode('utf8'))
         if len(err) > 0: # error
-            self.editor.show_message(err.decode('utf8'), timeout = 3600000)
+            err = err.decode('utf8')
+            self.editor.show_message(err, timeout = 10000)
+            _, line, column = err.split(':')[:3]
+            line = int(line) - 1
+            column = int(column) - 1
+            it = buf.get_start_iter()
+            it.set_line(line)
+            it.set_line_index(column)
+            buf.place_cursor(it)
             return
         offset = buf.get_iter_at_mark(buf.get_insert()).get_offset()
         buf.set_text(data.decode('utf8'))
