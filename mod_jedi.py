@@ -41,7 +41,11 @@ class ModJedi:
         if cond & GLib.IO_IN:
             status, data, _, _ = chan.read_line()
             if status != GLib.IO_STATUS_NORMAL: return
-            print(data) #TODO add to candidates
+            serial, words = data.split(':', 1)
+            serial = int(serial)
+            words = words.split(',')
+            if len(words) > 0:
+                self.editor.append_candidates(words, serial)
             ret = True
         if cond & GLib.IO_HUP:
             GLib.source_remove(self.stdout_id)
@@ -59,7 +63,7 @@ class ModJedi:
         buf.attr.setdefault('completion-providers', [])
         buf.attr['completion-providers'].append(self.provide)
 
-    def provide(self, buf, word, candidates):
+    def provide(self, buf, word, candidates, serial):
         if not word:
             it = buf.get_iter_at_mark(buf.get_insert())
             if it.backward_char():
@@ -70,7 +74,13 @@ class ModJedi:
         it = buf.get_iter_at_mark(buf.get_insert())
         line = it.get_line() + 1
         column = it.get_line_offset()
-        data = buf.attr['filename'] + ':' + str(line) + ':' + str(column) + ':' + text
+        data = ':'.join([
+            str(serial),
+            buf.attr['filename'],
+            str(line),
+            str(column),
+            text,
+        ])
         data = data.encode('utf8')
         self.stdin.write_chars(data, len(data))
         self.stdin.write_chars(self.line_sep_encoded, self.line_sep_length)

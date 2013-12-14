@@ -50,7 +50,7 @@ class ModGolang:
             lambda buf: self.oracle(buf, 'referrers'),
             'golang oracle: referrers')
 
-    def provide(self, buf, word, candidates):
+    def provide(self, buf, word, candidates, _serial):
         if not word:
             it = buf.get_iter_at_mark(buf.get_insert())
             if it.backward_char():
