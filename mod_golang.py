@@ -1,6 +1,7 @@
 import subprocess
 import os
 import json
+from core_selection_transform import Transform
 
 class ModGolang:
     def __init__(self, editor):
@@ -19,6 +20,35 @@ class ModGolang:
         buf.attr.setdefault('completion-providers', [])
         buf.attr['completion-providers'].append(self.provide)
         buf.attr['gocode-provided'] = set()
+
+        # oracle
+        self.editor.bind_key_handler(buf.command_key_handler, '.od',
+            lambda buf: self.oracle(buf, 'describe'),
+            'golang oracle: describe')
+        self.editor.bind_key_handler(buf.command_key_handler, '.oe',
+            lambda buf: self.oracle(buf, 'callees'),
+            'golang oracle: callees')
+        self.editor.bind_key_handler(buf.command_key_handler, '.or',
+            lambda buf: self.oracle(buf, 'callers'),
+            'golang oracle: callers')
+        self.editor.bind_key_handler(buf.command_key_handler, '.og',
+            lambda buf: self.oracle(buf, 'callgraph'),
+            'golang oracle: callgraph')
+        self.editor.bind_key_handler(buf.command_key_handler, '.os',
+            lambda buf: self.oracle(buf, 'callstack'),
+            'golang oracle: callstack')
+        self.editor.bind_key_handler(buf.command_key_handler, '.of',
+            lambda buf: self.oracle(buf, 'freevars'),
+            'golang oracle: freevars')
+        self.editor.bind_key_handler(buf.command_key_handler, '.oi',
+            lambda buf: self.oracle(buf, 'implements'),
+            'golang oracle: implements')
+        self.editor.bind_key_handler(buf.command_key_handler, '.op',
+            lambda buf: self.oracle(buf, 'peers'),
+            'golang oracle: peers')
+        self.editor.bind_key_handler(buf.command_key_handler, '.ot',
+            lambda buf: self.oracle(buf, 'referrers'),
+            'golang oracle: referrers')
 
     def provide(self, buf, word, candidates):
         if not word:
@@ -57,10 +87,29 @@ class ModGolang:
             buf.get_end_iter(), False).encode('utf8'))
         if len(err) > 0: # error
             self.editor.show_message(err.decode('utf8'), timeout = 3600000)
-            #TODO annotate and set jump list
             return
         offset = buf.get_iter_at_mark(buf.get_insert()).get_offset()
         buf.set_text(data.decode('utf8'))
         it = buf.get_start_iter()
         it.set_offset(offset)
         buf.place_cursor(it)
+
+    def oracle(self, buf, mode, scope = None):
+        if not buf.get_has_selection(): # select current word
+            Transform(
+                (self.editor.mark_jump_to_word_edge, 0, True),
+                (self.editor.mark_jump_to_word_edge, 0),
+                'cursor').apply(buf)
+        start = len(buf.get_text(buf.get_start_iter(),
+            buf.get_iter_at_mark(buf.get_selection_bound()), False).encode('utf8'))
+        end = len(buf.get_text(buf.get_start_iter(),
+            buf.get_iter_at_mark(buf.get_insert()), False).encode('utf8'))
+        pos = buf.attr['filename'] + ':' + '#' + str(start) + ',#' + str(end)
+        if scope is None:
+            scope = buf.attr['filename']
+        output = subprocess.check_output(['/usr/bin/env', 'oracle',
+            '-pos=' + pos,
+            '-format=plain',
+            mode,
+            scope])
+        self.editor.show_message(output.decode('utf8'), timeout = 600000)
