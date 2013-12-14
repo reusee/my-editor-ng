@@ -51,7 +51,7 @@ class Main(Gtk.Window):
 
     def excepthook(self, type, value, tback):
         self.exception_board.label.set_text('\n'.join(traceback.format_exception(type, value, tback)))
-        self.exception_board.show()
+        self.exception_board.show_all()
         sys.__excepthook__(type, value, tback)
 
 class ExceptionBoard(Gtk.Overlay):
@@ -61,7 +61,7 @@ class ExceptionBoard(Gtk.Overlay):
         self.add(self.label)
         self.button = Gtk.Button(
             valign = Gtk.Align.END,
-            halign = Gtk.Align.END,
+            halign = Gtk.Align.START,
             label = "X")
         self.add_overlay(self.button)
         self.button.connect('clicked', lambda _: self.hide())
