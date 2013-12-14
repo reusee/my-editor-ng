@@ -1,4 +1,5 @@
 from gi.repository import Gtk, GLib
+import xml.sax.saxutils
 import time
 
 class CoreMessage:
@@ -24,6 +25,7 @@ class CoreMessage:
         self.connect('show-message', lambda _, text: self.show_message(text))
 
     def show_message(self, text, **kwargs):
+        text = xml.sax.saxutils.escape(text.strip())
         self.message_history.append(text)
         self._show_message(text, **kwargs)
 
