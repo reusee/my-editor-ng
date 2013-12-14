@@ -45,7 +45,7 @@
   <color name="blue"                        value="#268bd2"/>
   <color name="cyan"                        value="#2aa198"/>
   <color name="green"                       value="#859900"/>
-  
+
   <!-- Global Settings -->
   <style name="text"                        foreground="base1" background="base03"/>
   <style name="selection"                   foreground="base03" background="base0"/>
@@ -65,7 +65,7 @@
 
   <!-- Right Margin -->
   <style name="right-margin"                foreground="base0" background="base02"/>
-  
+
   <!-- Search Matching -->
   <style name="search-match"                foreground="yellow"/>
 
@@ -92,7 +92,7 @@
   <style name="def:statement"               use-style="def:keyword"/>
 
   <!-- Types -->
-  <style name="def:type"                    foreground="yellow"/> 
+  <style name="def:type"                    foreground="yellow"/>
 
   <!-- Others -->
   <style name="def:preprocessor"            foreground="orange"/>

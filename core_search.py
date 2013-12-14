@@ -25,8 +25,8 @@ class CoreSearch:
         self.bind_command_key('*', self.search_current_word, 'search current word')
 
     def setup_search(self, _, buf):
-        tag = buf.create_tag('search-result', foreground = '#FFFF00')
-          #background = '#84bf96', foreground = '#000000')
+        tag = buf.create_tag('search-result',
+          background = '#002b36', foreground = '#FFFF00')
         buf.attr['search-result-tag'] = tag
         buf.attr['search-pattern'] = ''
         buf.connect('changed', self.update_search_result)
