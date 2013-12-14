@@ -35,18 +35,18 @@ class CorePatternMatch:
                     if state.predict and not state.predict(buf, state): # predict fail
                         buf.attr['pattern-matcher-states'].clear()
                         return
+                    buf.begin_user_action()
                     if state.clear_matched_text:
                         it = buf.get_iter_at_mark(buf.get_insert())
                         end = it.copy()
                         for _ in range(len(state.pattern) - 1):
                             it.backward_char()
-                        buf.begin_not_undoable_action()
                         buf.delete(it, end)
-                        buf.end_not_undoable_action()
                     state.callback(buf) # call
                     if state.drop_key_event:
                         self.key_pressed_return_value = True
                     buf.attr['pattern-matcher-states'].clear()
+                    buf.end_user_action()
                     return
                 else:
                     new_states.append(state)
