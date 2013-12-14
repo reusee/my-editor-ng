@@ -24,7 +24,7 @@ class Main:
             ret = True
             status, data, _, _ = chan.read_line()
             if status != GLib.IO_STATUS_NORMAL: return
-            serial, path, line, column, text = data.split(':', 4)
+            path, line, column, text = data.split(':', 3)
             script = jedi.Script(
                 source = text,
                 line = int(line),
@@ -35,7 +35,7 @@ class Main:
             for c in script.completions():
                 if c.name.startswith('__'): continue
                 words.append(c.name)
-            data = (serial + ':' + ','.join(words)).encode('utf8')
+            data = ','.join(words).encode('utf8')
             self.stdout.write_chars(data, len(data))
             self.stdout.write_chars(self.line_sep_encoded, self.line_sep_length)
             self.stdout.flush()

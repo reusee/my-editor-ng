@@ -21,15 +21,12 @@ class CoreCompletion:
         self.completion_replacing = False # changing text by Tab
         self.completion_candidates = []
 
-        self.completion_serial = 0
-
     def hint_completion(self, buf):
         if self.completion_replacing: return
         self.completion_view.hide()
         self.completion_candidates.clear()
         if self.operation_mode != self.EDIT: return
 
-        self.completion_serial += 1
         candidates = set()
         # global dictionary provides
         word_start_iter = buf.get_iter_at_mark(buf.attr['word-start'])
@@ -41,23 +38,9 @@ class CoreCompletion:
         # extra providers
         if 'completion-providers' in buf.attr:
             for provider in buf.attr['completion-providers']:
-                provider(buf, word, candidates, self.completion_serial)
+                provider(buf, word, candidates)
 
-        self.completion_candidates = sorted(candidates,
-            key = lambda w: len(w))
-        if len(self.completion_candidates) > 0:
-            self.show_candidates()
-
-    def append_candidates(self, words, serial):
-        print(len(words))
-        if serial != self.completion_serial: return
-        if self.completion_replacing: return
-        self.completion_view.hide()
-        if self.operation_mode != self.EDIT: return
-
-        self.completion_candidates += words
-        self.completion_candidates = sorted(self.completion_candidates,
-            key = lambda w: len(w))
+        self.completion_candidates = sorted(candidates, key = lambda w: len(w))
         if len(self.completion_candidates) > 0:
             self.show_candidates()
 
