@@ -18,7 +18,7 @@ class CoreCompletion:
 
         self.bind_edit_key([Gdk.KEY_Tab], self.cycle_completion_candidates, 'next completion')
 
-        self.completion_replacing = False # changing text
+        self.completion_replacing = False # changing text by Tab
         self.completion_candidates = []
 
     def hint_completion(self, buf):
@@ -28,7 +28,7 @@ class CoreCompletion:
         if self.operation_mode != self.EDIT: return
 
         candidates = set()
-        # word completions
+        # global dictionary provides
         word_start_iter = buf.get_iter_at_mark(buf.attr['word-start'])
         word_end_iter = buf.get_iter_at_mark(buf.attr['word-end'])
         word = buf.get_text(word_start_iter, word_end_iter, False)
@@ -73,22 +73,25 @@ class CoreCompletion:
         res = []
         n = 0
         for w in reversed(self.vocabulary):
-            if w == word: continue
-            #if w[0].lower() != word[0].lower(): continue
-            i = 0 # for w
-            j = 0 # for word
-            while i < len(w) and j < len(word):
-                if w[i] == word[j]:
-                    i += 1
-                    j += 1
-                else:
-                    i += 1
-            if j == len(word): # match
+            if self.completion_fuzzy_match(w, word):
                 res.append(w)
                 n += 1
-                if n == 30:
-                    return res
+                if n == 30: return res
         return res
+
+    def completion_fuzzy_match(self, w, word):
+        if w == word: return False
+        i = 0 # for w, the candidate word
+        j = 0 # for word, the pattern
+        while i < len(w) and j < len(word):
+            if w[i].lower() == word[j].lower():
+                i += 1
+                j += 1
+            else:
+                i += 1
+        if j == len(word): # match
+            return True
+        return False
 
     def cycle_completion_candidates(self, view):
         if len(self.completion_candidates) == 0: return 'propagate'
