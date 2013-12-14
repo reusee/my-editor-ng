@@ -67,6 +67,8 @@ class ExceptionBoard(Gtk.Overlay):
         self.button.connect('clicked', lambda _: self.hide())
 
 def main():
+    Gdk.threads_init()
+    Gtk.init(sys.argv)
     win = Main()
     win.connect('delete-event', Gtk.main_quit)
     win.show_all()
