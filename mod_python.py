@@ -15,16 +15,6 @@ class ModPython:
         self.add_line_start_abbre(buf, 'pp', 'print(')
 
         # macros
-        self.editor.bind_key_handler(buf.command_key_handler, '.fv', lambda view:
-            self.editor.feed_keys(view, 'vmwvt(v%vl'),
-            'select current function call')
-        self.editor.bind_key_handler(buf.command_key_handler, '.fi', lambda view, buf: [
-            self.editor.feed_keys(view, 'f(%i'),
-            buf.begin_user_action(),
-            buf.insert(buf.get_iter_at_mark(buf.get_insert()),
-                ', ', -1),
-            buf.end_user_action(),
-            ], 'insert argument to current function')
 
         self.editor.bind_key_handler(buf.command_key_handler, '.c', self.comment_lines,
             'comment lines')

@@ -40,6 +40,7 @@ extra_modules = [
     'statistics',
     'profiling',
     'rust',
+    'shared_snippets',
     ]
 
 extra_classes = [
