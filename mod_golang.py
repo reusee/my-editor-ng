@@ -9,6 +9,10 @@ class ModGolang:
             self.setup(buf) if lang == 'Go' else None)
 
         self.gocode_path = os.path.expanduser('~/gopath/bin/gocode')
+        editor.connect('before-saving', lambda _, buf:
+            self.gofmt(buf)
+            if buf.attr['lang'] and buf.attr['lang'].get_name() == 'Go'
+            else None)
 
     def setup(self, buf):
         self.editor.show_message('golang loaded')
@@ -17,6 +21,11 @@ class ModGolang:
         buf.attr['gocode-provided'] = set()
 
     def provide(self, buf, word, candidates):
+        if not word:
+            it = buf.get_iter_at_mark(buf.get_insert())
+            if it.backward_char():
+                if not it.get_char() in {'.'}: return
+            else: return
         offset = len(buf.get_text(buf.get_start_iter(),
             buf.get_iter_at_mark(buf.get_insert()), False).encode('utf8'))
         p = subprocess.Popen([self.gocode_path, '-f=json', 'autocomplete',
@@ -38,3 +47,20 @@ class ModGolang:
         for entry in data[1]:
             candidates.add(entry['name'])
             buf.attr['gocode-provided'].add(entry['name'])
+
+    def gofmt(self, buf):
+        p = subprocess.Popen(['/usr/bin/env', 'gofmt', '-s'],
+            stdin = subprocess.PIPE,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE)
+        data, err = p.communicate(buf.get_text(buf.get_start_iter(),
+            buf.get_end_iter(), False).encode('utf8'))
+        if len(err) > 0: # error
+            self.editor.show_message(err.decode('utf8'), timeout = 3600000)
+            #TODO annotate and set jump list
+            return
+        offset = buf.get_iter_at_mark(buf.get_insert()).get_offset()
+        buf.set_text(data.decode('utf8'))
+        it = buf.get_start_iter()
+        it.set_offset(offset)
+        buf.place_cursor(it)
