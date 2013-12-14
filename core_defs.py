@@ -1,5 +1,6 @@
 from gi.repository import Pango
 import regex
+from datetime import datetime
 
 class CoreDefs:
     def __init__(self):
@@ -20,6 +21,11 @@ class CoreDefs:
         self.default_indent_width = 2
 
         self.default_font = Pango.FontDescription.from_string('Terminus 13')
+        hour = datetime.now().hour
+        if hour >= 6 and hour <= 13:
+            self.scheme_name = 'solarizedlight'
+        else:
+            self.scheme_name = 'solarizeddark'
 
         self.word_regex = regex.compile('[a-zA-Z0-9-_]+')
 

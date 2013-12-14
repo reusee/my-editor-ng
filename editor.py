@@ -82,7 +82,7 @@ class Editor(Gtk.Overlay, *classes):
         # font and style
         self.style_scheme_manager = GtkSource.StyleSchemeManager.get_default()
         self.style_scheme_manager.append_search_path(os.path.dirname(__file__))
-        self.style_scheme = self.style_scheme_manager.get_scheme('solarizedlight')
+        self.style_scheme = self.style_scheme_manager.get_scheme(self.scheme_name)
 
         # extra classes
         for cls in extra_classes:
