@@ -14,6 +14,7 @@ class ModGolang:
         self.editor.show_message('golang loaded')
         buf.attr.setdefault('completion-providers', [])
         buf.attr['completion-providers'].append(self.provide)
+        buf.attr['gocode-provided'] = set()
 
     def provide(self, buf, word, candidates):
         offset = len(buf.get_text(buf.get_start_iter(),
@@ -28,7 +29,12 @@ class ModGolang:
         if len(err) > 0: # error
             self.editor.show_message('gocode error')
         data = json.loads(data.decode('utf8'))
-        if len(data) == 0: # no candidates
+        if len(data) == 0: # no candidates, use last provided
+            candidates.update(w
+                for w in buf.attr['gocode-provided']
+                if self.editor.completion_fuzzy_match(w, word))
             return
+        buf.attr['gocode-provided'].clear()
         for entry in data[1]:
             candidates.add(entry['name'])
+            buf.attr['gocode-provided'].add(entry['name'])
