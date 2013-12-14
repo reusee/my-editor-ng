@@ -107,9 +107,15 @@ class ModGolang:
         pos = buf.attr['filename'] + ':' + '#' + str(start) + ',#' + str(end)
         if scope is None:
             scope = buf.attr['filename']
-        output = subprocess.check_output(['/usr/bin/env', 'oracle',
+        p = subprocess.Popen(['/usr/bin/env', 'oracle',
             '-pos=' + pos,
             '-format=plain',
             mode,
-            scope])
-        self.editor.show_message(output.decode('utf8'), timeout = 600000)
+            scope],
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE)
+        output, err = p.communicate()
+        if len(err) > 0:
+            self.editor.show_message('oracle: ' + err.decode('utf8'))
+        else:
+            self.editor.show_message(output.decode('utf8'), timeout = 600000)
