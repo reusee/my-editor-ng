@@ -14,10 +14,6 @@ class CoreStatus:
     def draw_status(self, view, cr):
         if not view.is_focus(): return
         rect = view.get_allocation()
-        cr.select_font_face('Times')
-        cr.set_font_size(256)
-        cr.set_source_rgb(0.2, 0.2, 0.2)
-        cr.move_to(rect.width / 3, rect.height / 2)
 
         # current line and column
         buf = view.get_buffer()
@@ -37,7 +33,6 @@ class CoreStatus:
         cr.stroke()
         cr.set_line_width(1)
         cr.set_source_rgb(0.8, 0.8, 0.8)
-        cr.set_line_width(1)
         cr.move_to(0, y + cursor_rect.height)
         cr.line_to(rect.width, y + cursor_rect.height)
         cr.stroke()

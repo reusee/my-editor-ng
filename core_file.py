@@ -5,8 +5,8 @@ import time
 class CoreFile:
     def __init__(self):
 
-        self.bind_command_key(',b', self.open_file_chooser, 'open file')
         self.file_chooser = FileChooser(self)
+        self.bind_command_key(',b', self.open_file_chooser, 'open file')
         self.connect('realize', lambda _: self.north_area.add(self.file_chooser))
         self.file_chooser.connect('done', self.open_file)
 

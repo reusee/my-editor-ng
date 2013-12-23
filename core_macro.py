@@ -7,7 +7,7 @@ class CoreMacro:
         self.connect('key-pressed', self.record_key_events)
         self.connect('key-done', self.new_key_event_group)
         self.recording_macro = False
-        self.recorded_key_events = []
+        self.recorded_key_events = [[]]
 
         self.bind_command_key('.w', self.toggle_macro_recording, 'toggle macro recording')
         self.bind_command_key('mw', self.replay_macro, 'replay macro')

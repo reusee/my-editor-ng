@@ -114,6 +114,7 @@ class CoreSelectionOperation:
                     buf.end_user_action()
                 start.forward_line()
                 end = buf.get_iter_at_mark(sel.end)
+
     def cmd_dedent_selection(self, view, n):
         if n == 0: n = 1
         buf = view.get_buffer()

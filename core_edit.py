@@ -145,7 +145,7 @@ class CoreEdit:
         while it.get_char().isspace() and not it.ends_line():
             it.forward_char()
         line_end = it.copy()
-        if not line_end.ends_line(): it.forward_to_line_end()
+        if not line_end.ends_line(): line_end.forward_to_line_end()
         buf.begin_user_action()
         buf.delete(it, line_end)
         buf.end_user_action()

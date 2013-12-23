@@ -22,7 +22,7 @@ class CoreDefs:
 
         self.default_font = Pango.FontDescription.from_string('Terminus 13')
         hour = datetime.now().hour
-        if hour >= 6 and hour <= 13:
+        if hour >= 6 and hour <= 10:
             self.scheme_name = 'solarizedlight'
         else:
             self.scheme_name = 'solarizeddark'
